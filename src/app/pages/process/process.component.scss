@@ -1,0 +1,487 @@
+/* ───────────────────────── Process ─────────────────────────
+   Tokens only (--cr-*). Gantt bar chart, phase list, tools grid.
+──────────────────────────────────────────────────────────── */
+
+:host {
+    display: block;
+    background: var(--cr-bg);
+    padding: 5rem 0;
+  }
+  
+  .cr-flare { color: var(--cr-flare); }
+  
+  %mono {
+    font-family: var(--bs-font-monospace);
+    font-size: 0.62rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--cr-text-mid);
+  }
+  
+  .cr-mono { @extend %mono; }
+  
+  /* ── tone-to-color helper ── */
+  
+  @mixin tone-map($prop) {
+    &[data-tone='flare'] { #{$prop}: var(--cr-flare); }
+    &[data-tone='teal'] { #{$prop}: var(--cr-teal); }
+    &[data-tone='amber'] { #{$prop}: var(--cr-amber); }
+    &[data-tone='violet'] { #{$prop}: var(--cr-violet); }
+  }
+  
+  /* ── head ── */
+  
+  .cr-process-head {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem 3rem;
+    padding: 2.5rem 2rem;
+    margin-bottom: 1.25rem;
+    border-radius: 1.1rem;
+    overflow: hidden;
+    background-image: radial-gradient(
+      60% 90% at 100% 0%,
+      color-mix(in srgb, var(--cr-teal) 16%, transparent),
+      transparent 70%
+    );
+  }
+  
+  .cr-process-head-main {
+    max-width: 32rem;
+  }
+  
+  .cr-process-title {
+    font-size: clamp(2rem, 4.4vw, 3.1rem);
+    font-weight: 700;
+    line-height: 1.06;
+    letter-spacing: -0.03em;
+    color: var(--cr-text-hi);
+  }
+  
+  .cr-process-sub {
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: var(--cr-text-mid);
+  }
+  
+  .cr-head-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-end;
+  }
+  
+  .cr-head-stat {
+    @extend %mono;
+    padding: 0.32rem 0.75rem;
+    border: 1px solid var(--cr-border);
+    border-radius: 2rem;
+    background: color-mix(in srgb, var(--cr-band) 80%, transparent);
+    backdrop-filter: blur(4px);
+    white-space: nowrap;
+  }
+  
+  /* ── gantt panel ── */
+  
+  .cr-gantt-panel {
+    padding: 1.5rem 1.6rem 1.75rem;
+    margin-bottom: 3.5rem;
+    border: 1px solid var(--cr-border);
+    border-radius: 1rem;
+    background: var(--cr-surface);
+  }
+  
+  .cr-gantt-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+  
+  .cr-gantt-title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--cr-text-hi);
+  }
+  
+  .cr-gantt {
+    position: relative;
+    padding-top: 1.5rem;
+  }
+  
+  .cr-gantt-axis {
+    position: relative;
+    height: 1.25rem;
+    margin-bottom: 0.4rem;
+    border-bottom: 1px solid var(--cr-border);
+  }
+  
+  .cr-gantt-mark {
+    @extend %mono;
+    position: absolute;
+    bottom: 0.4rem;
+    transform: translateX(-2px);
+    font-size: 0.6rem;
+  }
+  
+  .cr-gantt-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  
+  .cr-gantt-row {
+    display: grid;
+    grid-template-columns: 8.5rem 1fr;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  
+  .cr-gantt-row-label {
+    font-size: 0.74rem;
+    color: var(--cr-text-mid);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .cr-gantt-row-track {
+    position: relative;
+    height: 14px;
+    border-radius: 4px;
+    background: var(--cr-band);
+  }
+  
+  .cr-gantt-bar {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    min-width: 6px;
+    border-radius: 4px;
+    transition: width 0.5s ease, left 0.5s ease;
+    @include tone-map(background);
+  }
+  
+  .cr-gantt-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem 1.4rem;
+    margin-top: 1.5rem;
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--cr-border);
+  }
+  
+  .cr-legend-item {
+    @extend %mono;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  
+  .cr-legend-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    @include tone-map(background);
+  }
+  
+  /* ── phases ── */
+  
+  .cr-phases {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    padding: 1rem 0 3.5rem;
+  }
+  
+  .cr-phase {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.75fr);
+    gap: 2.5rem 3rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid var(--cr-border);
+  
+    &:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+  
+    &.is-reverse {
+      .cr-phase-card {
+        order: -1;
+      }
+    }
+  }
+  
+  .cr-phase-index {
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: color-mix(in srgb, var(--cr-flare) 55%, var(--cr-text-mid) 20%);
+    opacity: 0.7;
+  }
+  
+  .cr-phase-day {
+    @extend %mono;
+    display: inline-block;
+    margin-bottom: 0.6rem;
+  }
+  
+  .cr-phase-title {
+    font-size: clamp(1.25rem, 2.2vw, 1.55rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--cr-text-hi);
+  }
+  
+  .cr-phase-body {
+    max-width: 34rem;
+    font-size: 0.85rem;
+    line-height: 1.75;
+    color: var(--cr-text-mid);
+  }
+  
+  .cr-phase-card {
+    align-self: start;
+    padding: 1.25rem 1.4rem;
+    border: 1px solid var(--cr-border);
+    border-radius: 0.9rem;
+    background: var(--cr-surface);
+  }
+  
+  .cr-phase-card-label {
+    @extend %mono;
+  }
+  
+  .cr-phase-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  
+    li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.55rem;
+      font-size: 0.8rem;
+      line-height: 1.45;
+      color: var(--cr-text-hi);
+  
+      svg {
+        flex: 0 0 auto;
+        margin-top: 0.15rem;
+        color: var(--cr-teal);
+      }
+    }
+  }
+  
+  /* ── split: need + tools ── */
+  
+  .cr-split {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.5rem 3rem;
+    padding: 3rem 0;
+    border-top: 1px solid var(--cr-border);
+  }
+  
+  .cr-section-title {
+    font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--cr-text-hi);
+  }
+  
+  .cr-need-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .cr-need-item {
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--cr-border);
+    font-size: 0.84rem;
+    line-height: 1.6;
+  
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+  
+  .cr-need-title {
+    font-weight: 700;
+    color: var(--cr-flare);
+  }
+  
+  .cr-need-body {
+    color: var(--cr-text-mid);
+  }
+  
+  .cr-need-note,
+  .cr-tool-note {
+    font-size: 0.74rem;
+    line-height: 1.65;
+    color: var(--cr-text-mid);
+  }
+  
+  .cr-tool-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .cr-tool-card {
+    padding: 0.95rem 1rem;
+    border: 1px solid var(--cr-border);
+    border-radius: 0.75rem;
+    background: var(--cr-surface);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  
+    &:hover {
+      transform: translateY(-2px);
+      border-color: var(--cr-border-strong);
+    }
+  }
+  
+  .cr-tool-icon {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    margin-bottom: 0.7rem;
+    border-radius: 0.5rem;
+    @include tone-map(color);
+  
+    &[data-tone='flare'] { background: color-mix(in srgb, var(--cr-flare) 14%, transparent); }
+    &[data-tone='teal'] { background: color-mix(in srgb, var(--cr-teal) 14%, transparent); }
+    &[data-tone='amber'] { background: color-mix(in srgb, var(--cr-amber) 14%, transparent); }
+    &[data-tone='violet'] { background: color-mix(in srgb, var(--cr-violet) 14%, transparent); }
+  }
+  
+  .cr-tool-name {
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: var(--cr-text-hi);
+  }
+  
+  .cr-tool-role {
+    font-size: 0.72rem;
+    line-height: 1.5;
+    color: var(--cr-text-mid);
+  }
+  
+  /* ── turnarounds table ── */
+  
+  .cr-turnaround {
+    padding: 3rem 0 0;
+    border-top: 1px solid var(--cr-border);
+  }
+  
+  .cr-section-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    margin-bottom: 1.75rem;
+  }
+  
+  .cr-section-note {
+    max-width: 22rem;
+    font-size: 0.78rem;
+    line-height: 1.65;
+    color: var(--cr-text-mid);
+  }
+  
+  .cr-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--cr-border);
+    border-radius: 0.8rem;
+  }
+  
+  .cr-table {
+    width: 100%;
+    min-width: 680px;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+  
+    th,
+    td {
+      padding: 0.8rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--cr-border);
+      white-space: nowrap;
+    }
+  
+    thead th {
+      @extend %mono;
+      background: var(--cr-band);
+      color: var(--cr-text-hi);
+    }
+  
+    tbody th[scope='row'] {
+      font-weight: 600;
+      color: var(--cr-text-hi);
+    }
+  
+    tbody td {
+      color: var(--cr-text-mid);
+    }
+  
+    tbody tr:last-child th,
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+  }
+  
+  .cr-ontime {
+    font-weight: 700;
+    color: var(--cr-teal);
+  }
+  
+  .cr-dash {
+    color: var(--cr-text-mid);
+    opacity: 0.6;
+  }
+  
+  /* ── responsive ── */
+  
+  @media (max-width: 991.98px) {
+    .cr-phase {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  
+    .cr-phase.is-reverse .cr-phase-card {
+      order: 0;
+    }
+  
+    .cr-split {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  
+    .cr-gantt-row {
+      grid-template-columns: 6rem 1fr;
+    }
+  }
+  
+  @media (max-width: 575.98px) {
+    .cr-tool-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  
+    .cr-process-head {
+      padding: 1.75rem 1.25rem;
+    }
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    .cr-gantt-bar,
+    .cr-tool-card {
+      transition: none;
+    }
+  }

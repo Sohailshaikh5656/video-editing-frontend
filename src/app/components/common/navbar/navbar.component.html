@@ -1,0 +1,237 @@
+<header class="cr-header sticky-top" [class.is-compact]="isHome()">
+  <nav class="cr-nav navbar navbar-expand-lg mx-auto">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2 fw-bold m-0" routerLink="/">
+        <span class="cr-logo d-flex align-items-center justify-content-center rounded-3 bg-primary text-white">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z" /></svg>
+        </span>
+        <span><span class="text-body-emphasis">CUT</span><span class="text-primary">ROOM</span></span>
+      </a>
+
+      <button
+        type="button"
+        class="btn border-0 p-1 d-lg-none text-body-emphasis"
+        aria-label="Toggle menu"
+        [attr.aria-expanded]="open()"
+        (click)="open.set(!open())"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M4 7h16M4 12h16M4 17h16" />
+        </svg>
+      </button>
+
+      <div class="collapse navbar-collapse" [class.show]="open()">
+        <ul class="navbar-nav mx-lg-auto gap-lg-1 py-3 py-lg-0">
+          @for (l of links; track l.path) {
+            <li class="nav-item">
+              <a class="nav-link px-lg-3" [routerLink]="l.path" routerLinkActive="active fw-semibold">{{ l.label }}</a>
+            </li>
+          }
+
+          <!-- More dropdown -->
+          <li #more class="nav-item dropdown">
+            <button
+              type="button"
+              class="nav-link dropdown-toggle px-lg-3 bg-transparent border-0"
+              [class.active]="moreActive()"
+              [class.fw-semibold]="moreActive()"
+              [class.is-open]="moreOpen()"
+              aria-haspopup="true"
+              [attr.aria-expanded]="moreOpen()"
+              (click)="toggleMore()"
+            >
+              More
+            </button>
+
+            <ul class="dropdown-menu cr-menu" [class.show]="moreOpen()">
+              @for (l of moreLinks; track l.path) {
+                <li>
+                  <a class="cr-item" [routerLink]="l.path" routerLinkActive="is-current" [style.--tone]="'var(--cr-' + l.tone + ')'">
+                    <span class="cr-item-icon" aria-hidden="true">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        @switch (l.icon) {
+                          @case ('play') {
+                            <rect x="3" y="5" width="18" height="14" rx="3" />
+                            <path d="M10.5 9.5v5l4-2.5z" />
+                          }
+                          @case ('flow') {
+                            <circle cx="6" cy="6" r="2.5" />
+                            <circle cx="18" cy="18" r="2.5" />
+                            <path d="M8.5 6H14a4 4 0 0 1 4 4v5.5" />
+                          }
+                          @case ('star') {
+                            <path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z" />
+                          }
+                          @case ('help') {
+                            <circle cx="12" cy="12" r="9" />
+                            <path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01" />
+                          }
+                        }
+                      </svg>
+                    </span>
+                    <span class="cr-item-text">
+                      <span class="cr-item-label">{{ l.label }}</span>
+                      @if (l.hint) {
+                        <span class="cr-item-hint">{{ l.hint }}</span>
+                      }
+                    </span>
+                    <svg class="cr-item-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M9 6l6 6-6 6" />
+                    </svg>
+                  </a>
+                </li>
+              }
+            </ul>
+          </li>
+        </ul>
+
+        <div class="d-flex align-items-center gap-3">
+          <!-- accent colour -->
+          <button
+            type="button"
+            class="cr-palette-btn"
+            aria-label="Open colour panel"
+            aria-haspopup="dialog"
+            [attr.aria-expanded]="panelOpen()"
+            (click)="openPanel()"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="13.5" cy="6.5" r=".6" />
+              <circle cx="17.5" cy="10.5" r=".6" />
+              <circle cx="8.5" cy="7.5" r=".6" />
+              <circle cx="6.5" cy="12.5" r=".6" />
+              <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.84-.44-1.13-.29-.29-.44-.65-.44-1.13a1.64 1.64 0 0 1 1.67-1.67h2c3.05 0 5.55-2.5 5.55-5.55C21.97 6.01 17.46 2 12 2z" />
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            class="cr-toggle border rounded-pill d-flex align-items-center justify-content-between px-2 py-0"
+            [attr.data-mode]="theme.theme()"
+            aria-label="Toggle theme"
+            (click)="theme.toggle()"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="4" />
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+            </svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          </button>
+
+          <a class="btn btn-primary rounded-pill px-4 fw-semibold" routerLink="/contact">Start a project →</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<!-- ═════════ Accent colour side panel (outside the header so blur/sticky can't trap it) ═════════ -->
+<div class="cr-backdrop" [class.show]="panelOpen()" (click)="closePanel()" aria-hidden="true"></div>
+
+<aside
+  class="cr-panel"
+  [class.is-open]="panelOpen()"
+  [attr.inert]="panelOpen() ? null : ''"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="cr-panel-title"
+>
+  <div class="cr-panel-head">
+    <div>
+      <p class="cr-eyebrow font-monospace text-uppercase text-primary mb-1">Appearance</p>
+      <h2 id="cr-panel-title" class="cr-panel-title text-body-emphasis mb-0">Accent colour</h2>
+    </div>
+    <button #closeBtn type="button" class="cr-close" aria-label="Close panel" (click)="closePanel()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M6 6l12 12M18 6L6 18" />
+      </svg>
+    </button>
+  </div>
+
+  <div class="cr-panel-body">
+    <!-- live preview -->
+    <div class="cr-preview">
+      <span class="cr-preview-tag font-monospace text-uppercase">Live preview</span>
+      <p class="cr-preview-title text-body-emphasis mb-1">Cut it. Grade it. Ship it.</p>
+      <p class="cr-preview-copy mb-3">Buttons, links and highlights follow your pick.</p>
+      <div class="d-flex align-items-center gap-3">
+        <span class="btn btn-primary btn-sm rounded-pill px-3 fw-semibold pe-none">Start a project</span>
+        <span class="text-primary fw-semibold small">Read the process →</span>
+      </div>
+    </div>
+
+    <!-- presets -->
+    <section>
+      <div class="d-flex justify-content-between align-items-baseline mb-3">
+        <h3 class="cr-section-title mb-0">Presets</h3>
+        <span class="cr-current font-monospace">{{ accentName() }} · {{ accent().toUpperCase() }}</span>
+      </div>
+
+      <div class="cr-swatches">
+        @for (s of swatches; track s.hex) {
+          <button
+            type="button"
+            class="cr-swatch"
+            [class.is-selected]="accent() === s.hex"
+            [style.--sw]="s.hex"
+            [attr.aria-label]="s.name"
+            [attr.aria-pressed]="accent() === s.hex"
+            (click)="setAccent(s.hex)"
+          >
+            <span class="cr-swatch-chip">
+              @if (accent() === s.hex) {
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12.5l4.5 4.5L19 7.5" />
+                </svg>
+              }
+            </span>
+            <span class="cr-swatch-name">{{ s.name }}</span>
+          </button>
+        }
+      </div>
+    </section>
+
+    <!-- custom -->
+    <section>
+      <h3 class="cr-section-title mb-3">Custom colour</h3>
+      <div class="cr-custom">
+        <label class="cr-picker" [class.is-selected]="accentName() === 'Custom'">
+          <span class="visually-hidden">Pick a custom colour</span>
+          <input type="color" [value]="accent()" (input)="setAccent($any($event.target).value)" />
+        </label>
+
+        <div class="flex-grow-1">
+          <label class="cr-field-label font-monospace text-uppercase" for="cr-hex">Hex</label>
+          <input
+            id="cr-hex"
+            type="text"
+            class="form-control cr-hex font-monospace"
+            [class.is-invalid]="hexInvalid()"
+            [value]="hexDraft()"
+            maxlength="7"
+            spellcheck="false"
+            autocomplete="off"
+            placeholder="#FF5C2B"
+            (input)="onHexInput($any($event.target).value)"
+          />
+        </div>
+      </div>
+      @if (hexInvalid()) {
+        <p class="small text-danger mt-2 mb-0" role="alert">Use a 3 or 6 digit hex code, like #FF5C2B.</p>
+      }
+    </section>
+
+    <p class="cr-note mb-0">
+      Saved on this device. In light mode the accent is deepened slightly so text stays readable.
+    </p>
+  </div>
+
+  <div class="cr-panel-foot">
+    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" [disabled]="isDefaultAccent()" (click)="resetAccent()">
+      Reset
+    </button>
+    <button type="button" class="btn btn-primary rounded-pill px-4 flex-grow-1" (click)="closePanel()">Done</button>
+  </div>
+</aside>

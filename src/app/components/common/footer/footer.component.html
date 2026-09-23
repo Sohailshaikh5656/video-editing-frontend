@@ -1,0 +1,108 @@
+<!-- CTA band -->
+<section class="cta text-center py-5">
+    <div class="container py-lg-5">
+      <p class="cr-eyebrow font-monospace text-uppercase text-primary mb-4">Available for Q4 — 3 slots left</p>
+  
+      <h2 class="cta-title display-4 fw-bold mb-4">
+        Got footage?<br />
+        Let us make it <span class="text-primary">move.</span>
+      </h2>
+  
+      <p class="col-md-8 col-lg-5 mx-auto mb-4">
+        Book a free 20-minute call. We will review your footage, talk turnaround, and send a fixed quote within 24 hours.
+      </p>
+  
+      <div class="d-flex flex-wrap justify-content-center gap-3 mb-4">
+        <a class="btn btn-primary btn-lg rounded-pill px-4" routerLink="/contact">Book a free call →</a>
+        <a class="btn btn-outline-secondary btn-lg rounded-pill px-4" routerLink="/pricing">See pricing</a>
+      </div>
+  
+      <ul class="list-unstyled d-flex flex-wrap justify-content-center gap-2 gap-md-4 font-monospace small mb-0">
+        @for (m of meta; track m) {
+          <li><span class="text-primary me-2">◆</span>{{ m }}</li>
+        }
+      </ul>
+    </div>
+  </section>
+  
+  <!-- Footer -->
+  <footer class="border-top pt-5">
+    <div class="container">
+      <div class="row g-5">
+        <div class="col-lg-4">
+          <a class="d-inline-flex align-items-center gap-2 fw-bold text-decoration-none mb-3" routerLink="/">
+            <span class="logo d-flex align-items-center justify-content-center rounded-3 bg-primary text-white">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z" /></svg>
+            </span>
+            <span><span class="text-body-emphasis">CUT</span><span class="text-primary">ROOM</span></span>
+          </a>
+  
+          <p class="small col-xl-10 mb-4">
+            Post-production studio of Aarav Mehta. Editing, colour and sound for brands, agencies and creators — from
+            Pune, for the world.
+          </p>
+  
+          <div class="d-flex gap-2">
+            @for (s of socials; track s.label) {
+              <a
+                class="social rounded-circle d-flex align-items-center justify-content-center small text-decoration-none"
+                [href]="s.href"
+                [attr.aria-label]="s.label"
+                >{{ s.text }}</a
+              >
+            }
+          </div>
+        </div>
+  
+        <div class="col-6 col-md-4 col-lg-2">
+          <h3 class="cr-eyebrow font-monospace text-uppercase fw-normal opacity-75 mb-3">Pages</h3>
+          <ul class="list-unstyled small d-grid gap-2 mb-0">
+            @for (p of pages; track p.path) {
+              <li>
+                <a class="link-body-emphasis link-opacity-75 link-opacity-100-hover text-decoration-none" [routerLink]="p.path">{{ p.label }}</a>
+              </li>
+            }
+          </ul>
+        </div>
+  
+        <div class="col-6 col-md-4 col-lg-3">
+          <h3 class="cr-eyebrow font-monospace text-uppercase fw-normal opacity-75 mb-3">Services</h3>
+          <ul class="list-unstyled small d-grid gap-2 mb-0">
+            @for (s of services; track s) {
+              <li>
+                <a class="link-body-emphasis link-opacity-75 link-opacity-100-hover text-decoration-none" routerLink="/services">{{ s }}</a>
+              </li>
+            }
+          </ul>
+        </div>
+  
+        <div class="col-md-4 col-lg-3">
+          <h3 class="cr-eyebrow font-monospace text-uppercase fw-normal opacity-75 mb-3">Contact</h3>
+          <ul class="list-unstyled small d-grid gap-2 mb-0">
+            <li>
+              <a class="link-body-emphasis link-opacity-75 link-opacity-100-hover text-decoration-none" href="mailto:hello@cutroom.studio">hello&#64;cutroom.studio</a>
+            </li>
+            <li class="link-body-emphasis link-opacity-75">+91 98xxx xxxxx</li>
+            <li>
+              <a class="link-body-emphasis link-opacity-75 link-opacity-100-hover text-decoration-none" routerLink="/contact">Book a call</a>
+            </li>
+            <li class="font-monospace opacity-75 mt-2">
+              IST (UTC+5:30)<br />
+              Covering IST · GMT · EST
+            </li>
+          </ul>
+        </div>
+      </div>
+  
+      <div class="d-flex flex-column flex-sm-row justify-content-between gap-3 border-top mt-5 py-4 small">
+        <span>© {{ year }} Cutroom Studio. All rights reserved.</span>
+        <ul class="list-unstyled d-flex gap-4 mb-0">
+          @for (l of legal; track l) {
+            <li>
+              <a class="link-body-emphasis link-opacity-75 link-opacity-100-hover text-decoration-none" href="#">{{ l }}</a>
+            </li>
+          }
+        </ul>
+      </div>
+    </div>
+  </footer>

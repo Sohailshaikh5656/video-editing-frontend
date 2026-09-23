@@ -1,0 +1,158 @@
+<section class="cr-reel">
+  <div class="container">
+
+    <!-- ── head ── -->
+    <header class="cr-reel-head">
+      <div class="cr-reel-head-main">
+        <p class="cr-eyebrow text-uppercase fw-semibold cr-flare mb-3">{{ eyebrow }}</p>
+        <h2 class="cr-reel-title mb-0">{{ heading }}</h2>
+      </div>
+      @if (blurb) {
+        <p class="cr-reel-blurb mb-0">{{ blurb }}</p>
+      }
+    </header>
+
+    <!-- ── filters ── -->
+    <div class="cr-filters" role="tablist" aria-label="Showreel categories">
+      @for (cat of categories(); track trackCat($index, cat)) {
+        <button
+          type="button"
+          class="cr-filter"
+          role="tab"
+          [class.is-on]="filter() === cat"
+          [attr.aria-selected]="filter() === cat"
+          (click)="setFilter(cat)"
+        >{{ cat }}</button>
+      }
+      <span class="cr-count">{{ visible().length }} films</span>
+    </div>
+
+    @if (active(); as reel) {
+      <!-- ── featured ── -->
+      <div class="cr-stage">
+        <div class="cr-stage-frame">
+          <span class="cr-chip cr-chip-tl">{{ reel.category }} &nbsp;·&nbsp; {{ reel.year }}</span>
+          <span class="cr-chip cr-chip-tr">{{ reel.length }}</span>
+          <div class="ratio ratio-16x9 cr-stage-media">
+            <app-cr-player
+              [src]="reel.src"
+              [poster]="reel.poster || ''"
+              [captions]="reel.captions || ''"
+              [label]="reel.title"
+              [length]="reel.length"
+              preload="metadata"
+            ></app-cr-player>
+          </div>
+        </div>
+
+        <!-- spec strip -->
+        <dl class="cr-specs">
+          <div class="cr-spec">
+            <dt>Client</dt>
+            <dd>{{ reel.client }}</dd>
+          </div>
+          <div class="cr-spec">
+            <dt>Category</dt>
+            <dd>{{ reel.category }}</dd>
+          </div>
+          <div class="cr-spec">
+            <dt>My role</dt>
+            <dd>{{ reel.role }}</dd>
+          </div>
+          <div class="cr-spec">
+            <dt>Delivered</dt>
+            <dd>{{ reel.delivery }}</dd>
+          </div>
+          <div class="cr-spec">
+            <dt>Year</dt>
+            <dd>{{ reel.year }}</dd>
+          </div>
+        </dl>
+
+        <!-- brief -->
+        <div class="cr-brief">
+          <div class="cr-brief-left">
+            <p class="cr-eyebrow text-uppercase fw-semibold cr-flare mb-3">The brief</p>
+            <h3 class="cr-brief-title mb-0">{{ reel.title }}</h3>
+          </div>
+          <div class="cr-brief-right">
+            <p class="cr-brief-note">{{ reel.note }}</p>
+            <div class="cr-tags">
+              @for (tag of reel.tags; track trackTag($index, tag)) {
+                <span class="cr-chip cr-chip-static">{{ tag }}</span>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- ── list ── -->
+    <div class="cr-list">
+      @for (reel of visible(); track trackReel($index, reel)) {
+        <article
+          class="cr-row"
+          role="button"
+          tabindex="0"
+          [class.is-active]="active()?.id === reel.id"
+          [attr.aria-pressed]="active()?.id === reel.id"
+          [attr.aria-label]="'Play ' + reel.title"
+          (click)="select(reel)"
+          (keydown)="onRowKey($event, reel)"
+        >
+          <div class="cr-row-left">
+            <p class="cr-row-index cr-flare mb-2">Reel {{ reel.index }}</p>
+            <h4 class="cr-row-title mb-2">{{ reel.client }}</h4>
+            <span class="cr-tag cr-tag-{{ reel.tone }}">{{ reel.category }}</span>
+          </div>
+
+          <p class="cr-row-note mb-0">{{ reel.note }}</p>
+
+          <div class="cr-row-media ratio ratio-16x9" [attr.data-tone]="reel.tone">
+            <app-cr-player
+              [compact]="true"
+              [src]="reel.src"
+              [poster]="reel.poster || ''"
+              [label]="reel.title"
+              preload="none"
+            ></app-cr-player>
+          </div>
+        </article>
+      } @empty {
+        <p class="cr-row-note mb-0">Is category mein abhi kuch nahi hai.</p>
+      }
+    </div>
+
+    <!-- ── results ── -->
+    @if (stats.length) {
+      <div class="cr-results">
+        <div class="cr-results-head">
+          <div>
+            <p class="cr-eyebrow text-uppercase fw-semibold cr-flare mb-3">Results</p>
+            <h3 class="cr-brief-title mb-0">What it actually did.</h3>
+          </div>
+          <p class="cr-reel-blurb mb-0">
+            Figures supplied by each client team, measured over the launch fortnight.
+          </p>
+        </div>
+
+        <div class="cr-stats">
+          @for (stat of stats; track trackStat($index, stat)) {
+            <div class="cr-stat">
+              <p class="cr-stat-value mb-2">{{ stat.value }}</p>
+              <p class="cr-stat-label mb-1">{{ stat.label }}</p>
+              <p class="cr-stat-note mb-0">{{ stat.note }}</p>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- ── pager ── -->
+    <div class="cr-pager">
+      <button type="button" class="btn btn-outline-secondary btn-sm" (click)="step(-1)">‹ Previous</button>
+      <button type="button" class="btn btn-outline-secondary btn-sm" (click)="step(1)">Next ›</button>
+    </div>
+
+  </div>
+</section>

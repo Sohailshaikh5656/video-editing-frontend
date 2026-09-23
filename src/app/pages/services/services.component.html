@@ -1,0 +1,224 @@
+<!-- ───────────── Hero ───────────── -->
+<section class="sv-hero">
+    <div class="container">
+      <p class="cr-meta text-primary mb-3">Services</p>
+  
+      <div class="row g-4 align-items-end">
+        <div class="col-lg-8">
+          <h1 class="sv-hero-title mb-4">
+            Six services. One<br />
+            person accountable.
+          </h1>
+          <p class="cr-lede sv-hero-lede mb-0">
+            Take one piece or hand over the whole pipeline. Every engagement has a written scope, a fixed price and a
+            delivery date agreed before work starts.
+          </p>
+        </div>
+  
+        <div class="col-lg-4 d-flex flex-wrap gap-3 justify-content-lg-end">
+          <a class="btn btn-primary rounded-pill px-4 py-2 fw-semibold" routerLink="/contact">Get a fixed quote →</a>
+          <button type="button" class="btn btn-outline-secondary rounded-pill px-4 py-2 fw-semibold" (click)="scrollTo(list)">
+            See packages
+          </button>
+        </div>
+      </div>
+  
+      <ul class="sv-filters" role="list" aria-label="Filter services">
+        @for (f of filters; track f.key) {
+          <li>
+            <button
+              type="button"
+              class="sv-filter"
+              [class.is-active]="active() === f.key"
+              [attr.aria-pressed]="active() === f.key"
+              (click)="active.set(f.key)"
+            >
+              {{ f.label }}
+            </button>
+          </li>
+        }
+      </ul>
+    </div>
+  </section>
+  
+  <!-- ───────────── Service rows ───────────── -->
+  <section class="sv-list" #list>
+    <div class="container">
+      @for (s of visible(); track s.slug) {
+        <article class="sv-row row g-4 g-lg-5 align-items-start" [class]="'sv-tone-' + s.tone">
+          <!-- preview -->
+          <div class="col-lg-3 col-md-4">
+            <div class="sv-shot ratio ratio-16x9 rounded-3 overflow-hidden">
+              <app-cr-player [compact]="true" [src]="s.video" [length]="s.length" [label]="s.title" />
+            </div>
+  
+            <ul class="sv-tags list-unstyled d-flex flex-wrap gap-2 mt-3 mb-0">
+              @for (t of s.tags; track t) {
+                <li class="sv-tag rounded-pill">{{ t }}</li>
+              }
+            </ul>
+          </div>
+  
+          <!-- copy + deliverables -->
+          <div class="col-lg-6 col-md-8">
+            <p class="cr-meta text-primary mb-2">Service {{ s.no }}</p>
+            <h2 class="sv-title mb-3">{{ s.title }}</h2>
+            <p class="sv-text mb-4">{{ s.text }}</p>
+  
+            <ul class="sv-points list-unstyled mb-0">
+              @for (pt of s.points; track pt) {
+                <li>
+                  <svg class="sv-tick" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                    <path d="M6.003 12.127a.75.75 0 0 1-1.06 0l-3.07-3.098a.75.75 0 1 1 1.06-1.06l2.54 2.567 6.53-6.566a.75.75 0 1 1 1.062 1.06l-7.062 7.097z" />
+                  </svg>
+                  <span>{{ pt }}</span>
+                </li>
+              }
+            </ul>
+          </div>
+  
+          <!-- price -->
+          <div class="col-lg-3">
+            <div class="sv-quote">
+              <p class="cr-meta mb-2">Starting at</p>
+              <p class="sv-quote-price mb-1">{{ s.from }}</p>
+              <p class="sv-quote-note mb-3">{{ s.note }}</p>
+              <a
+                class="btn btn-outline-secondary btn-sm rounded-pill w-100 py-2"
+                routerLink="/contact"
+                [queryParams]="{ service: s.slug }"
+                >Get a fixed quote</a
+              >
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  </section>
+  
+  <!-- ───────────── Add-ons ───────────── -->
+  <section class="sv-section sv-addons">
+    <div class="container">
+      <div class="row g-4 align-items-end mb-5">
+        <div class="col-lg-7">
+          <p class="cr-meta sv-eyebrow-teal mb-3">Add-ons</p>
+          <h2 class="cr-h2 mb-0">Bolt anything on.</h2>
+        </div>
+        <div class="col-lg-4 offset-lg-1">
+          <p class="cr-lede mb-0">
+            Priced per project and quoted with the main scope so there are no surprises later.
+          </p>
+        </div>
+      </div>
+  
+      <div class="row row-cols-1 row-cols-md-2 g-3">
+        @for (a of addons; track a.title) {
+          <div class="col">
+            <div class="sv-addon h-100">
+              <div>
+                <p class="sv-addon-title mb-1">{{ a.title }}</p>
+                <p class="sv-addon-text mb-0">{{ a.text }}</p>
+              </div>
+              <span class="sv-addon-price">{{ a.price }}</span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+  
+  <!-- ───────────── Included / not / deliverables ───────────── -->
+  <section class="sv-section sv-terms">
+    <div class="container">
+      <div class="row g-5">
+        <div class="col-lg-4">
+          <p class="cr-meta text-primary mb-3">Always included</p>
+          <h3 class="sv-h3 mb-4">In every single project</h3>
+          <ul class="sv-checks list-unstyled mb-0">
+            @for (item of included; track item) {
+              <li>
+                <svg class="sv-tick" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                  <path d="M6.003 12.127a.75.75 0 0 1-1.06 0l-3.07-3.098a.75.75 0 1 1 1.06-1.06l2.54 2.567 6.53-6.566a.75.75 0 1 1 1.062 1.06l-7.062 7.097z" />
+                </svg>
+                <span>{{ item }}</span>
+              </li>
+            }
+          </ul>
+        </div>
+  
+        <div class="col-lg-4">
+          <p class="cr-meta mb-3">Not included</p>
+          <h3 class="sv-h3 mb-4">Quoted separately, or not offered</h3>
+          <ul class="sv-checks sv-checks-off list-unstyled mb-0">
+            @for (item of notIncluded; track item) {
+              <li>
+                <svg class="sv-tick" width="1em" height="1em" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+                  <path d="M4.5 4.5l7 7M11.5 4.5l-7 7" />
+                </svg>
+                <span>{{ item }}</span>
+              </li>
+            }
+          </ul>
+        </div>
+  
+        <div class="col-lg-4">
+          <p class="cr-meta sv-eyebrow-teal mb-3">Deliverables</p>
+          <h3 class="sv-h3 mb-4">Formats you receive</h3>
+          <div class="sv-table-wrap">
+            <table class="sv-table">
+              <thead>
+                <tr>
+                  <th scope="col">Use</th>
+                  <th scope="col">Format</th>
+                  <th scope="col">Spec</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (d of deliverables; track d.use) {
+                  <tr>
+                    <th scope="row">{{ d.use }}</th>
+                    <td>{{ d.format }}</td>
+                    <td>{{ d.spec }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- ───────────── Sectors ───────────── -->
+  <section class="sv-section sv-sectors">
+    <div class="container">
+      <p class="cr-meta mb-3">Sectors</p>
+      <h3 class="sv-h3 mb-4">Where most of the work comes from</h3>
+  
+      <ul class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-3 list-unstyled mb-0">
+        @for (s of sectors; track s.name) {
+          <li class="col">
+            <div class="sv-sector h-100">
+              <p class="sv-sector-name mb-1">{{ s.name }}</p>
+              <p class="sv-sector-pct mb-2">{{ s.pct }}%</p>
+              <span class="sv-sector-bar" aria-hidden="true"><i [style.width.%]="s.pct"></i></span>
+            </div>
+          </li>
+        }
+      </ul>
+    </div>
+  </section>
+  
+  <!-- ───────────── Closing CTA ───────────── -->
+  <section class="sv-cta">
+    <div class="container text-center">
+      <h2 class="cr-h2 mb-3">Not sure which one fits?</h2>
+      <p class="cr-lede sv-cta-lede mx-auto mb-4">
+        Send the brief and the footage size. You get a fixed quote and a delivery date within 24 hours.
+      </p>
+      <div class="d-flex flex-wrap justify-content-center gap-3">
+        <a class="btn btn-primary rounded-pill px-4 py-2 fw-semibold" routerLink="/contact">Get a fixed quote →</a>
+        <a class="btn btn-outline-secondary rounded-pill px-4 py-2 fw-semibold" routerLink="/work">See the work</a>
+      </div>
+    </div>
+  </section>

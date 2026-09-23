@@ -1,0 +1,44 @@
+<aside class="cr-sidebar d-flex flex-column">
+
+  <!-- Brand -->
+  <div class="cr-sidebar-brand d-flex align-items-center gap-2">
+    <div class="cr-brand-mark">C</div>
+    <span class="cr-brand-text">Cutroom<span class="cr-brand-accent">.</span></span>
+  </div>
+
+  <!-- Scrollable nav -->
+  <nav class="cr-sidebar-nav">
+
+    <a routerLink="/admin/home"
+       routerLinkActive="active"
+       [routerLinkActiveOptions]="{exact:true}"
+       class="cr-nav-link">
+      <i class="bi bi-speedometer2"></i>
+      <span>Dashboard</span>
+    </a>
+
+    @for (section of sections; track section.heading) {
+      <p class="cr-nav-heading">{{ section.heading }}</p>
+
+      @for (item of section.items; track item.id) {
+        <a [routerLink]="item.link"
+           routerLinkActive="active"
+           [routerLinkActiveOptions]="{exact:true}"
+           class="cr-nav-link">
+          <i class="bi" [class]="item.icon"></i>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    }
+
+  </nav>
+
+  <!-- Footer -->
+  <div class="cr-sidebar-footer">
+    <a routerLink="/" class="cr-nav-link">
+      <i class="bi bi-box-arrow-left"></i>
+      <span>Back to Site</span>
+    </a>
+  </div>
+
+</aside>

@@ -1,0 +1,424 @@
+<section class="cr-hero">
+  <div class="container cr-hero-inner">
+    <div class="d-flex flex-wrap align-items-center gap-3 mb-4 mb-lg-5">
+      <span class="cr-status rounded-pill d-inline-flex align-items-center gap-2 px-3 py-1">
+        <span class="cr-status-dot rounded-circle"></span>
+        Taking projects for Q2
+      </span>
+      <span class="cr-meta">EST · GMT · CET · IST overlap</span>
+    </div>
+
+    <h1 class="cr-hero-title">
+      Edits that<br />
+      Hold <span class="text-primary">Attention.</span>
+    </h1>
+
+    <div class="row g-4 g-lg-5 align-items-end cr-hero-foot">
+      <div class="col-lg-5">
+        <p class="cr-hero-lede mb-0">
+          I am Aarav — a video editor and post-production lead. Brand films, short-form that actually retains, and
+          colour that looks like it cost more than it did.
+        </p>
+      </div>
+      <div class="col-lg-6 offset-lg-1 d-flex flex-wrap gap-3 justify-content-lg-end">
+        <a class="btn btn-primary rounded-pill px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2" routerLink="/work">
+          Watch the showreel
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z" /></svg>
+        </a>
+        <a class="btn btn-outline-secondary rounded-pill px-4 py-2 fw-semibold" routerLink="/contact">Start a project</a>
+      </div>
+    </div>
+  </div>
+
+  <span class="cr-scroll d-none d-lg-flex align-items-center gap-2" aria-hidden="true">Scroll ↓</span>
+</section>
+
+<section class="cr-stats">
+  <div class="container">
+    <div class="row g-4 py-4 py-lg-5">
+      @for (s of stats; track s.label) {
+        <div class="col-6 col-lg-3">
+          <p class="cr-stat-value mb-2">{{ s.value }}</p>
+          <p class="cr-meta mb-0">{{ s.label }}</p>
+        </div>
+      }
+    </div>
+    <p class="cr-meta text-center pt-4 pb-2 mb-0 border-top">
+      Trusted by teams at
+    </p>
+    
+    <div class="brand-marquee mb-4">
+      <div class="brand-track">
+    
+        <!-- First set -->
+        <div *ngFor="let item of brandName" class="brand-name">{{item.label}}</div>
+    
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cr-work">
+  <div class="container">
+    <div class="row g-4 align-items-end cr-work-head">
+      <div class="col-lg-8">
+        <p class="cr-meta text-primary mb-3">Selected work</p>
+        <h2 class="cr-work-title mb-0">
+          Cuts we are proud<br />
+          to put our name on.
+        </h2>
+      </div>
+      <div class="col-lg-4 d-flex justify-content-lg-end">
+        <a class="btn btn-outline-secondary rounded-pill px-4 py-2" routerLink="/work">All 42 projects →</a>
+      </div>
+    </div>
+
+    @for (w of work; track w.title; let i = $index) {
+      <article class="cr-case row g-4 g-lg-5 align-items-center" [class]="'cr-case-' + w.color">
+        <div class="col-lg-6">
+          <div class="cr-shot ratio ratio-16x9 rounded-3 overflow-hidden">
+            <app-cr-player [src]="w.video" [length]="w.length" [label]="w.title" />
+            <span class="cr-shot-label cr-meta">{{ w.client }}</span>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <p class="cr-meta mb-2">{{ w.year }} · {{ w.client }}</p>
+          <h3 class="cr-case-title mb-3">{{ w.title }}</h3>
+          <p class="cr-case-text mb-3">{{ w.text }}</p>
+
+          <ul class="cr-chips list-unstyled d-flex flex-wrap gap-2 mb-4">
+            @for (t of w.tags; track t) {
+              <li class="cr-chip rounded-pill px-3 py-1">{{ t }}</li>
+            }
+          </ul>
+
+          <a class="btn btn-outline-secondary btn-sm rounded-pill px-3 py-2" routerLink="/work">View case study →</a>
+        </div>
+      </article>
+    }
+  </div>
+</section>
+<div class="container-fluid" style="background-color: var(--cr-band) !important;">
+  <div class="container py-5 stories" >
+    <div class="row title-header align-items-center g-4">
+      <div class="col-lg-6 title text-primary">
+        <small class="text-primary">WHAT WE DO</small>
+        <h2>Every thing after the camera stops.</h2>
+      </div>
+      <div class="d-none d-lg-block col-lg-1"></div> <!-- Space between columns -->
+      <div class="col-lg-5 para text-lg-end">
+        <p>Whether you require a single service, ongoing support, or a fully managed workflow, we tailor every edit, cut, and creative decision to the unique goals of your next project.</p>
+      </div>
+    </div>
+    <div class="row my-4">
+    @for (item of whatWeDo; track item.id) {
+      <div class="col-md-4 mb-4 d-flex what-we-do">
+        <div class="card what-we-do-card h-100">
+          <div class="card-body d-flex flex-column align-items-start">
+            <span class="what-we-do-num text-primary fw-bold mb-2">
+              {{ item.id < 10 ? ('0' + item.id) : item.id }}
+            </span>
+            <h3 class="fw-semibold mb-2">{{ item.title }}</h3>
+            <small class="what-we-do-text text-secondary mb-3">{{ item.description }}</small>
+            <ul class="what-we-do-points list-unstyled flex-grow-1">
+              @for (point of item.points; track point) {
+                <li class="mb-1 d-flex align-items-center">
+                  <span class="what-we-do-tick">
+                    <!-- Green Tick SVG -->
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor">
+                      <path d="M6.003 12.127a.75.75 0 0 1-1.06 0l-3.07-3.098a.75.75 0 1 1 1.06-1.06l2.54 2.567 6.53-6.566a.75.75 0 1 1 1.062 1.06l-7.062 7.097z"/>
+                    </svg>
+                  </span>
+   
+                  <span>{{ point }}</span>
+                </li>
+              }
+            </ul>
+          </div>
+        </div>
+      </div>
+    }
+    </div>
+  </div>
+</div>
+
+<!-- ───────────── Why Cutroom ───────────── -->
+<section class="cr-why">
+  <div class="container">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-6">
+        <p class="cr-meta text-primary mb-3">Why Cutroom</p>
+        <h2 class="cr-h2 mb-4">Working with an editor abroad should feel boring.</h2>
+        <p class="cr-lede mb-5">
+          Predictable, quiet, on time. No chasing, no surprise invoices, no midnight favours. Here is what that
+          actually means in practice.
+        </p>
+
+        <div class="row g-4">
+          @for (p of promises; track p.title) {
+            <div class="col-sm-6">
+              <h3 class="cr-promise-title">{{ p.title }}</h3>
+              <p class="cr-promise-text mb-0">{{ p.text }}</p>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="cr-timeline" aria-hidden="true">
+          <div class="cr-timeline-bar">
+            <span class="cr-meta">Sequence — northwind_hero_v7</span>
+            <span class="cr-timeline-rec"><i></i>REC 00:01:29:14</span>
+          </div>
+          <div class="cr-timeline-body">
+            @for (t of tracks; track t.name) {
+              <div class="cr-track">
+                <span class="cr-track-no">{{ t.name }}</span>
+                <div class="cr-track-lane">
+                  @for (clip of t.clips; track $index) {
+                    <span class="cr-clip" [class]="'cr-clip-' + clip.tone" [style.flex]="clip.w"></span>
+                  }
+                </div>
+              </div>
+            }
+            <div class="cr-wave">
+              @for (b of waveform; track $index) {
+                <span [style.height.%]="b"></span>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────── Process ───────────── -->
+<section class="cr-process">
+  <div class="container">
+    <div class="row g-4 align-items-end mb-5">
+      <div class="col-lg-7">
+        <p class="cr-meta text-primary mb-3">How it works</p>
+        <h2 class="cr-h2 mb-0">Four steps. No mystery.</h2>
+      </div>
+      <div class="col-lg-4 offset-lg-1">
+        <p class="cr-lede mb-0">Most projects run 7–14 days end to end. Retainers run on a weekly cadence.</p>
+      </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
+      @for (s of steps; track s.no) {
+        <div class="col">
+          <div class="cr-step h-100">
+            <p class="cr-meta mb-2">Step {{ s.no }}</p>
+            <h3 class="cr-step-title">{{ s.title }}</h3>
+            <p class="cr-step-text mb-0">{{ s.text }}</p>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="d-flex flex-wrap align-items-center gap-3 mt-5">
+      <a class="btn btn-primary rounded-pill px-4 py-2 fw-semibold" routerLink="/services">See the full process →</a>
+      <span class="cr-pill">Average first cut: 72 hours</span>
+      <span class="cr-pill">2 revision rounds included</span>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────── Colour ───────────── -->
+<section class="cr-colour">
+  <div class="container">
+    <div class="row g-4 align-items-end mb-4">
+      <div class="col-lg-7">
+        <p class="cr-meta text-primary mb-3">Colour</p>
+        <h2 class="cr-h2 mb-0">Same footage.<br />Different film.</h2>
+      </div>
+      <div class="col-lg-4 offset-lg-1">
+        <p class="cr-lede mb-0">Drag the handle to compare the camera original against the final Resolve grade.</p>
+      </div>
+    </div>
+
+    <div class="cr-compare" [style.--split.%]="grade()">
+      <div class="cr-compare-frame cr-compare-before"><span class="cr-compare-tag">Before · Log · Ungraded</span></div>
+      <div class="cr-compare-frame cr-compare-after"><span class="cr-compare-tag">After · Final grade</span></div>
+      <span class="cr-compare-line"></span>
+      <input
+        class="cr-compare-input"
+        type="range"
+        min="0"
+        max="100"
+        [value]="grade()"
+        (input)="grade.set(+$any($event.target).value)"
+        aria-label="Compare ungraded and graded footage"
+      />
+    </div>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3 mt-4">
+      @for (n of gradeNotes; track n.title) {
+        <div class="col">
+          <div class="cr-note h-100">
+            <p class="cr-meta text-primary mb-2">{{ n.title }}</p>
+            <p class="cr-note-text mb-0">{{ n.text }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ───────────── Reviews ───────────── -->
+<section class="cr-reviews">
+  <div class="container">
+    <div class="row g-4 align-items-end mb-5">
+      <div class="col-lg-8">
+        <p class="cr-meta text-primary mb-3">Client reviews</p>
+        <h2 class="cr-h2 mb-0">What it is like<br />to work together.</h2>
+      </div>
+      <div class="col-lg-4 d-flex justify-content-lg-end align-items-end gap-2">
+        <button type="button" class="cr-arrow" (click)="scrollReviews(track, -1)" aria-label="Previous reviews">&#8592;</button>
+        <button type="button" class="cr-arrow" (click)="scrollReviews(track, 1)" aria-label="Next reviews">&#8594;</button>
+      </div>
+    </div>
+
+    <div class="cr-review-track" #track>
+      @for (r of reviews; track r.name) {
+        <figure class="cr-review">
+          <p class="cr-stars mb-3" [attr.aria-label]="r.stars + ' out of 5'">
+            @for (s of [].constructor(r.stars); track $index) {<span>&#9733;</span>}
+          </p>
+          <blockquote class="cr-review-quote mb-4">{{ r.quote }}</blockquote>
+          <figcaption class="d-flex align-items-center gap-3">
+            <span class="cr-avatar">{{ r.initials }}</span>
+            <span class="d-block">
+              <span class="cr-review-name">{{ r.name }}</span>
+              <span class="cr-review-role">{{ r.role }} <em>&#8212; {{ r.city }}</em></span>
+            </span>
+          </figcaption>
+        </figure>
+      }
+    </div>
+
+    <div class="cr-review-foot d-flex flex-wrap justify-content-between align-items-center gap-3">
+      <p class="mb-0 d-flex align-items-center gap-2 flex-wrap">
+        <span class="cr-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+        <span class="cr-meta">4.9 average across 88 reviews · 96% of clients book again</span>
+      </p>
+      <a class="cr-textlink" routerLink="/about">Read all reviews →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────── Pricing ───────────── -->
+<section class="cr-pricing">
+  <div class="container">
+    <div class="row g-4 align-items-end mb-5">
+      <div class="col-lg-7">
+        <p class="cr-meta text-primary mb-3">Packages</p>
+        <h2 class="cr-h2 mb-0">Transparent pricing,<br />published up front.</h2>
+      </div>
+      <div class="col-lg-4 offset-lg-1">
+        <p class="cr-lede mb-0">
+          Prices in USD. Indian clients are billed in INR at the same rate. Custom scopes quoted within 24 hours.
+        </p>
+      </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-lg-3 g-4 align-items-stretch">
+      @for (p of plans; track p.name) {
+        <div class="col">
+          <div class="cr-plan h-100" [class.is-featured]="p.featured">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
+              <p class="cr-meta mb-0" [class.text-primary]="p.featured">{{ p.name }}</p>
+              @if (p.badge) {
+                <span class="cr-plan-badge">{{ p.badge }}</span>
+              }
+            </div>
+            <p class="cr-plan-price mb-1">{{ p.price }}</p>
+            <p class="cr-plan-unit">{{ p.unit }}</p>
+
+            <ul class="cr-plan-points list-unstyled">
+              @for (pt of p.points; track pt) {
+                <li>{{ pt }}</li>
+              }
+            </ul>
+
+            <a
+              class="btn w-100 rounded-pill py-2 fw-semibold mt-auto"
+              [class.btn-primary]="p.featured"
+              [class.btn-outline-secondary]="!p.featured"
+              routerLink="/contact"
+              >{{ p.cta }}</a
+            >
+          </div>
+        </div>
+      }
+    </div>
+
+    <p class="cr-meta text-center mt-4 mb-0">
+      Rush delivery +40% · Raw footage over 200GB quoted separately · 50% deposit to book a slot
+    </p>
+  </div>
+</section>
+
+<!-- ───────────── Journal ───────────── -->
+<section class="cr-journal">
+  <div class="container">
+    <div class="row g-4 align-items-center mb-5">
+      <div class="col-lg-8">
+        <p class="cr-meta text-primary mb-3">Journal</p>
+        <h2 class="cr-h2 mb-0">Notes from the suite.</h2>
+      </div>
+      <div class="col-lg-4 d-flex justify-content-lg-end">
+        <a class="btn btn-outline-secondary rounded-pill px-4 py-2" routerLink="/journal">All posts →</a>
+      </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      @for (post of posts; track post.title) {
+        <div class="col">
+          <a class="cr-post h-100" routerLink="/journal">
+            <span class="cr-post-thumb ratio ratio-16x9 rounded-3" [class]="'cr-post-' + post.tone"></span>
+            <span class="cr-post-meta">
+              <span class="cr-meta text-primary">{{ post.tag }}</span>
+              <span class="cr-meta">{{ post.read }}</span>
+            </span>
+            <span class="cr-post-title">{{ post.title }}</span>
+            <span class="cr-post-text">{{ post.text }}</span>
+          </a>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ───────────── FAQ ───────────── -->
+<section class="cr-faq">
+  <div class="container">
+    <div class="row g-5">
+      <div class="col-lg-4">
+        <p class="cr-meta text-primary mb-3">FAQ</p>
+        <h2 class="cr-h2 mb-3">Quick answers.</h2>
+        <p class="cr-lede mb-4">Everything else lives on the full FAQ page.</p>
+        <a class="btn btn-outline-secondary rounded-pill px-4 py-2" routerLink="/about">All questions →</a>
+      </div>
+
+      <div class="col-lg-8">
+        @for (f of faqs; track f.q; let i = $index) {
+          <div class="cr-faq-item" [class.is-open]="openFaq() === i">
+            <h3 class="mb-0">
+              <button type="button" class="cr-faq-q" [attr.aria-expanded]="openFaq() === i" (click)="toggleFaq(i)">
+                <span>{{ f.q }}</span>
+                <span class="cr-faq-icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            @if (openFaq() === i) {
+              <p class="cr-faq-a mb-0">{{ f.a }}</p>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>

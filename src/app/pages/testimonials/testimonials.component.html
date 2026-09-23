@@ -1,0 +1,153 @@
+<section class="cr-testi">
+    <div class="container">
+  
+      <!-- ── head ── -->
+      <header class="cr-testi-head">
+        <div class="cr-testi-head-main">
+          <p class="cr-eyebrow text-uppercase fw-semibold cr-flare mb-3">{{ eyebrow }}</p>
+          <h2 class="cr-testi-title mb-3">{{ heading1 }}<br />{{ heading2 }}</h2>
+          <p class="cr-testi-sub mb-0">{{ subheading }}</p>
+        </div>
+  
+        <div class="cr-stat-grid">
+          @for (s of stats; track trackStat($index, s)) {
+            <div class="cr-stat-box">
+              <p class="cr-stat-value mb-1">{{ s.value }}</p>
+              <p class="cr-stat-label mb-0">{{ s.label }}</p>
+            </div>
+          }
+        </div>
+      </header>
+  
+      <!-- ── featured ── -->
+      <div class="cr-featured">
+        <div class="cr-featured-media">
+          <span class="cr-chip cr-chip-tl">{{ featured.clip }}</span>
+          <div class="ratio ratio-16x9 cr-featured-frame">
+            <app-cr-player
+              [src]="featured.videoSrc"
+              [poster]="featured.poster || ''"
+              [label]="featured.name + ' testimonial'"
+              preload="metadata"
+            ></app-cr-player>
+          </div>
+        </div>
+  
+        <div class="cr-featured-body">
+          <span class="cr-featured-tag">Featured</span>
+          <p class="cr-featured-quote mb-4">“{{ featured.quote }}”</p>
+  
+          <div class="cr-featured-author">
+            <span class="cr-avatar cr-avatar-{{ featured.avatarTone }}">{{ featured.avatarInitials }}</span>
+            <div>
+              <p class="cr-author-name mb-0">{{ featured.name }}</p>
+              <p class="cr-author-role mb-0">{{ featured.role }} · {{ featured.location }}</p>
+            </div>
+          </div>
+  
+          <div class="cr-featured-stats">
+            @for (s of featured.stats; track s.label) {
+              <div>
+                <p class="cr-featured-stat-value mb-1">{{ s.value }}</p>
+                <p class="cr-featured-stat-label mb-0">{{ s.label }}</p>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+  
+      <!-- ── filters ── -->
+      <div class="cr-filters" role="tablist" aria-label="Filter reviews by segment">
+        @for (seg of segments; track trackSeg($index, seg)) {
+          <button
+            type="button"
+            class="cr-filter"
+            role="tab"
+            [class.is-on]="filter() === seg"
+            [attr.aria-selected]="filter() === seg"
+            (click)="setFilter(seg)"
+          >{{ seg }}</button>
+        }
+        <span class="cr-sort">Sorted by most recent</span>
+      </div>
+  
+      <!-- ── grid ── -->
+      <div class="cr-grid">
+        @for (t of visible(); track trackItem($index, t)) {
+          <article class="cr-card">
+            <div class="cr-card-top">
+              <div class="cr-stars" aria-hidden="true">
+                @for (on of stars(t.rating); track $index) {
+                  <svg width="12" height="12" viewBox="0 0 24 24" [attr.fill]="on ? 'currentColor' : 'none'" [attr.stroke]="on ? 'none' : 'currentColor'" stroke-width="1.5">
+                    <path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.9-6.3 3.9 1.7-7L2 9.2l7.1-.6z" />
+                  </svg>
+                }
+              </div>
+              @if (t.tag) {
+                <span class="cr-card-flag" [class.is-new]="t.tag === 'new'">{{ t.tag }}</span>
+              }
+            </div>
+  
+            <p class="cr-card-quote mb-4">“{{ t.quote }}”</p>
+  
+            <div class="cr-card-footer">
+              <span class="cr-avatar cr-avatar-sm cr-avatar-{{ t.avatarTone }}">{{ t.avatarInitials }}</span>
+              <div>
+                <p class="cr-author-name mb-0">{{ t.name }}</p>
+                <p class="cr-author-role mb-0">{{ t.role }}</p>
+              </div>
+            </div>
+          </article>
+        } @empty {
+          <p class="cr-author-role mb-0">Is segment mein abhi koi review nahi hai.</p>
+        }
+      </div>
+  
+      <!-- ── rating breakdown ── -->
+      <div class="cr-breakdown">
+        <div class="cr-breakdown-left">
+          <p class="cr-eyebrow text-uppercase fw-semibold cr-flare mb-2">Rating breakdown</p>
+          <h3 class="cr-section-title mb-4">Where the 4.9 comes from.</h3>
+  
+          <div class="cr-bars">
+            @for (bar of ratingBreakdown; track trackBar($index, bar)) {
+              <div class="cr-bar-row">
+                <span class="cr-bar-label">{{ bar.stars }} star</span>
+                <span class="cr-bar-track">
+                  <span class="cr-bar-fill" [style.width.%]="bar.percent"></span>
+                </span>
+                <span class="cr-bar-count">{{ bar.count }}</span>
+              </div>
+            }
+          </div>
+  
+          <p class="cr-breakdown-note mb-0">{{ ratingNote }}</p>
+        </div>
+  
+        <div class="cr-breakdown-right">
+          <p class="cr-eyebrow text-uppercase fw-semibold cr-flare mb-2">Also reviewed on</p>
+          <div class="cr-platforms">
+            @for (p of platforms; track trackPlatform($index, p)) {
+              <div class="cr-platform">
+                <p class="cr-platform-name mb-1">{{ p.name }}</p>
+                <p class="cr-platform-score mb-0">
+                  @if (p.score) {
+                    <span class="cr-flare">★</span> {{ p.score }}
+                  }
+                </p>
+                <p class="cr-platform-detail mb-0">{{ p.detail }}</p>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+  
+      <!-- ── logos ── -->
+      <div class="cr-logos">
+        @for (logo of logos; track trackLogo($index, logo)) {
+          <span class="cr-logo">{{ logo }}</span>
+        }
+      </div>
+  
+    </div>
+  </section>

@@ -1,0 +1,199 @@
+<!-- ═════════════ Header ═════════════ -->
+<header class="cr-journal-head">
+    <div class="container">
+      <div class="row align-items-end gy-4">
+        <div class="col-lg-7">
+          <p class="cr-eyebrow font-monospace text-uppercase mb-3">Journal</p>
+          <h1 class="cr-journal-title text-body-emphasis mb-0">Notes from<br />the suite.</h1>
+        </div>
+  
+        <div class="col-lg-5">
+          <p class="cr-journal-intro mb-3">
+            Craft, workflow and the business of post. Written while the render bar moves, mostly for people who hire
+            editors rather than people who are editors.
+          </p>
+  
+          <div class="d-flex flex-wrap gap-2" role="group" aria-label="Filter posts by category">
+            @for (f of filters; track f) {
+              <button
+                type="button"
+                class="cr-chip font-monospace text-uppercase"
+                [class.is-active]="activeFilter() === f"
+                [attr.aria-pressed]="activeFilter() === f"
+                (click)="setFilter(f)"
+              >
+                {{ f }}
+                @if (f === 'All') {
+                  <span class="cr-chip-count">· {{ countFor(f) }}</span>
+                }
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  
+  <main>
+    <!-- ═════════════ Featured ═════════════ -->
+    @if (featured(); as post) {
+      <section class="cr-section">
+        <div class="container">
+          <article class="row align-items-center g-4 g-lg-5 cr-featured">
+            <div class="col-lg-6">
+              <a class="cr-thumb cr-thumb-lg d-block" [href]="'/journal/' + post.slug" [style.background]="gradient(post)" [attr.aria-label]="post.title">
+                <span class="cr-badge font-monospace text-uppercase">Featured</span>
+              </a>
+            </div>
+  
+            <div class="col-lg-6">
+              <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+                <span class="cr-tag cr-tag-flare font-monospace text-uppercase">Most read</span>
+                <span class="cr-meta font-monospace text-uppercase">
+                  {{ post.category }} · {{ post.readMins }} min · {{ post.date }}
+                </span>
+              </div>
+  
+              <h2 class="cr-featured-title text-body-emphasis mb-3">
+                <a [href]="'/journal/' + post.slug">{{ post.title }}</a>
+              </h2>
+              <p class="cr-excerpt mb-4">{{ post.excerpt }}</p>
+  
+              <div class="d-flex align-items-center gap-3">
+                @if (post.author; as a) {
+                  <span class="cr-avatar" aria-hidden="true">{{ a.initials }}</span>
+                  <span class="cr-meta">{{ a.name }}</span>
+                  <span class="cr-rule" aria-hidden="true"></span>
+                }
+                <a class="cr-read-link" [href]="'/journal/' + post.slug">Read the post &rarr;</a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+    }
+  
+    <!-- ═════════════ Grid ═════════════ -->
+    @if (grid().length) {
+      <section class="cr-section cr-section-tight">
+        <div class="container">
+          <div class="row g-4 g-xl-5">
+            @for (post of grid(); track post.slug) {
+              <div class="col-md-6 col-lg-4">
+                <article class="cr-card-post h-100">
+                  <a class="cr-thumb d-block mb-3" [href]="'/journal/' + post.slug" [style.background]="gradient(post)" [attr.aria-label]="post.title">
+                    <span class="cr-badge font-monospace text-uppercase">{{ post.category }}</span>
+                  </a>
+  
+                  <div class="d-flex justify-content-between font-monospace cr-meta mb-2">
+                    <span class="text-primary">{{ post.category }}</span>
+                    <span>{{ post.readMins }} min</span>
+                  </div>
+  
+                  <h3 class="cr-post-title text-body-emphasis mb-2">
+                    <a [href]="'/journal/' + post.slug">{{ post.title }}</a>
+                  </h3>
+                  <p class="cr-excerpt-sm mb-3">{{ post.excerpt }}</p>
+                  <time class="cr-meta font-monospace">{{ post.date }}</time>
+                </article>
+              </div>
+            }
+          </div>
+        </div>
+      </section>
+    } @else if (!featured()) {
+      <section class="cr-section">
+        <div class="container">
+          <p class="cr-excerpt mb-0">No posts in this category yet. Try another filter.</p>
+        </div>
+      </section>
+    }
+  
+    <!-- ═════════════ Earlier posts ═════════════ -->
+    <section class="cr-section cr-band">
+      <div class="container cr-narrow">
+        <div class="d-flex justify-content-between align-items-baseline mb-3">
+          <h2 class="cr-h-sm text-body-emphasis mb-0">Earlier posts</h2>
+          <span class="cr-meta font-monospace text-uppercase">{{ earlierTotal() }} posts</span>
+        </div>
+  
+        <ul class="cr-list list-unstyled mb-0">
+          @for (p of earlier(); track p.slug) {
+            <li>
+              <a class="cr-list-row" [href]="'/journal/' + p.slug">
+                <time class="cr-meta font-monospace">{{ p.date }}</time>
+                <span class="cr-list-title text-body-emphasis">{{ p.title }}</span>
+                <span class="cr-list-cat font-monospace text-uppercase text-primary">{{ p.category }}</span>
+                <span class="cr-meta font-monospace text-end">{{ p.readMins }} min</span>
+              </a>
+            </li>
+          }
+        </ul>
+  
+        @if (canLoadMore()) {
+          <div class="text-center mt-4">
+            <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-4" (click)="loadMore()">
+              Load more posts
+            </button>
+          </div>
+        }
+      </div>
+    </section>
+  
+    <!-- ═════════════ Newsletter + topics ═════════════ -->
+    <section class="cr-section">
+      <div class="container cr-narrow">
+        <div class="row g-4">
+          <div class="col-lg-7">
+            <div class="cr-letter card h-100 p-4 p-md-4">
+              <p class="cr-eyebrow font-monospace text-uppercase text-primary mb-3">The Cutroom letter</p>
+              <h2 class="cr-letter-title text-body-emphasis mb-3">One email a month.<br />No funnel behind it.</h2>
+              <p class="cr-excerpt-sm mb-4">
+                A new post, one thing learned the hard way, and a film worth watching. 2,400 readers, mostly marketing
+                leads and founders. Unsubscribe link at the top, not buried at the bottom.
+              </p>
+  
+              @if (subscribed()) {
+                <p class="text-body-emphasis mb-0" role="status">You are on the list. The next letter lands next month.</p>
+              } @else {
+                <div class="d-flex flex-column flex-sm-row gap-2">
+                  <label class="visually-hidden" for="cr-email">Email address</label>
+                  <input
+                    #email
+                    id="cr-email"
+                    type="email"
+                    class="form-control cr-input"
+                    [class.is-invalid]="emailError()"
+                    placeholder="you@company.com"
+                    autocomplete="email"
+                    (keydown.enter)="subscribe(email.value)"
+                  />
+                  <button type="button" class="btn btn-primary rounded-pill px-4 flex-shrink-0" (click)="subscribe(email.value)">
+                    Subscribe
+                  </button>
+                </div>
+                @if (emailError()) {
+                  <p class="small text-danger mt-2 mb-0" role="alert">Enter a valid email address, like you&#64;company.com.</p>
+                }
+                <p class="cr-fine font-monospace mt-3 mb-0">No spam, no sharing, no lines in public.</p>
+              }
+            </div>
+          </div>
+  
+          <div class="col-lg-5">
+            <p class="cr-eyebrow font-monospace text-uppercase mb-3">Popular topics</p>
+            <ul class="list-unstyled d-grid gap-2 mb-0">
+              @for (t of topics; track t) {
+                <li>
+                  <a class="cr-topic" href="#">
+                    <span>{{ t }}</span>
+                    <span aria-hidden="true">&rsaquo;</span>
+                  </a>
+                </li>
+              }
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>

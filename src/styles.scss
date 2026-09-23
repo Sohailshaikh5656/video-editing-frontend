@@ -1,1 +1,265 @@
-/* You can add global styles to this file, and also import other style files */
+/* ───────────────────────── Cutroom tokens ─────────────────────────
+   Dark is the default. Light is applied via <html data-bs-theme="light">.
+   --bs-*-rgb triplets are the Bootstrap bridge: utilities such as
+   .text-primary / .bg-body-secondary read those, not the hex values.
+──────────────────────────────────────────────────────────────────── */
+
+:root,
+[data-bs-theme='dark'] {
+  --cr-bg: #08080a; /* Ink 900 – page */
+  --cr-band: #101015; /* Ink 800 – section / input */
+  --cr-surface: #14141a; /* Card */
+  --cr-border: #1e1e27; /* Ink 600 – elevated / border */
+  --cr-border-strong: #2a2a35; /* Ink 500 – divider strong */
+  --cr-text-hi: #f5f5f7;
+  --cr-text-mid: #a1a1aa; /* not in the swatches – tweak to taste */
+  --cr-flare: #ff5c2b; /* primary */
+  --cr-teal: #26d7c2; /* secondary / audio / success */
+  --cr-amber: #ffc24b; /* ratings / warning */
+  --cr-violet: #8b7bff; /* motion / VFX */
+
+  --bs-primary-rgb: 255, 92, 43;
+  --bs-success-rgb: 38, 215, 194;
+  --bs-warning-rgb: 255, 194, 75;
+  --bs-body-bg-rgb: 8, 8, 10;
+  --bs-body-color-rgb: 161, 161, 170;
+  --bs-emphasis-color-rgb: 245, 245, 247;
+  --bs-secondary-bg-rgb: 16, 16, 21;
+  --bs-tertiary-bg-rgb: 20, 20, 26;
+}
+
+[data-bs-theme='light'] {
+  --cr-bg: #f7f6f3; /* Paper */
+  --cr-band: #f2f0ec; /* Sand 100 */
+  --cr-surface: #ffffff; /* Surface */
+  --cr-border: #eae7e1; /* Sand 200 */
+  --cr-border-strong: #eae7e1;
+  --cr-text-hi: #0e0e12;
+  --cr-text-mid: #55555f;
+  --cr-flare: #ec4713; /* Flare 600 */
+  --cr-teal: #0d9e8c; /* Teal 600 */
+  --cr-amber: #c98a05; /* Amber 600 */
+  --cr-violet: #6a57f0; /* Violet 600 */
+
+  --bs-primary-rgb: 236, 71, 19;
+  --bs-success-rgb: 13, 158, 140;
+  --bs-warning-rgb: 201, 138, 5;
+  --bs-body-bg-rgb: 247, 246, 243;
+  --bs-body-color-rgb: 85, 85, 95;
+  --bs-emphasis-color-rgb: 14, 14, 18;
+  --bs-secondary-bg-rgb: 242, 240, 236;
+  --bs-tertiary-bg-rgb: 255, 255, 255;
+}
+
+/* ───────────────────── Bootstrap variable mapping ───────────────────── */
+
+:root {
+  --bs-body-font-family: 'Inter', system-ui, sans-serif;
+  --bs-font-monospace: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  --bs-body-bg: var(--cr-bg);
+  --bs-body-color: var(--cr-text-mid);
+  --bs-secondary-color: var(--cr-text-mid);
+  --bs-emphasis-color: var(--cr-text-hi);
+  --bs-heading-color: var(--cr-text-hi);
+  --bs-secondary-bg: var(--cr-band);
+  --bs-tertiary-bg: var(--cr-surface);
+  --bs-border-color: var(--cr-border);
+  --bs-primary: var(--cr-flare);
+  --bs-link-color-rgb: var(--bs-primary-rgb);
+  --bs-link-hover-color-rgb: var(--bs-primary-rgb);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.navbar {
+  --bs-navbar-color: var(--cr-text-mid);
+  --bs-navbar-hover-color: var(--cr-text-hi);
+  --bs-navbar-active-color: var(--cr-text-hi);
+}
+
+.card {
+  --bs-card-bg: var(--cr-surface);
+  --bs-card-border-color: var(--cr-border);
+  --bs-card-border-radius: 1rem;
+}
+
+.btn-primary {
+  --bs-btn-color: #fff;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-active-color: #fff;
+  --bs-btn-bg: var(--cr-flare);
+  --bs-btn-hover-bg: var(--cr-flare);
+  --bs-btn-active-bg: var(--cr-flare);
+  --bs-btn-border-color: var(--cr-flare);
+  --bs-btn-hover-border-color: var(--cr-flare);
+  --bs-btn-active-border-color: var(--cr-flare);
+  box-shadow: 0 6px 24px -6px color-mix(in srgb, var(--cr-flare) 60%, transparent);
+
+  &:hover {
+    filter: brightness(1.08);
+  }
+}
+
+.btn-outline-secondary {
+  --bs-btn-color: var(--cr-text-hi);
+  --bs-btn-border-color: var(--cr-border-strong);
+  --bs-btn-hover-color: var(--cr-text-hi);
+  --bs-btn-hover-bg: var(--cr-surface);
+  --bs-btn-hover-border-color: var(--cr-border-strong);
+  --bs-btn-active-color: var(--cr-text-hi);
+  --bs-btn-active-bg: var(--cr-surface);
+  --bs-btn-active-border-color: var(--cr-border-strong);
+}
+
+/* ───────────────────────── Navbar ─────────────────────────
+   Full width by default. .is-compact (home route) turns it
+   into a floating pill.
+──────────────────────────────────────────────────────────── */
+
+.cr-nav {
+  max-width: 100%;
+  background: var(--cr-bg);
+  border: 1px solid transparent;
+  border-bottom-color: var(--cr-border);
+  transition: max-width 0.4s ease, border-radius 0.4s ease, background-color 0.4s ease;
+}
+
+.cr-header {
+  transition: padding 0.4s ease;
+
+  &.is-compact {
+    padding: 1rem 1rem 0;
+
+    .cr-nav {
+      max-width: 1100px;
+      border-color: var(--cr-border);
+      border-radius: 2rem;
+      background: color-mix(in srgb, var(--cr-band) 80%, transparent);
+      backdrop-filter: blur(12px);
+
+      > .container {
+        --bs-gutter-x: 2rem;
+      }
+    }
+  }
+}
+
+.cr-logo {
+  width: 34px;
+  height: 34px;
+}
+
+.cr-toggle {
+  position: relative;
+  width: 60px;
+  height: 32px;
+  background: var(--cr-band);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--cr-text-hi);
+    transition: transform 0.25s ease;
+  }
+
+  svg {
+    position: relative;
+    color: var(--cr-text-mid);
+  }
+
+  /* knob sits on the active theme's icon */
+  &[data-mode='dark']::before {
+    transform: translateX(28px);
+  }
+  &[data-mode='dark'] svg:last-child,
+  &[data-mode='light'] svg:first-child {
+    color: var(--cr-bg);
+  }
+}
+
+/* ───────────────────────── Page bits ───────────────────────── */
+
+.cr-eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+}
+
+.cr-hero {
+  background-image: radial-gradient(50% 70% at 0% 0%, color-mix(in srgb, var(--cr-teal) 12%, transparent), transparent),
+    radial-gradient(50% 70% at 100% 100%, color-mix(in srgb, var(--cr-flare) 22%, transparent), transparent);
+}
+
+.cr-portrait {
+  background-image: linear-gradient(150deg, var(--cr-band) 30%, color-mix(in srgb, var(--cr-flare) 40%, var(--cr-band)));
+}
+
+.cr-tag {
+  color: var(--c);
+  background: color-mix(in srgb, var(--c) 14%, transparent);
+}
+
+@each $name in 'flare', 'teal', 'amber', 'violet' {
+    .cr-tag-#{$name} {
+      --c: var(--cr-#{$name});
+    }
+  }
+
+@media (prefers-reduced-motion: reduce) {
+  .cr-header,
+  .cr-nav,
+  .cr-toggle::before {
+    transition: none;
+  }
+}
+
+/* src/styles.scss mein add kar */
+
+.cr-leaflet-pin {
+    position: relative;
+    width: 20px;
+    height: 20px;
+  }
+  
+  .cr-leaflet-pin .cr-pin-dot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    margin: -5px 0 0 -5px;
+    border-radius: 50%;
+    background: var(--cr-flare);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--cr-bg) 80%, transparent);
+  }
+  
+  .cr-leaflet-pin .cr-pin-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    margin: -5px 0 0 -5px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--cr-flare) 55%, transparent);
+    animation: cr-pin-radar 2.4s ease-out infinite;
+  }
+  
+  .cr-leaflet-pin .cr-pin-ring-delay {
+    animation-delay: 1.2s;
+  }
+  
+  @keyframes cr-pin-radar {
+    0% { transform: scale(1); opacity: 0.7; }
+    100% { transform: scale(6.5); opacity: 0; }
+  }

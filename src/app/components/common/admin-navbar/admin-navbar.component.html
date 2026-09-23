@@ -1,0 +1,102 @@
+<header
+  class="cr-admin-topbar d-flex align-items-center justify-content-between"
+>
+  <!-- Left: sidebar toggle (mobile) + search -->
+  <div class="d-flex align-items-center gap-3 flex-grow-1">
+    <button
+      type="button"
+      class="cr-icon-btn d-lg-none"
+      aria-label="Toggle menu"
+    >
+      <i class="bi bi-list"></i>
+    </button>
+
+    <div class="cr-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Search videos, reels, journal…" />
+      <kbd class="cr-search-kbd">⌘K</kbd>
+    </div>
+  </div>
+
+  <!-- Right: theme toggle, notifications, profile -->
+  <div class="d-flex align-items-center gap-2">
+    <button
+      type="button"
+      class="cr-icon-btn"
+      (click)="toggleTheme()"
+      aria-label="Toggle theme"
+    >
+      <i
+        class="bi"
+        [class.bi-moon-stars]="isDark()"
+        [class.bi-sun]="!isDark()"
+      ></i>
+    </button>
+
+    <div class="cr-dropdown-wrap">
+      <button
+        type="button"
+        class="cr-icon-btn"
+        (click)="toggleNotif()"
+        aria-label="Notifications"
+      >
+        <i class="bi bi-bell"></i>
+        <span class="cr-badge-dot"></span>
+      </button>
+
+      @if (notifOpen()) {
+        <div class="cr-dropdown cr-dropdown-notif">
+          <p class="cr-dropdown-heading">Notifications</p>
+          <div class="cr-notif-item">
+            <i class="bi bi-film"></i>
+            <div>
+              <p class="cr-notif-title">New video uploaded</p>
+              <span class="cr-notif-time">2h ago</span>
+            </div>
+          </div>
+          <div class="cr-notif-item">
+            <i class="bi bi-chat-quote"></i>
+            <div>
+              <p class="cr-notif-title">New testimonial submitted</p>
+              <span class="cr-notif-time">5h ago</span>
+            </div>
+          </div>
+          <a href="javascript:void(0)" class="cr-dropdown-footer">View all</a>
+        </div>
+      }
+    </div>
+
+    <div class="cr-dropdown-wrap">
+      <button type="button" class="cr-profile-btn" (click)="toggleProfile()">
+        <span class="cr-avatar">A</span>
+        <span class="cr-profile-name d-none d-md-inline">Admin</span>
+        <i class="bi bi-chevron-down cr-profile-chevron"></i>
+      </button>
+
+      @if (profileOpen()) {
+        <div class="cr-dropdown cr-dropdown-profile">
+          <div class="cr-dropdown-user">
+            <span class="cr-avatar cr-avatar-lg">A</span>
+            <div>
+              <p class="cr-notif-title">Admin User</p>
+              <span class="cr-notif-time">admin&#64;cutroom.com</span>
+            </div>
+          </div>
+          <a href="javascript:void(0)" class="cr-dropdown-item">
+            <i class="bi bi-person"></i> Profile
+          </a>
+          <a href="javascript:void(0)" class="cr-dropdown-item">
+            <i class="bi bi-gear"></i> Settings
+          </a>
+          <button
+            type="button"
+            class="cr-dropdown-item cr-dropdown-item-danger"
+            (click)="logout()"
+          >
+            <i class="bi bi-box-arrow-right"></i> Logout
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+</header>

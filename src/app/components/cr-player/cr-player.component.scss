@@ -1,0 +1,377 @@
+/* ───────────────────────── Video player ─────────────────────────
+   Fills its positioned parent. Tokens only (--cr-*), so it follows
+   the dark / light theme automatically.
+──────────────────────────────────────────────────────────────── */
+
+:host {
+    position: absolute;
+    inset: 0;
+    display: block;
+  }
+  
+  .cr-player {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    outline: none;
+    color: var(--cr-text-hi);
+  
+    &:focus-visible {
+      box-shadow: inset 0 0 0 2px var(--cr-flare);
+    }
+  
+    &.is-idle {
+      cursor: none;
+    }
+  
+    /* fullscreen: letterbox instead of crop */
+    &.is-fs {
+      background: #000;
+  
+      .cr-player-media {
+        object-fit: contain;
+      }
+    }
+  }
+  
+  .cr-player-media {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: transparent; /* lets the parent's gradient show until a frame loads */
+    cursor: pointer;
+  }
+  
+  /* ── centre play ── */
+  
+  .cr-player-big {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--cr-bg);
+    background: color-mix(in srgb, var(--cr-text-hi) 88%, transparent);
+    backdrop-filter: blur(6px);
+    transition: transform 0.25s ease, opacity 0.25s ease;
+  
+    svg {
+      margin-left: 2px;
+    }
+  
+    &:hover {
+      transform: translate(-50%, -50%) scale(1.08);
+    }
+  
+    &.is-hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+  
+  .is-compact .cr-player-big {
+    width: 46px;
+    height: 46px;
+  }
+  
+  /* ── status ── */
+  
+  .cr-player-spin {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 2;
+    width: 34px;
+    height: 34px;
+    margin: -17px 0 0 -17px;
+    border: 2px solid color-mix(in srgb, var(--cr-text-hi) 25%, transparent);
+    border-top-color: var(--cr-text-hi);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: cr-spin 0.8s linear infinite;
+  }
+  
+  @keyframes cr-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .cr-player-fail {
+    position: absolute;
+    right: 0.9rem;
+    bottom: 3.6rem;
+    z-index: 2;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.35rem;
+    font-family: var(--bs-font-monospace);
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--cr-text-hi);
+    background: color-mix(in srgb, var(--cr-bg) 72%, transparent);
+  }
+  
+  .is-compact .cr-player-fail {
+    bottom: 0.9rem;
+  }
+  
+  /* ── control bar ── */
+  
+  .cr-controls {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 3;
+    padding: 2.5rem 0.85rem 0.55rem;
+    background: linear-gradient(to top, color-mix(in srgb, #000 78%, transparent), transparent);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+  
+  .is-idle .cr-controls {
+    opacity: 0;
+    transform: translateY(6px);
+    pointer-events: none;
+  }
+  
+  /* keyboard users always see the bar */
+  .cr-player:has(:focus-visible) .cr-controls {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+  
+  /* ── seek ── */
+  
+  .cr-seek {
+    --h: 3px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 16px;
+    cursor: pointer;
+    touch-action: none;
+    outline: none;
+  
+    &::before,
+    .cr-seek-buf,
+    .cr-seek-fill {
+      position: absolute;
+      left: 0;
+      height: var(--h);
+      border-radius: 2px;
+      transition: height 0.15s ease;
+    }
+  
+    &::before {
+      content: '';
+      right: 0;
+      background: color-mix(in srgb, var(--cr-text-hi) 22%, transparent);
+    }
+  
+    &:hover,
+    &.is-scrubbing,
+    &:focus-visible {
+      --h: 5px;
+    }
+  }
+  
+  .cr-seek-buf {
+    background: color-mix(in srgb, var(--cr-text-hi) 34%, transparent);
+  }
+  
+  .cr-seek-fill {
+    background: var(--cr-flare);
+  }
+  
+  .cr-seek-knob {
+    position: absolute;
+    top: 50%;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    background: var(--cr-text-hi);
+    box-shadow: 0 1px 6px color-mix(in srgb, #000 55%, transparent);
+    transition: transform 0.15s ease;
+  }
+  
+  .cr-seek:hover .cr-seek-knob,
+  .cr-seek.is-scrubbing .cr-seek-knob,
+  .cr-seek:focus-visible .cr-seek-knob {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  
+  /* the knob stays visible at rest on the full player, like the reference */
+  .cr-player:not(.is-idle) .cr-seek-knob {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  
+  /* ── buttons row ── */
+  
+  .cr-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-top: 0.15rem;
+  }
+  
+  .cr-bar-group {
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+    min-width: 0;
+  }
+  
+  .cr-btn {
+    display: grid;
+    place-items: center;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 0.35rem;
+    border: 0;
+    border-radius: 0.5rem;
+    color: var(--cr-text-hi);
+    background: transparent;
+    opacity: 0.88;
+    transition: background-color 0.15s ease, opacity 0.15s ease, color 0.15s ease;
+  
+    &:hover {
+      opacity: 1;
+      background: color-mix(in srgb, var(--cr-text-hi) 14%, transparent);
+    }
+  
+    &:focus-visible {
+      outline: 2px solid var(--cr-flare);
+      outline-offset: 1px;
+    }
+  
+    &.is-on {
+      opacity: 1;
+      color: var(--cr-flare);
+    }
+  }
+  
+  .cr-speed {
+    font-family: var(--bs-font-monospace);
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+  }
+  
+  .cr-time {
+    margin-left: 0.5rem;
+    font-family: var(--bs-font-monospace);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    color: var(--cr-text-hi);
+  
+    i {
+      font-style: normal;
+      opacity: 0.55;
+    }
+  }
+  
+  /* ── volume: slider slides out on hover / focus ── */
+  
+  .cr-vol-wrap {
+    display: flex;
+    align-items: center;
+  
+    &:hover .cr-vol,
+    &:focus-within .cr-vol {
+      width: 64px;
+      margin: 0 0.35rem 0 0.1rem;
+      opacity: 1;
+    }
+  }
+  
+  .cr-vol {
+    width: 0;
+    height: 16px;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+    appearance: none;
+    background: transparent;
+    transition: width 0.2s ease, margin 0.2s ease, opacity 0.2s ease;
+  
+    &::-webkit-slider-runnable-track {
+      height: 3px;
+      border-radius: 2px;
+      background: linear-gradient(
+        to right,
+        var(--cr-text-hi) var(--v, 100%),
+        color-mix(in srgb, var(--cr-text-hi) 25%, transparent) var(--v, 100%)
+      );
+    }
+  
+    &::-webkit-slider-thumb {
+      width: 11px;
+      height: 11px;
+      margin-top: -4px;
+      border-radius: 50%;
+      appearance: none;
+      background: var(--cr-text-hi);
+    }
+  
+    &::-moz-range-track {
+      height: 3px;
+      border-radius: 2px;
+      background: color-mix(in srgb, var(--cr-text-hi) 25%, transparent);
+    }
+  
+    &::-moz-range-progress {
+      height: 3px;
+      border-radius: 2px;
+      background: var(--cr-text-hi);
+    }
+  
+    &::-moz-range-thumb {
+      width: 11px;
+      height: 11px;
+      border: 0;
+      border-radius: 50%;
+      background: var(--cr-text-hi);
+    }
+  }
+  
+  @media (max-width: 575.98px) {
+    .cr-controls {
+      padding-inline: 0.6rem;
+    }
+  
+    .cr-speed,
+    .cr-vol {
+      display: none;
+    }
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    .cr-player-big,
+    .cr-controls,
+    .cr-seek::before,
+    .cr-seek-buf,
+    .cr-seek-fill,
+    .cr-seek-knob,
+    .cr-btn,
+    .cr-vol {
+      transition: none;
+    }
+  
+    .cr-player-spin {
+      animation-duration: 2s;
+    }
+  }

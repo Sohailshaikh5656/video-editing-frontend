@@ -1,0 +1,111 @@
+<section class="cr-faqpage">
+    <div class="container">
+  
+      <!-- ── head ── -->
+      <header class="cr-faqpage-head">
+        <p class="cr-eyebrow text-uppercase fw-semibold cr-flare mb-3">{{ eyebrow }}</p>
+        <h2 class="cr-faqpage-title mb-3">{{ heading1 }}<br />{{ heading2 }}</h2>
+        <p class="cr-faqpage-sub mb-4">{{ subheading }}</p>
+  
+        <div class="cr-search">
+          <svg class="cr-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
+          <input
+            type="text"
+            class="cr-search-input"
+            [placeholder]="searchPlaceholder"
+            [value]="query()"
+            (input)="setQuery($any($event.target).value)"
+          />
+          @if (query()) {
+            <button type="button" class="cr-search-clear" (click)="clearQuery()" aria-label="Clear search">✕</button>
+          }
+        </div>
+  
+        @if (query()) {
+          <p class="cr-search-meta mb-0">{{ resultCount() }} result{{ resultCount() === 1 ? '' : 's' }} for “{{ query() }}”</p>
+        }
+      </header>
+  
+      <!-- ── body ── -->
+      <div class="cr-faqpage-body">
+  
+        <!-- sidebar -->
+        <aside class="cr-sidebar">
+          <p class="cr-sidebar-label mb-2">Categories</p>
+          <nav class="cr-cat-nav">
+            @for (cat of categories; track trackCat($index, cat)) {
+              <button
+                type="button"
+                class="cr-cat-link"
+                [class.is-active]="activeCategory() === cat.id"
+                (click)="setCategory(cat.id)"
+              >
+                <span>{{ cat.title }}</span>
+                <span class="cr-cat-count">{{ cat.items.length }}</span>
+              </button>
+            }
+          </nav>
+  
+          <div class="cr-stuck">
+            <p class="cr-stuck-title mb-1">Still stuck?</p>
+            <p class="cr-stuck-body mb-3">Ask directly — replies land within twenty working hours and there is no sales sequence attached.</p>
+            <button type="button" class="btn btn-primary btn-sm w-100 mb-2">Ask a question</button>
+            <a href="#contact" class="cr-stuck-link">Book a 20-min call →</a>
+          </div>
+        </aside>
+  
+        <!-- categories -->
+        <div class="cr-content">
+          @for (cat of filteredCategories(); track trackCat($index, cat)) {
+            <div class="cr-cat-section" [id]="'cat-' + cat.id">
+              <div class="cr-cat-heading">
+                <span class="cr-cat-index">{{ cat.index }}</span>
+                <h3 class="mb-0">{{ cat.title }}</h3>
+              </div>
+  
+              <div class="cr-faq-list">
+                @for (item of cat.items; track trackItem($index, item)) {
+                  <div class="cr-faq-item" [class.is-open]="openItem() === item.id">
+                    <button
+                      type="button"
+                      class="cr-faq-trigger"
+                      [attr.aria-expanded]="openItem() === item.id"
+                      (click)="toggleItem(item.id)"
+                    >
+                      <span>{{ item.q }}</span>
+                      <span class="cr-faq-icon" aria-hidden="true"></span>
+                    </button>
+              
+                    @if (openItem() === item.id) {
+                      <p class="cr-faq-answer cr-anim-open mb-0">{{ item.a }}</p>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          } @empty {
+            <div class="cr-empty">
+              <p class="cr-empty-title mb-2">No matches for “{{ query() }}”.</p>
+              <p class="cr-empty-body mb-3">Try a shorter word, or ask it directly and it will be answered here too.</p>
+              <button type="button" class="btn btn-outline-secondary btn-sm" (click)="clearQuery()">Clear search</button>
+            </div>
+          }
+        </div>
+      </div>
+  
+      <!-- ── contact cards ── -->
+      <div class="cr-contact-cards">
+        @for (card of contactCards; track trackCard($index, card)) {
+          <div class="cr-contact-card" [class.is-primary]="card.isPrimary">
+            <p class="cr-contact-eyebrow mb-2">{{ card.eyebrow }}</p>
+            <p class="cr-contact-title mb-2">{{ card.title }}</p>
+            <p class="cr-contact-body mb-3">{{ card.body }}</p>
+            <a class="btn btn-sm" [class.btn-primary]="card.isPrimary" [class.btn-outline-secondary]="!card.isPrimary" [href]="card.href">
+              {{ card.cta }}
+            </a>
+          </div>
+        }
+      </div>
+  
+    </div>
+  </section>

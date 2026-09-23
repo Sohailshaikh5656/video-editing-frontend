@@ -1,0 +1,273 @@
+.cr-admin-topbar {
+  height: 64px;
+  padding: 0 1.5rem;
+  background: color-mix(in srgb, var(--cr-bg) 92%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--cr-border);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+/* ── Search ──────────────────────────────── */
+
+.cr-search {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  max-width: 360px;
+  padding: 0.5rem 0.85rem;
+  border-radius: 0.7rem;
+  background: var(--cr-band);
+  border: 1px solid var(--cr-border);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+
+  i {
+    color: var(--cr-text-mid);
+    font-size: 0.9rem;
+  }
+
+  input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--cr-text-hi);
+    font-size: 0.85rem;
+
+    &::placeholder {
+      color: var(--cr-text-mid);
+      opacity: 0.75;
+    }
+  }
+
+  &:focus-within {
+    border-color: var(--cr-flare);
+    background: var(--cr-surface);
+  }
+}
+
+.cr-search-kbd {
+  padding: 0.1rem 0.4rem;
+  font-size: 0.68rem;
+  font-family: var(--bs-font-monospace);
+  color: var(--cr-text-mid);
+  background: var(--cr-surface);
+  border: 1px solid var(--cr-border-strong);
+  border-radius: 0.35rem;
+  opacity: 0.8;
+}
+
+/* ── Icon buttons ────────────────────────── */
+
+.cr-icon-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--cr-border);
+  border-radius: 0.65rem;
+  background: var(--cr-band);
+  color: var(--cr-text-mid);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+
+  &:hover {
+    background: var(--cr-surface);
+    color: var(--cr-text-hi);
+    border-color: var(--cr-border-strong);
+  }
+}
+
+.cr-badge-dot {
+  position: absolute;
+  top: 7px;
+  right: 8px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--cr-flare);
+  box-shadow: 0 0 0 2px var(--cr-bg);
+}
+
+/* ── Profile button ──────────────────────── */
+
+.cr-profile-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.6rem 0.35rem 0.35rem;
+  border: 1px solid var(--cr-border);
+  border-radius: 0.75rem;
+  background: var(--cr-band);
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+
+  &:hover {
+    background: var(--cr-surface);
+    border-color: var(--cr-border-strong);
+  }
+}
+
+.cr-profile-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--cr-text-hi);
+}
+
+.cr-profile-chevron {
+  font-size: 0.7rem;
+  color: var(--cr-text-mid);
+}
+
+.cr-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(150deg, var(--cr-flare), color-mix(in srgb, var(--cr-flare) 60%, var(--cr-violet)));
+  flex-shrink: 0;
+}
+
+.cr-avatar-lg {
+  width: 40px;
+  height: 40px;
+  font-size: 1rem;
+}
+
+/* ── Dropdowns ───────────────────────────── */
+
+.cr-dropdown-wrap {
+  position: relative;
+}
+
+.cr-dropdown {
+  position: absolute;
+  top: calc(100% + 0.6rem);
+  right: 0;
+  width: 280px;
+  padding: 0.6rem;
+  background: var(--cr-surface);
+  border: 1px solid var(--cr-border);
+  border-radius: 0.9rem;
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.35);
+  z-index: 30;
+  animation: cr-dropdown-in 0.16s ease;
+}
+
+@keyframes cr-dropdown-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.cr-dropdown-heading {
+  padding: 0.3rem 0.5rem 0.6rem;
+  margin: 0;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cr-text-mid);
+  opacity: 0.75;
+}
+
+.cr-notif-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.55rem 0.5rem;
+  border-radius: 0.6rem;
+  transition: background-color 0.15s ease;
+
+  i {
+    margin-top: 0.15rem;
+    color: var(--cr-flare);
+    font-size: 0.9rem;
+  }
+
+  &:hover {
+    background: var(--cr-band);
+  }
+}
+
+.cr-notif-title {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--cr-text-hi);
+}
+
+.cr-notif-time {
+  font-size: 0.72rem;
+  color: var(--cr-text-mid);
+}
+
+.cr-dropdown-footer {
+  display: block;
+  margin-top: 0.3rem;
+  padding: 0.5rem;
+  text-align: center;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--cr-flare);
+  text-decoration: none;
+  border-top: 1px solid var(--cr-border);
+}
+
+.cr-dropdown-user {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.4rem 0.5rem 0.7rem;
+  margin-bottom: 0.3rem;
+  border-bottom: 1px solid var(--cr-border);
+
+  .cr-notif-title { font-size: 0.85rem; }
+  .cr-notif-time { font-size: 0.72rem; }
+}
+
+.cr-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.55rem 0.5rem;
+  border: none;
+  background: transparent;
+  border-radius: 0.6rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--cr-text-mid);
+  text-decoration: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  i {
+    font-size: 0.9rem;
+    width: 1rem;
+  }
+
+  &:hover {
+    background: var(--cr-band);
+    color: var(--cr-text-hi);
+  }
+}
+
+.cr-dropdown-item-danger {
+  color: #ff5c5c;
+
+  &:hover {
+    background: color-mix(in srgb, #ff5c5c 12%, transparent);
+    color: #ff5c5c;
+  }
+}

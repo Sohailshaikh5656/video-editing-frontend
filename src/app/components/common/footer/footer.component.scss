@@ -1,0 +1,25 @@
+.cta {
+    background-image: radial-gradient(45% 60% at 50% 0%, color-mix(in srgb, var(--cr-flare) 22%, transparent), transparent);
+  }
+  
+  .cta-title {
+    letter-spacing: -0.03em;
+  }
+  
+  .logo {
+    width: 34px;
+    height: 34px;
+  }
+  
+  .social {
+    width: 36px;
+    height: 36px;
+    color: var(--cr-text-mid);
+    border: 1px solid var(--cr-border-strong);
+    transition: color 0.2s ease, border-color 0.2s ease;
+  
+    &:hover {
+      color: var(--cr-text-hi);
+      border-color: var(--cr-text-mid);
+    }
+  }

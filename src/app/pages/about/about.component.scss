@@ -1,0 +1,44 @@
+$colors: (
+  flare: var(--cr-flare),
+  teal: var(--cr-teal),
+  amber: var(--cr-amber),
+  violet: var(--cr-violet),
+  mid: var(--cr-text-mid),
+);
+
+@each $name, $value in $colors {
+  .c-#{$name} {
+    --c: #{$value};
+  }
+}
+
+.hero {
+  background-image: radial-gradient(45% 60% at 100% 0%, color-mix(in srgb, var(--cr-flare) 22%, transparent), transparent);
+}
+
+.portrait {
+  background-image: linear-gradient(
+    170deg,
+    color-mix(in srgb, var(--cr-flare) 30%, var(--cr-bg)) 0%,
+    color-mix(in srgb, var(--cr-flare) 55%, var(--cr-bg)) 45%,
+    color-mix(in srgb, var(--cr-amber) 45%, var(--cr-bg)) 100%
+  );
+}
+
+.tile {
+  background-image: linear-gradient(140deg, color-mix(in srgb, var(--c) 55%, var(--cr-bg)), color-mix(in srgb, var(--c) 15%, var(--cr-bg)));
+}
+
+.tool {
+  width: 32px;
+  height: 32px;
+}
+
+.callout {
+  border-left: 3px solid var(--cr-flare);
+}
+
+.progress {
+  --bs-progress-height: 3px;
+  --bs-progress-bg: var(--cr-border-strong);
+}

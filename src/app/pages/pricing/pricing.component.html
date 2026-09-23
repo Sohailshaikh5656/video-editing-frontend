@@ -1,0 +1,215 @@
+<section class="cr-pricing">
+    <div class="container">
+  
+      <!-- ── head ── -->
+      <header class="cr-pricing-head text-center">
+        <p class="cr-eyebrow text-uppercase fw-semibold cr-flare mb-3">{{ eyebrow }}</p>
+        <h2 class="cr-pricing-title mb-3">
+          {{ heading }} <span class="cr-flare">{{ headingHighlight }}</span>
+        </h2>
+        <p class="cr-pricing-sub mx-auto mb-4">{{ subheading }}</p>
+  
+        <div class="cr-toolbar">
+          <div class="cr-currency" role="tablist" aria-label="Currency">
+            @for (cur of currencies; track cur.code) {
+              <button
+                type="button"
+                class="cr-currency-btn"
+                role="tab"
+                [class.is-on]="currencyCode() === cur.code"
+                [attr.aria-selected]="currencyCode() === cur.code"
+                (click)="setCurrency(cur.code)"
+              >{{ cur.label }}</button>
+            }
+          </div>
+          <span class="cr-slots">
+            <span class="cr-slots-dot" aria-hidden="true"></span>{{ slotsLeft }}
+          </span>
+        </div>
+      </header>
+  
+      <!-- ── plan cards ── -->
+      <div class="cr-plans">
+        @for (plan of plans; track plan.id) {
+          <article class="cr-plan" [class.is-highlighted]="plan.highlighted">
+            @if (plan.badge) {
+              <span class="cr-plan-badge">{{ plan.badge }}</span>
+            }
+  
+            <p class="cr-plan-eyebrow mb-2">{{ plan.name }}</p>
+            <p class="cr-plan-desc mb-4">{{ plan.description }}</p>
+  
+            <p class="cr-plan-price mb-1">{{ price(plan.usdPrice) }}</p>
+            <p class="cr-plan-cadence mb-4">{{ plan.cadence }}</p>
+  
+            <ul class="cr-plan-features list-unstyled mb-4">
+              @for (f of plan.features; track f.text) {
+                <li [class.is-off]="!f.included">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    @if (f.included) {
+                      <path d="M20 6L9 17l-5-5" />
+                    } @else {
+                      <path d="M5 12h14" />
+                    }
+                  </svg>
+                  <span>{{ f.text }}</span>
+                </li>
+              }
+            </ul>
+  
+            <button type="button" class="btn w-100" [class.btn-primary]="plan.highlighted" [class.btn-outline-secondary]="!plan.highlighted">
+              {{ plan.cta }}
+            </button>
+            <p class="cr-plan-footnote mt-3 mb-0">{{ plan.footnote }}</p>
+          </article>
+        }
+      </div>
+  
+      <p class="cr-pricing-legal text-center mb-0">{{ priceFootnote }}</p>
+  
+      <!-- ── comparison ── -->
+      <div class="cr-compare">
+        <div class="cr-section-head">
+          <div>
+            <p class="cr-eyebrow text-uppercase fw-semibold cr-flare mb-2">Compare</p>
+            <h3 class="cr-section-title mb-0">Line by line.</h3>
+          </div>
+          <p class="cr-section-note mb-0">If something you need is not listed, it is quotable. Ask.</p>
+        </div>
+  
+        <div class="cr-table-wrap">
+          <table class="cr-table">
+            <thead>
+              <tr>
+                <th scope="col">Feature</th>
+                @for (plan of plans; track plan.id) {
+                  <th scope="col" [class.is-flare]="plan.highlighted">{{ plan.name }}</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (section of comparison; track section.label) {
+                <tr class="cr-table-section">
+                  <td [attr.colspan]="plans.length + 1">{{ section.label }}</td>
+                </tr>
+                @for (row of section.rows; track row.feature) {
+                  <tr>
+                    <th scope="row">{{ row.feature }}</th>
+                    @for (cell of row.values; track $index) {
+                      <td>
+                        @switch (cell.type) {
+                          @case ('check') {
+                            <svg class="cr-check" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                              <path d="M20 6L9 17l-5-5" />
+                            </svg>
+                          }
+                          @case ('dash') {
+                            <span class="cr-dash">—</span>
+                          }
+                          @default {
+                            <span>{{ cell.text }}</span>
+                          }
+                        }
+                      </td>
+                    }
+                  </tr>
+                }
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+  
+      <!-- ── what moves the number ── -->
+      <div class="cr-moves">
+        <div class="cr-section-head">
+          <div>
+            <p class="cr-eyebrow text-uppercase fw-semibold cr-flare mb-2">Transparency</p>
+            <h3 class="cr-section-title mb-0">What moves the number.</h3>
+          </div>
+          <p class="cr-section-note mb-0">Six things change a quote. None of them appear after the first.</p>
+        </div>
+  
+        <div class="cr-move-grid">
+          @for (m of moves; track m.title) {
+            <div class="cr-move-card">
+              <p class="cr-move-title mb-2">{{ m.title }}</p>
+              <p class="cr-move-body mb-0">{{ m.body }}</p>
+            </div>
+          }
+        </div>
+      </div>
+  
+      <!-- ── payment + promises ── -->
+      <div class="cr-split">
+        <div class="cr-split-col">
+          <p class="cr-eyebrow text-uppercase fw-semibold cr-flare mb-2">Payment</p>
+          <h3 class="cr-section-title mb-4">Easy for finance teams abroad.</h3>
+  
+          <div class="cr-payments">
+            @for (p of payments; track p.abbr) {
+              <div class="cr-payment">
+                <span class="cr-payment-abbr">{{ p.abbr }}</span>
+                <span class="cr-payment-label">{{ p.label }}</span>
+              </div>
+            }
+          </div>
+  
+          <p class="cr-split-note mb-0">
+            Invoices are GST-compliant and export-ready, with your company details, our tax registration and a
+            clear description of services. Reverse-charge available on request for US clients.
+          </p>
+        </div>
+  
+        <div class="cr-split-col">
+          <p class="cr-eyebrow text-uppercase fw-semibold cr-flare mb-2">Guarantees</p>
+          <h3 class="cr-section-title mb-4">What you can hold me to.</h3>
+  
+          <div class="cr-promises">
+            @for (item of promises; track item.title) {
+              <div class="cr-promise">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M20 6L9 17l-5-5" />
+                </svg>
+                <div>
+                  <p class="cr-promise-title mb-1">{{ item.title }}</p>
+                  <p class="cr-promise-body mb-0">{{ item.body }}</p>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+  
+      <!-- ── FAQ ── -->
+      <div class="cr-faq">
+        <div class="cr-section-head">
+          <div>
+            <p class="cr-eyebrow text-uppercase fw-semibold cr-flare mb-2">Pricing FAQ</p>
+            <h3 class="cr-section-title mb-0">Money questions.</h3>
+          </div>
+          <p class="cr-section-note mb-0">Everything else is on the main FAQ page.</p>
+        </div>
+  
+        <div class="cr-faq-list">
+          @for (item of faqs; track item.q; let i = $index) {
+            <div class="cr-faq-item" [class.is-open]="openFaq() === i">
+              <button
+                type="button"
+                class="cr-faq-trigger"
+                [attr.aria-expanded]="openFaq() === i"
+                (click)="toggleFaq(i)"
+              >
+                <span>{{ item.q }}</span>
+                <span class="cr-faq-icon" aria-hidden="true"></span>
+              </button>
+              @if (openFaq() === i) {
+                <p class="cr-faq-answer mb-0">{{ item.a }}</p>
+              }
+            </div>
+          }
+        </div>
+      </div>
+  
+    </div>
+  </section>

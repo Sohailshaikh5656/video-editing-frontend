@@ -1,0 +1,1001 @@
+/* ───────────────────────── Hero ─────────────────────────
+   Dark stage, warm flare bleeding in from the right, a cool
+   wash top-left, and a hairline stats band underneath.
+──────────────────────────────────────────────────────────── */
+
+:host {
+  display: block;
+}
+
+.cr-hero {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background-color: var(--cr-bg);
+  background-image:
+    radial-gradient(70% 90% at 78% 42%, color-mix(in srgb, var(--cr-flare) 34%, transparent), transparent 68%),
+    radial-gradient(55% 75% at 12% 18%, color-mix(in srgb, var(--cr-teal) 9%, transparent), transparent 70%),
+    radial-gradient(90% 60% at 50% 110%, color-mix(in srgb, var(--cr-bg) 92%, transparent), transparent 60%);
+}
+
+/* film grain */
+.cr-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.045;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* every section on this page shares one measure, so nothing drifts */
+.container,
+.stories {
+  max-width: 1100px;
+  --bs-gutter-x: 2rem;
+}
+
+.cr-hero-inner {
+  padding-top: clamp(3.5rem, 9vw, 7rem);
+  padding-bottom: clamp(3rem, 7vw, 6rem);
+}
+
+/* ── status pill ── */
+
+.cr-status {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cr-text-hi);
+  border: 1px solid var(--cr-border-strong);
+  background: color-mix(in srgb, var(--cr-surface) 70%, transparent);
+  backdrop-filter: blur(8px);
+}
+
+.cr-status-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--cr-flare);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--cr-flare) 70%, transparent);
+  animation: cr-pulse 2.4s ease-out infinite;
+}
+
+@keyframes cr-pulse {
+  70% {
+    box-shadow: 0 0 0 7px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+/* ── headline ── */
+
+.cr-hero-title {
+  margin: 0;
+  font-size: clamp(2.6rem, 9.2vw, 7.5rem);
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+  text-transform: uppercase;
+  color: var(--cr-text-hi);
+}
+
+.cr-hero-foot {
+  margin-top: clamp(2.25rem, 5vw, 4rem);
+}
+
+.cr-hero-lede {
+  max-width: 34rem;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--cr-text-mid);
+}
+
+/* ── scroll cue ── */
+
+.cr-scroll {
+  position: absolute;
+  right: 1.25rem;
+  bottom: clamp(3rem, 8vw, 6rem);
+  writing-mode: vertical-rl;
+  font-family: var(--bs-font-monospace);
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--cr-text-mid);
+  opacity: 0.7;
+}
+
+/* ── stats band ── */
+
+.cr-stats {
+  background: var(--cr-bg);
+  border-top: 1px solid var(--cr-border);
+}
+
+.cr-stat-value {
+  font-size: clamp(1.85rem, 3.4vw, 2.6rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--cr-text-hi);
+}
+
+/* ── shared mono label ── */
+
+.cr-meta {
+  font-family: var(--bs-font-monospace);
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cr-text-mid);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cr-status-dot {
+    animation: none;
+  }
+}
+
+
+.brand-marquee {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.brand-track {
+  display: flex;
+  align-items: center;
+  gap: 60px;
+  width: max-content;
+
+  animation: marquee 25s linear infinite;
+}
+
+.brand-name {
+  flex-shrink: 0;
+  font-size: 0.9rem !important;
+  font-weight: 600;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+/* ───────────────────────── Selected work ─────────────────────────
+   Four case rows, each a 16:9 clip beside its write-up, split by a
+   hairline. Every colour below resolves to an existing --cr-* token.
+──────────────────────────────────────────────────────────────────── */
+
+.cr-work {
+  background: var(--cr-bg);
+  padding-block: clamp(3.5rem, 8vw, 6.5rem);
+}
+
+.cr-work-head {
+  margin-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+
+.cr-work-title {
+  font-size: clamp(1.75rem, 3.4vw, 2.6rem);
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  color: var(--cr-text-hi);
+}
+
+/* ── case row ── */
+
+.cr-case {
+  padding-block: clamp(1.75rem, 3.5vw, 2.75rem);
+  border-top: 1px solid var(--cr-border);
+}
+
+.cr-case-title {
+  font-size: clamp(1.15rem, 1.9vw, 1.5rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--cr-text-hi);
+}
+
+.cr-case-text {
+  max-width: 34rem;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--cr-text-mid);
+}
+
+/* ── thumbnail ── */
+
+.cr-shot {
+  background-image: linear-gradient(
+    140deg,
+    color-mix(in srgb, var(--c) 10%, var(--cr-bg)),
+    color-mix(in srgb, var(--c) 46%, var(--cr-bg)) 52%,
+    color-mix(in srgb, var(--c) 92%, var(--cr-bg))
+  );
+  border: 1px solid var(--cr-border);
+}
+
+.cr-case-flare {
+  --c: var(--cr-flare);
+}
+.cr-case-teal {
+  --c: var(--cr-teal);
+}
+.cr-case-violet {
+  --c: var(--cr-violet);
+}
+/* the cool one — mixed from two existing tokens, no new colour */
+.cr-case-ion {
+  --c: color-mix(in srgb, var(--cr-teal) 42%, var(--cr-violet));
+}
+
+
+.cr-shot-label {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  right: auto;
+  bottom: auto;
+  z-index: 2;
+  width: auto;
+  height: auto;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.35rem;
+  color: #fff;
+  background: rgba(10, 10, 14, 0.55);
+  backdrop-filter: blur(6px);
+  pointer-events: none;
+}
+/* ── tag chips ── */
+
+.cr-chip {
+  font-family: var(--bs-font-monospace);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cr-text-mid);
+  border: 1px solid var(--cr-border-strong);
+}
+/* ───────────────────── What we do ─────────────────────
+   Six service cards, 3-up. Flat surface, hairline border,
+   numbered in flare, ticks in teal. Tokens only.
+──────────────────────────────────────────────────────── */
+
+.stories {
+  padding-block: clamp(3.5rem, 8vw, 6.5rem);
+}
+
+.title-header {
+  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+
+  .title small {
+    display: block;
+    margin-bottom: 0.75rem;
+    font-family: var(--bs-font-monospace);
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  h2 {
+    margin-bottom: 0;
+    font-size: clamp(1.75rem, 3.4vw, 2.6rem);
+    font-weight: 800;
+    line-height: 1.12;
+    letter-spacing: -0.03em;
+    color: var(--cr-text-hi);
+  }
+
+  .para p {
+    margin-bottom: 0;
+    font-size: 0.92rem;
+    line-height: 1.7;
+    color: var(--cr-text-mid);
+  }
+}
+
+.what-we-do-card {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--cr-border);
+  border-radius: 1rem;
+  background: var(--cr-surface);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+
+  /* faint warm bloom in the bottom-right corner */
+  &::after {
+    content: '';
+    position: absolute;
+    right: -20%;
+    bottom: -35%;
+    width: 70%;
+    height: 70%;
+    pointer-events: none;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--cr-flare) 22%, transparent), transparent);
+    opacity: 0.55;
+    transition: opacity 0.2s ease;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--cr-flare) 35%, var(--cr-border));
+
+    &::after {
+      opacity: 1;
+    }
+  }
+
+  .card-body {
+    position: relative;
+    z-index: 1;
+    padding: 1.6rem 1.5rem;
+  }
+
+  h3 {
+    margin-bottom: 0.6rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--cr-text-hi);
+  }
+}
+
+.what-we-do-num {
+  font-family: var(--bs-font-monospace);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--cr-flare);
+}
+
+.what-we-do-text {
+  display: block;
+  margin-bottom: 1.35rem;
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: var(--cr-text-mid);
+}
+
+/* pinned to the bottom so the tick lists line up across a row */
+.what-we-do-points {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  margin-top: auto;
+  margin-bottom: 0;
+  padding-left: 0;
+
+  li {
+    gap: 0.6rem;
+    margin-bottom: 0 !important;
+    font-size: 0.84rem;
+    line-height: 1.45;
+    color: var(--cr-text-mid);
+  }
+}
+
+.what-we-do-tick {
+  display: flex;
+  flex: 0 0 auto;
+  color: var(--cr-teal);
+  font-size: 1.05em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .what-we-do-card {
+    transition: none;
+  }
+}
+
+/* ═══════════════ Shared section rhythm ═══════════════
+   One container width + one heading scale for every
+   section, so nothing drifts out of alignment.
+══════════════════════════════════════════════════════ */
+
+.cr-why,
+.cr-process,
+.cr-colour,
+.cr-reviews,
+.cr-pricing,
+.cr-journal,
+.cr-faq {
+  padding-block: clamp(3.5rem, 8vw, 6.5rem);
+  border-top: 1px solid var(--cr-border);
+  background: var(--cr-bg);
+}
+
+.cr-h2 {
+  font-size: clamp(1.75rem, 3.4vw, 2.6rem);
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  color: var(--cr-text-hi);
+}
+
+.cr-lede {
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--cr-text-mid);
+}
+
+.cr-pill {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--cr-border-strong);
+  border-radius: 2rem;
+  font-family: var(--bs-font-monospace);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cr-text-mid);
+}
+
+.cr-textlink {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--cr-text-hi);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--cr-flare);
+  }
+}
+
+/* ───────────── Why Cutroom ───────────── */
+
+.cr-promise-title {
+  margin-bottom: 0.4rem;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--cr-text-hi);
+}
+
+.cr-promise-text {
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--cr-text-mid);
+}
+
+/* fake NLE timeline */
+.cr-timeline {
+  overflow: hidden;
+  border: 1px solid var(--cr-border);
+  border-radius: 0.9rem;
+  background: var(--cr-band);
+}
+
+.cr-timeline-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--cr-border);
+  background: var(--cr-surface);
+}
+
+.cr-timeline-rec {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--bs-font-monospace);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  color: var(--cr-flare);
+
+  i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--cr-flare);
+  }
+}
+
+.cr-timeline-body {
+  padding: 0.9rem 1rem 1rem;
+}
+
+.cr-track {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.35rem;
+}
+
+.cr-track-no {
+  flex: 0 0 1.4rem;
+  font-family: var(--bs-font-monospace);
+  font-size: 0.55rem;
+  color: var(--cr-text-mid);
+  opacity: 0.6;
+}
+
+.cr-track-lane {
+  display: flex;
+  flex: 1;
+  gap: 3px;
+  height: 14px;
+}
+
+.cr-clip {
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--c) 72%, var(--cr-bg));
+}
+
+.cr-clip-flare {
+  --c: var(--cr-flare);
+}
+.cr-clip-teal {
+  --c: var(--cr-teal);
+}
+.cr-clip-violet {
+  --c: var(--cr-violet);
+}
+.cr-clip-amber {
+  --c: var(--cr-amber);
+}
+.cr-clip-ion {
+  --c: color-mix(in srgb, var(--cr-teal) 42%, var(--cr-violet));
+}
+.cr-clip-muted {
+  --c: var(--cr-border-strong);
+}
+
+.cr-wave {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 42px;
+  margin-top: 0.7rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--cr-border);
+
+  span {
+    flex: 1;
+    border-radius: 1px;
+    background: color-mix(in srgb, var(--cr-teal) 55%, var(--cr-bg));
+  }
+}
+
+/* ───────────── Process ───────────── */
+
+.cr-step {
+  display: flex;
+  flex-direction: column;
+  padding-top: 1.1rem;
+  border-top: 2px solid var(--cr-flare);
+}
+
+.cr-step-title {
+  margin-bottom: 0.55rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--cr-text-hi);
+}
+
+.cr-step-text {
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--cr-text-mid);
+}
+
+/* ───────────── Colour compare ───────────── */
+
+.cr-compare {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 21 / 9;
+  border: 1px solid var(--cr-border);
+  border-radius: 0.9rem;
+}
+
+.cr-compare-frame {
+  position: absolute;
+  inset: 0;
+}
+
+/* flat, desaturated log */
+.cr-compare-before {
+  background-image: linear-gradient(
+    120deg,
+    color-mix(in srgb, var(--cr-text-mid) 42%, var(--cr-bg)),
+    color-mix(in srgb, var(--cr-text-mid) 30%, var(--cr-bg))
+  );
+}
+
+/* the graded version, revealed from the split point */
+.cr-compare-after {
+  clip-path: inset(0 0 0 var(--split, 50%));
+  background-image: radial-gradient(70% 90% at 78% 40%, color-mix(in srgb, var(--cr-flare) 62%, transparent), transparent 70%),
+    linear-gradient(120deg, color-mix(in srgb, var(--cr-flare) 22%, var(--cr-bg)), color-mix(in srgb, var(--cr-amber) 34%, var(--cr-bg)));
+}
+
+.cr-compare-tag {
+  position: absolute;
+  top: 0.8rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 0.3rem;
+  font-family: var(--bs-font-monospace);
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cr-text-hi);
+  background: color-mix(in srgb, var(--cr-bg) 65%, transparent);
+  backdrop-filter: blur(6px);
+}
+
+.cr-compare-before .cr-compare-tag {
+  left: 0.8rem;
+}
+
+.cr-compare-after .cr-compare-tag {
+  right: 0.8rem;
+}
+
+.cr-compare-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--split, 50%);
+  width: 2px;
+  pointer-events: none;
+  background: var(--cr-text-hi);
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 34px;
+    height: 34px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: var(--cr-text-hi);
+  }
+}
+
+/* the real control — an invisible range over the whole frame */
+.cr-compare-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  cursor: ew-resize;
+  opacity: 0;
+  appearance: none;
+  background: transparent;
+
+  &:focus-visible + .cr-compare-line::after {
+    outline: 2px solid var(--cr-flare);
+    outline-offset: 3px;
+  }
+}
+
+.cr-note {
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--cr-border);
+  border-radius: 0.75rem;
+  background: var(--cr-surface);
+}
+
+.cr-note-text {
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: var(--cr-text-mid);
+}
+
+/* ───────────── Reviews ───────────── */
+
+.cr-arrow {
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--cr-border-strong);
+  border-radius: 50%;
+  color: var(--cr-text-hi);
+  background: transparent;
+  transition: border-color 0.2s ease, color 0.2s ease;
+
+  &:hover {
+    color: var(--cr-flare);
+    border-color: var(--cr-flare);
+  }
+}
+
+.cr-review-track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(min(100%, 320px), 1fr);
+  gap: 1.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding-bottom: 0.25rem;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.cr-review {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 1.5rem;
+  scroll-snap-align: start;
+  border: 1px solid var(--cr-border);
+  border-radius: 1rem;
+  background: var(--cr-surface);
+}
+
+.cr-stars {
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  color: var(--cr-amber);
+}
+
+.cr-review-quote {
+  flex: 1;
+  font-size: 0.86rem;
+  line-height: 1.7;
+  color: var(--cr-text-hi);
+}
+
+.cr-avatar {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-family: var(--bs-font-monospace);
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--cr-text-hi);
+  background: color-mix(in srgb, var(--cr-flare) 30%, var(--cr-band));
+}
+
+.cr-review-name {
+  display: block;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--cr-text-hi);
+}
+
+.cr-review-role {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--cr-text-mid);
+
+  em {
+    font-style: normal;
+    opacity: 0.7;
+  }
+}
+
+.cr-review-foot {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--cr-border);
+}
+
+/* ───────────── Pricing ───────────── */
+
+.cr-plan {
+  display: flex;
+  flex-direction: column;
+  padding: 1.6rem 1.5rem;
+  border: 1px solid var(--cr-border);
+  border-radius: 1rem;
+  background: var(--cr-surface);
+
+  &.is-featured {
+    border-color: var(--cr-flare);
+    box-shadow: 0 0 0 1px var(--cr-flare), 0 18px 50px -24px color-mix(in srgb, var(--cr-flare) 70%, transparent);
+  }
+}
+
+.cr-plan-badge {
+  flex: 0 0 auto;
+  padding: 0.2rem 0.55rem;
+  border-radius: 2rem;
+  font-family: var(--bs-font-monospace);
+  font-size: 0.55rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cr-bg);
+  background: var(--cr-flare);
+}
+
+.cr-plan-price {
+  font-size: clamp(1.9rem, 3vw, 2.4rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--cr-text-hi);
+}
+
+.cr-plan-unit {
+  margin-bottom: 1.35rem;
+  font-size: 0.74rem;
+  color: var(--cr-text-mid);
+}
+
+.cr-plan-points {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+
+  li {
+    padding-left: 0.9rem;
+    position: relative;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: var(--cr-text-mid);
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0.52em;
+      left: 0;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--cr-teal);
+    }
+  }
+}
+
+/* ───────────── Journal ───────────── */
+
+.cr-post {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+}
+
+.cr-post-thumb {
+  display: block;
+  width: 100%;
+  margin-bottom: 1rem;
+  border: 1px solid var(--cr-border);
+  background-image: linear-gradient(
+    140deg,
+    color-mix(in srgb, var(--c) 12%, var(--cr-bg)),
+    color-mix(in srgb, var(--c) 48%, var(--cr-bg)) 52%,
+    color-mix(in srgb, var(--c) 88%, var(--cr-bg))
+  );
+  transition: transform 0.25s ease;
+}
+
+.cr-post-amber {
+  --c: var(--cr-amber);
+}
+.cr-post-teal {
+  --c: var(--cr-teal);
+}
+.cr-post-ion {
+  --c: color-mix(in srgb, var(--cr-teal) 42%, var(--cr-violet));
+}
+
+.cr-post:hover .cr-post-thumb {
+  transform: translateY(-3px);
+}
+
+.cr-post-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.cr-post-title {
+  margin-bottom: 0.45rem;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--cr-text-hi);
+}
+
+.cr-post:hover .cr-post-title {
+  color: var(--cr-flare);
+}
+
+.cr-post-text {
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--cr-text-mid);
+}
+
+/* ───────────── FAQ ───────────── */
+
+.cr-faq-item {
+  border-bottom: 1px solid var(--cr-border);
+
+  &:first-child {
+    border-top: 1px solid var(--cr-border);
+  }
+}
+
+.cr-faq-q {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  width: 100%;
+  padding: 1.15rem 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--cr-text-hi);
+
+  &:hover {
+    color: var(--cr-flare);
+  }
+}
+
+/* plus that becomes a minus when open */
+.cr-faq-icon {
+  position: relative;
+  flex: 0 0 auto;
+  width: 12px;
+  height: 12px;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 12px;
+    height: 1.5px;
+    background: currentColor;
+    transition: transform 0.2s ease;
+  }
+
+  &::after {
+    transform: rotate(90deg);
+  }
+}
+
+.cr-faq-item.is-open .cr-faq-icon::after {
+  transform: rotate(0deg);
+}
+
+.cr-faq-a {
+  padding: 0 0 1.25rem;
+  max-width: 52ch;
+  font-size: 0.84rem;
+  line-height: 1.7;
+  color: var(--cr-text-mid);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cr-post-thumb,
+  .cr-faq-icon::before,
+  .cr-faq-icon::after,
+  .cr-arrow {
+    transition: none;
+  }
+}

@@ -1,0 +1,190 @@
+<div
+  #wrap
+  class="cr-player"
+  role="group"
+  [class.is-playing]="playing()"
+  [class.is-idle]="playing() && idle() && !scrubbing()"
+  [class.is-compact]="compact"
+  [class.is-fs]="isFs()"
+  [attr.tabindex]="compact ? null : 0"
+  [attr.aria-label]="label + ' video player'"
+  (pointermove)="wake()"
+  (pointerleave)="onLeave($event)"
+  (keydown)="onKey($event)"
+>
+  <video
+    #video
+    class="cr-player-media"
+    playsinline
+    [src]="src"
+    [attr.poster]="poster || null"
+    [preload]="preload"
+    (click)="toggle()"
+    (dblclick)="compact || toggleFullscreen()"
+    (play)="onPlay()"
+    (pause)="onPause()"
+    (ended)="onPause()"
+    (timeupdate)="onTime()"
+    (loadedmetadata)="onMeta()"
+    (durationchange)="onMeta()"
+    (progress)="onProgress()"
+    (volumechange)="onVolume()"
+    (waiting)="waiting.set(true)"
+    (playing)="waiting.set(false)"
+    (canplay)="waiting.set(false)"
+    (error)="failed.set(true)"
+  >
+    @if (captions) {
+      <track kind="captions" srclang="en" label="English" [src]="captions" />
+    }
+  </video>
+
+  @if (waiting() && playing()) {
+    <span class="cr-player-spin" aria-hidden="true"></span>
+  }
+
+  @if (failed()) {
+    <span class="cr-player-fail">Clip unavailable</span>
+  }
+
+  <!-- centre play button: steps aside while playing -->
+  <button
+    type="button"
+    class="cr-player-big"
+    [class.is-hidden]="playing()"
+    [attr.aria-label]="'Play ' + label"
+    (click)="toggle()"
+  >
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M7 4.5v15l13-7.5z" />
+    </svg>
+  </button>
+
+  @if (!compact) {
+    <div class="cr-controls">
+      <!-- seek bar -->
+      <div
+        #bar
+        class="cr-seek"
+        role="slider"
+        tabindex="0"
+        aria-label="Seek"
+        [class.is-scrubbing]="scrubbing()"
+        [attr.aria-valuemin]="0"
+        [attr.aria-valuemax]="duration()"
+        [attr.aria-valuenow]="current()"
+        [attr.aria-valuetext]="curLabel + ' of ' + durLabel"
+        (pointerdown)="seekStart($event)"
+        (pointermove)="seekMove($event)"
+        (pointerup)="seekEnd($event)"
+        (pointercancel)="seekEnd($event)"
+        (keydown)="onSeekKey($event)"
+      >
+        <span class="cr-seek-buf" [style.width.%]="buffered()"></span>
+        <span class="cr-seek-fill" [style.width.%]="pct()"></span>
+        <span class="cr-seek-knob" [style.left.%]="pct()"></span>
+      </div>
+
+      <div class="cr-bar">
+        <div class="cr-bar-group">
+          <button
+            type="button"
+            class="cr-btn"
+            [attr.aria-label]="playing() ? 'Pause' : 'Play'"
+            (click)="toggle()"
+          >
+            @if (playing()) {
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M6 4h4v16H6zM14 4h4v16h-4z" />
+              </svg>
+            } @else {
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M7 4.5v15l13-7.5z" />
+              </svg>
+            }
+          </button>
+
+          <div class="cr-vol-wrap">
+            <button
+              type="button"
+              class="cr-btn"
+              [attr.aria-label]="muted() ? 'Unmute' : 'Mute'"
+              (click)="toggleMute()"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 9v6h4l5 4V5L7 9H3z" fill="currentColor" />
+                @if (muted() || volume() === 0) {
+                  <path
+                    d="M16 9.5l5 5M21 9.5l-5 5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                } @else {
+                  <path
+                    d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                }
+              </svg>
+            </button>
+            <input
+              class="cr-vol"
+              type="range"
+              min="0"
+              max="1"
+              step="0.05"
+              aria-label="Volume"
+              [value]="muted() ? 0 : volume()"
+              [style.--v.%]="volPct()"
+              (input)="setVolume(+$any($event.target).value)"
+            />
+          </div>
+
+          <span class="cr-time">{{ curLabel }} <i>/</i> {{ durLabel }}</span>
+        </div>
+
+        <div class="cr-bar-group">
+          @if (captions) {
+            <button
+              type="button"
+              class="cr-btn"
+              [class.is-on]="ccOn()"
+              [attr.aria-pressed]="ccOn()"
+              aria-label="Captions"
+              (click)="toggleCaptions()"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="14" rx="3" />
+                <path d="M10.2 10.2a2.2 2.2 0 1 0 0 3.6M16.2 10.2a2.2 2.2 0 1 0 0 3.6" stroke-width="1.8" />
+              </svg>
+            </button>
+          }
+
+          <button type="button" class="cr-btn cr-speed" aria-label="Playback speed" (click)="cycleSpeed()">
+            {{ rate() }}×
+          </button>
+
+          <button
+            type="button"
+            class="cr-btn"
+            [attr.aria-label]="isFs() ? 'Exit fullscreen' : 'Fullscreen'"
+            (click)="toggleFullscreen()"
+          >
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              @if (isFs()) {
+                <path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" />
+              } @else {
+                <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
+              }
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

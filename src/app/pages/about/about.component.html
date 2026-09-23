@@ -1,0 +1,259 @@
+<!-- Hero -->
+<section class="hero py-5">
+  <div class="container py-lg-4">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-7">
+        <p class="cr-eyebrow font-monospace text-uppercase text-primary mb-3">About the editor</p>
+        <h1 class="display-4 fw-bold col-xl-10 mb-4">
+          Nine years in a dark room, making things <span class="text-primary">feel right.</span>
+        </h1>
+        <p class="col-xl-9 mb-4">
+          I am Aarav Mehta. I cut brand films, documentaries and short-form from a small studio in Pune, mostly for
+          teams in the US, UK and EU. Before this I was an assistant editor on ad shoots, which is where I learned that
+          the edit is where the film is actually written.
+        </p>
+        <div class="d-flex flex-wrap gap-3 mb-4">
+          <a class="btn btn-primary rounded-pill px-4 fw-semibold" routerLink="/contact">Work with me →</a>
+          <a class="btn btn-outline-secondary rounded-pill px-4" href="#">Download CV / rate card</a>
+        </div>
+        <ul class="list-unstyled d-flex flex-wrap gap-2 gap-md-4 font-monospace small mb-0">
+          @for (m of meta; track m) {
+            <li><span class="text-primary me-2">◆</span>{{ m }}</li>
+          }
+        </ul>
+      </div>
+
+      <div class="col-lg-4 offset-lg-1">
+        <div class="ratio" style="--bs-aspect-ratio: 150%">
+          <div class="portrait card">
+            <span class="cr-eyebrow font-monospace text-uppercase position-absolute top-0 start-0 m-3 px-2 py-1 border rounded-2 bg-body">
+              Portrait — Studio
+            </span>
+            <div class="position-absolute bottom-0 start-0 end-0 d-flex justify-content-between p-3 cr-eyebrow font-monospace text-uppercase">
+              <span class="text-body-emphasis">Aarav Mehta</span>
+              <span>Editor / Colourist</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<section class="bg-body-secondary border-top border-bottom py-4">
+  <div class="container">
+    <div class="row g-4">
+      @for (s of stats; track s.label) {
+        <div class="col-6 col-md">
+          <div class="fs-2 fw-bold text-body-emphasis lh-1 mb-2">{{ s.value }}</div>
+          <div class="cr-eyebrow font-monospace text-uppercase">{{ s.label }}</div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- The long version -->
+<section class="py-5">
+  <div class="container py-lg-4">
+    <div class="row g-5">
+      <div class="col-lg-4">
+        <p class="cr-eyebrow font-monospace text-uppercase text-primary mb-3">The long version</p>
+        <h2 class="fs-2 fw-bold">How I got<br />here.</h2>
+      </div>
+
+      <div class="col-lg-7 offset-lg-1">
+        <p class="fs-5 text-body-emphasis mb-4">
+          I started as the person who logged footage and made tea on ad sets in Mumbai. It was the best possible
+          education.
+        </p>
+        <p>
+          Watching senior editors taught me the thing film school does not: that a cut is a decision about attention.
+          Every frame you hold is a frame you are asking someone to give you. In 2017 I went independent, mostly because
+          a founder in Berlin needed a brand film and did not care where the editor sat.
+        </p>
+        <p>
+          That first remote project turned into nine years of them. Somewhere along the way the work split into two
+          halves — long-form storytelling where structure does the work, and short-form where the first second does. I
+          care about both, and I think being good at one makes you better at the other.
+        </p>
+        <p>
+          These days it is mostly brand films, founder documentaries and short-form retainers, with colour and sound
+          handled in house. Small by choice: you get me on your project, not a junior with my name on the invoice.
+        </p>
+
+        <div class="callout card p-4 mt-4">
+          <h3 class="h6 fw-semibold text-body-emphasis mb-2">What I will not do</h3>
+          <p class="small mb-0">
+            Unlimited revisions with no defined scope. Work without a contract. Cut something I think is dishonest. Take
+            on a deadline I cannot hit — I would rather refer you to someone good than deliver something mediocre.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Craft + toolkit -->
+<section class="border-top py-5">
+  <div class="container py-lg-4">
+    <div class="row g-5">
+      <div class="col-lg-5">
+        <p class="cr-eyebrow font-monospace text-uppercase text-primary mb-3">Craft</p>
+        <h2 class="fs-2 fw-bold mb-4">Where the hours<br />have gone.</h2>
+        @for (s of skills; track s.name) {
+          <div class="mb-3">
+            <div class="d-flex justify-content-between small mb-2">
+              <span class="text-body-emphasis">{{ s.name }}</span>
+              <span class="font-monospace">{{ s.years }} yrs</span>
+            </div>
+            <div class="progress" role="progressbar" [attr.aria-valuenow]="s.level" aria-valuemin="0" aria-valuemax="100">
+              <div class="progress-bar bg-primary" [style.width.%]="s.level"></div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="col-lg-6 offset-lg-1">
+        <p class="cr-eyebrow font-monospace text-uppercase text-success mb-3">Toolkit</p>
+        <h2 class="fs-2 fw-bold mb-4">What is open<br />on the second monitor.</h2>
+        <div class="row g-2">
+          @for (t of tools; track t.name) {
+            <div class="col-sm-6">
+              <div class="d-flex align-items-center gap-3 border rounded-3 bg-body-tertiary px-3 py-2 h-100">
+                <span class="tool cr-tag rounded-2 d-flex align-items-center justify-content-center small fw-semibold" [class]="'c-' + t.color">{{ t.abbr }}</span>
+                <div class="lh-sm">
+                  <div class="small fw-semibold text-body-emphasis">{{ t.name }}</div>
+                  <div class="small opacity-75">{{ t.role }}</div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+        <p class="font-monospace small opacity-75 mt-3 mb-0">
+          Workstation: Ryzen 9 / 64GB / RTX 4070, calibrated 27″ reference display, Yamaha HS5 monitors in a treated
+          room. Backed up to local RAID and cloud nightly.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Experience -->
+<section class="border-top py-5">
+  <div class="container py-lg-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-5">
+      <div>
+        <p class="cr-eyebrow font-monospace text-uppercase text-primary mb-3">Experience</p>
+        <h2 class="fs-1 fw-bold mb-0">The short CV.</h2>
+      </div>
+      <a class="btn btn-outline-secondary btn-sm rounded-pill px-3" href="#">Download full CV ↓</a>
+    </div>
+
+    @for (e of experience; track e.title) {
+      <div class="row g-3 border-top py-4">
+        <div class="col-md-3 col-lg-2">
+          <div class="font-monospace small text-primary">{{ e.period }}</div>
+          <div class="small opacity-75">{{ e.place }}</div>
+        </div>
+        <div class="col-md-9 col-lg-6">
+          <h3 class="h5 fw-semibold mb-2">{{ e.title }}</h3>
+          <p class="small mb-0">{{ e.text }}</p>
+        </div>
+      </div>
+    }
+  </div>
+</section>
+
+<!-- The room + awards -->
+<section class="border-top py-5">
+  <div class="container py-lg-4">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-5">
+        <p class="cr-eyebrow font-monospace text-uppercase text-primary mb-3">The room</p>
+        <h2 class="fs-2 fw-bold mb-3">A treated room, a calibrated screen, and no distractions.</h2>
+        <p class="small mb-4">
+          Colour decisions are only as good as the display they were made on, and mix decisions are only as good as the
+          room. Both are handled, so what you approve is what your audience sees.
+        </p>
+        <div class="row g-2">
+          @for (s of specs; track s.label) {
+            <div class="col-sm-6">
+              <div class="card h-100 p-3">
+                <div class="cr-eyebrow font-monospace text-uppercase text-primary mb-2">{{ s.label }}</div>
+                <p class="small mb-0">{{ s.text }}</p>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="col-lg-6 offset-lg-1">
+        <div class="row g-2">
+          <div class="col-12">
+            <div class="ratio ratio-16x9">
+              <div class="tile c-mid rounded-4">
+                <span class="cr-eyebrow font-monospace text-uppercase position-absolute top-0 start-0 m-3 px-2 py-1 border rounded-2 bg-body">Edit suite</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-6"><div class="ratio ratio-1x1"><div class="tile c-amber rounded-4"></div></div></div>
+          <div class="col-6"><div class="ratio ratio-1x1"><div class="tile c-teal rounded-4"></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4 border-top mt-5 pt-4">
+      @for (a of awards; track a.title) {
+        <div class="col-6 col-lg-3">
+          <div class="font-monospace small text-primary mb-2">{{ a.year }}</div>
+          <div class="fw-semibold text-body-emphasis">{{ a.title }}</div>
+          <div class="small opacity-75">{{ a.note }}</div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Principles -->
+<section class="border-top py-5">
+  <div class="container py-lg-4">
+    <p class="cr-eyebrow font-monospace text-uppercase text-primary mb-3">How I work</p>
+    <h2 class="fs-1 fw-bold col-lg-6 mb-5">Four things I will not compromise on.</h2>
+    <div class="row g-3">
+      @for (p of principles; track p.title; let i = $index) {
+        <div class="col-md-6 col-lg-3">
+          <div class="card h-100 p-4">
+            <div class="fs-2 fw-bold text-body-emphasis opacity-25 mb-3">{{ '0' + (i + 1) }}</div>
+            <h3 class="h6 fw-semibold text-body-emphasis mb-2">{{ p.title }}</h3>
+            <p class="small mb-0">{{ p.text }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Off the clock -->
+<section class="border-top py-5">
+  <div class="container py-lg-4">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-6">
+        <p class="cr-eyebrow font-monospace text-uppercase opacity-75 mb-3">Off the clock</p>
+        <h2 class="h4 fw-bold mb-3">Things that are not video</h2>
+        <p class="small col-xl-9 mb-0">
+          Long-distance running, badly. Film photography on a Pentax that jams. Cooking for people. An ongoing and
+          unresolved argument with a friend about whether the 1986 cut of a certain film is better than the original.
+        </p>
+      </div>
+      <div class="col-lg-5 offset-lg-1">
+        <div class="row g-3">
+          @for (c of offClock; track c) {
+            <div class="col-3"><div class="ratio ratio-1x1"><div class="tile rounded-3" [class]="'c-' + c"></div></div></div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

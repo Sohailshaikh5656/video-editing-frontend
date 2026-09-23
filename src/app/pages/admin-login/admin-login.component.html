@@ -1,0 +1,163 @@
+<div class="cr-login-page d-flex">
+  <!-- Left: branding panel -->
+  <div
+    class="cr-login-brand d-none d-lg-flex flex-column justify-content-between"
+  >
+    <div class="cr-brand-top d-flex align-items-center gap-2">
+      <div class="cr-brand-mark">C</div>
+      <span class="cr-brand-text"
+        >Cutroom<span class="cr-brand-accent">.</span></span
+      >
+    </div>
+
+    <div class="cr-brand-mid">
+      <p class="cr-eyebrow">ADMIN CONSOLE</p>
+      <h1>Manage every frame,<br />from one place.</h1>
+      <p class="cr-brand-sub">
+        Videos, reels, journals and testimonials — publish, edit and organize
+        your entire content library from a single dashboard.
+      </p>
+    </div>
+
+    <div class="cr-brand-bottom d-flex gap-4">
+      <div>
+        <p class="cr-stat-num">2.4k+</p>
+        <p class="cr-stat-label">Videos managed</p>
+      </div>
+      <div>
+        <p class="cr-stat-num">180+</p>
+        <p class="cr-stat-label">Journal entries</p>
+      </div>
+      <div>
+        <p class="cr-stat-num">99.9%</p>
+        <p class="cr-stat-label">Uptime</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: form panel -->
+  <div
+    class="cr-login-form-panel d-flex align-items-center justify-content-center"
+  >
+    <button
+      type="button"
+      class="cr-icon-btn cr-theme-toggle"
+      (click)="toggleTheme()"
+      aria-label="Toggle theme"
+    >
+      <i
+        class="bi"
+        [class.bi-moon-stars]="isDark()"
+        [class.bi-sun]="!isDark()"
+      ></i>
+    </button>
+
+    <div class="cr-login-card">
+      <div class="cr-brand-top d-flex d-lg-none align-items-center gap-2 mb-4">
+        <div class="cr-brand-mark">C</div>
+        <span class="cr-brand-text"
+          >Cutroom<span class="cr-brand-accent">.</span></span
+        >
+      </div>
+
+      <p class="cr-eyebrow">WELCOME BACK</p>
+      <h2>Sign in to admin</h2>
+      <p class="cr-form-sub">Enter your credentials to access the dashboard.</p>
+
+      @if (errorMsg()) {
+        <div class="cr-alert">
+          <i class="bi bi-exclamation-circle"></i>
+          <span>{{ errorMsg() }}</span>
+        </div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+        <div class="cr-field">
+          <label for="email">Email address</label>
+          <div
+            class="cr-input-wrap"
+            [class.invalid]="f['email'].invalid && f['email'].touched"
+          >
+            <i class="bi bi-envelope"></i>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              placeholder="admin@cutroom.com"
+              autocomplete="username"
+            />
+          </div>
+          @if (f["email"].invalid && f["email"].touched) {
+            <span class="cr-field-error">
+              {{
+                f["email"].errors?.["required"]
+                  ? "Email is required."
+                  : "Enter a valid email."
+              }}
+            </span>
+          }
+        </div>
+
+        <div class="cr-field">
+          <div class="d-flex justify-content-between align-items-center">
+            <label for="password">Password</label>
+            <a href="javascript:void(0)" class="cr-forgot-link"
+              >Forgot password?</a
+            >
+          </div>
+          <div
+            class="cr-input-wrap"
+            [class.invalid]="f['password'].invalid && f['password'].touched"
+          >
+            <i class="bi bi-lock"></i>
+            <input
+              id="password"
+              [type]="showPassword() ? 'text' : 'password'"
+              formControlName="password"
+              placeholder="••••••••"
+              autocomplete="current-password"
+            />
+            <button
+              type="button"
+              class="cr-field-icon-btn"
+              (click)="togglePassword()"
+              tabindex="-1"
+            >
+              <i
+                class="bi"
+                [class.bi-eye]="!showPassword()"
+                [class.bi-eye-slash]="showPassword()"
+              ></i>
+            </button>
+          </div>
+          @if (f["password"].invalid && f["password"].touched) {
+            <span class="cr-field-error"
+              >Password must be at least 6 characters.</span
+            >
+          }
+        </div>
+
+        <label class="cr-checkbox">
+          <input type="checkbox" formControlName="remember" />
+          <span class="cr-checkbox-box"><i class="bi bi-check"></i></span>
+          <span class="cr-checkbox-label">Keep me signed in</span>
+        </label>
+
+        <button type="submit" class="cr-submit-btn" [disabled]="loading()">
+          @if (loading()) {
+            <span class="cr-spinner"></span>
+            <span>Signing in…</span>
+          } @else {
+            <span>Sign in</span>
+            <i class="bi bi-arrow-right"></i>
+          }
+        </button>
+      </form>
+
+      <p class="cr-back-link">
+        <i class="bi bi-arrow-left"></i>
+        <a routerLink="/">Back to site</a>
+      </p>
+    </div>
+  </div>
+</div>

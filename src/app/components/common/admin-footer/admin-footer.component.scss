@@ -1,0 +1,28 @@
+.cr-admin-footer {
+  padding: 0.75rem 1.5rem;
+  background: color-mix(in srgb, var(--cr-bg) 92%, transparent);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--cr-border);
+}
+
+.cr-footer-text {
+  font-size: 0.78rem;
+  color: var(--cr-text-mid);
+  opacity: 0.8;
+}
+
+.cr-footer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--cr-teal);
+  background: color-mix(in srgb, var(--cr-teal) 12%, transparent);
+
+  i {
+    font-size: 0.75rem;
+  }
+}

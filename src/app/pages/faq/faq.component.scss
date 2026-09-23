@@ -1,0 +1,403 @@
+/* ───────────────────────── FAQ page ─────────────────────────
+   Tokens only (--cr-*). Sticky sidebar, search-filtered accordion.
+──────────────────────────────────────────────────────────── */
+
+:host {
+    display: block;
+    background: var(--cr-bg);
+    padding: 5rem 0;
+  }
+  
+  .cr-flare { color: var(--cr-flare); }
+  
+  %mono {
+    font-family: var(--bs-font-monospace);
+    font-size: 0.62rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--cr-text-mid);
+  }
+  
+  /* ── head ── */
+  
+  .cr-faqpage-head {
+    max-width: 42rem;
+    margin-bottom: 3rem;
+  }
+  
+  .cr-faqpage-title {
+    font-size: clamp(2rem, 4.4vw, 3.1rem);
+    font-weight: 700;
+    line-height: 1.06;
+    letter-spacing: -0.03em;
+    color: var(--cr-text-hi);
+  }
+  
+  .cr-faqpage-sub {
+    max-width: 36rem;
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: var(--cr-text-mid);
+  }
+  
+  .cr-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    max-width: 30rem;
+    padding: 0 0.9rem;
+    border: 1px solid var(--cr-border);
+    border-radius: 0.7rem;
+    background: var(--cr-band);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  
+    &:focus-within {
+      border-color: var(--cr-flare);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--cr-flare) 18%, transparent);
+    }
+  }
+  
+  .cr-search-icon {
+    flex: 0 0 auto;
+    color: var(--cr-text-mid);
+  }
+  
+  .cr-search-input {
+    flex: 1;
+    padding: 0.75rem 0.6rem;
+    border: 0;
+    background: transparent;
+    font-size: 0.82rem;
+    color: var(--cr-text-hi);
+  
+    &::placeholder {
+      color: var(--cr-text-mid);
+    }
+  
+    &:focus {
+      outline: none;
+    }
+  }
+  
+  .cr-search-clear {
+    flex: 0 0 auto;
+    padding: 0.2rem 0.4rem;
+    border: 0;
+    border-radius: 0.4rem;
+    font-size: 0.7rem;
+    color: var(--cr-text-mid);
+    background: transparent;
+  
+    &:hover {
+      color: var(--cr-text-hi);
+      background: var(--cr-surface);
+    }
+  }
+  
+  .cr-search-meta {
+    @extend %mono;
+    margin-top: 0.75rem;
+  }
+  
+  /* ── body layout ── */
+  
+  .cr-faqpage-body {
+    display: grid;
+    grid-template-columns: 15.5rem minmax(0, 1fr);
+    gap: 2.5rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid var(--cr-border);
+    margin-bottom: 3.5rem;
+  }
+  
+  /* ── sidebar ── */
+  
+  .cr-sidebar {
+    position: sticky;
+    top: 1.5rem;
+    align-self: start;
+  }
+  
+  .cr-sidebar-label {
+    @extend %mono;
+  }
+  
+  .cr-cat-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .cr-cat-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.55rem 0.7rem;
+    border: 0;
+    border-radius: 0.5rem;
+    text-align: left;
+    font-size: 0.82rem;
+    color: var(--cr-text-mid);
+    background: transparent;
+    transition: color 0.18s ease, background-color 0.18s ease;
+  
+    &:hover {
+      color: var(--cr-text-hi);
+      background: var(--cr-band);
+    }
+  
+    &.is-active {
+      color: var(--cr-text-hi);
+      background: color-mix(in srgb, var(--cr-flare) 12%, var(--cr-band));
+  
+      .cr-cat-count {
+        color: var(--cr-flare);
+      }
+    }
+  }
+  
+  .cr-cat-count {
+    @extend %mono;
+    font-size: 0.66rem;
+  }
+  
+  .cr-stuck {
+    padding: 1.1rem 1.15rem;
+    border: 1px solid var(--cr-border);
+    border-radius: 0.85rem;
+    background: var(--cr-surface);
+  }
+  
+  .cr-stuck-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--cr-text-hi);
+  }
+  
+  .cr-stuck-body {
+    font-size: 0.74rem;
+    line-height: 1.6;
+    color: var(--cr-text-mid);
+  }
+  
+  .cr-stuck-link {
+    display: block;
+    text-align: center;
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: var(--cr-flare);
+    text-decoration: none;
+  
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  
+  /* ── categories ── */
+  
+  .cr-content {
+    min-width: 0;
+  }
+  
+  .cr-cat-section {
+    padding-bottom: 2.75rem;
+    scroll-margin-top: 1.5rem;
+  }
+  
+  .cr-cat-heading {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+  
+    h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--cr-text-hi);
+    }
+  }
+  
+  .cr-cat-index {
+    @extend %mono;
+    color: var(--cr-flare);
+  }
+  
+  /* accordion */
+
+.cr-faq-list {
+    border-top: 1px solid var(--cr-border);
+  }
+  
+  .cr-faq-item {
+    border-bottom: 1px solid var(--cr-border);
+  }
+  
+  .cr-faq-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+    padding: 1rem 0;
+    border: 0;
+    background: transparent;
+    text-align: left;
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: var(--cr-text-hi);
+    transition: color 0.18s ease;
+  
+    &:hover {
+      color: var(--cr-flare);
+    }
+  }
+  
+  .cr-faq-item.is-open .cr-faq-trigger {
+    color: var(--cr-flare);
+  }
+  
+  .cr-faq-icon {
+    position: relative;
+    flex: 0 0 auto;
+    width: 16px;
+    height: 16px;
+  
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      background: var(--cr-flare);
+      transform: translate(-50%, -50%);
+      transition: transform 0.25s ease;
+    }
+  
+    &::before { width: 12px; height: 2px; }
+    &::after { width: 2px; height: 12px; }
+  }
+  
+  .cr-faq-item.is-open .cr-faq-icon::after {
+    transform: translate(-50%, -50%) rotate(90deg) scaleY(0);
+  }
+  
+  .cr-faq-answer {
+    max-width: 42rem;
+    padding-bottom: 1.15rem;
+    font-size: 0.82rem;
+    line-height: 1.7;
+    color: var(--cr-text-mid);
+  }
+  
+  @keyframes cr-fade-open {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .cr-anim-open {
+    animation: cr-fade-open 0.2s ease both;
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    .cr-anim-open {
+      animation: none;
+    }
+  }  
+  /* empty state */
+  
+  .cr-empty {
+    padding: 2.5rem 0;
+    text-align: center;
+  }
+  
+  .cr-empty-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--cr-text-hi);
+  }
+  
+  .cr-empty-body {
+    font-size: 0.8rem;
+    color: var(--cr-text-mid);
+  }
+  
+  /* ── contact cards ── */
+  
+  .cr-contact-cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.85rem;
+    padding-top: 3rem;
+    border-top: 1px solid var(--cr-border);
+  }
+  
+  .cr-contact-card {
+    padding: 1.35rem 1.4rem;
+    border: 1px solid var(--cr-border);
+    border-radius: 0.9rem;
+    background: var(--cr-surface);
+    transition: transform 0.22s ease, border-color 0.22s ease;
+  
+    &:hover {
+      transform: translateY(-3px);
+      border-color: var(--cr-border-strong);
+    }
+  
+    &.is-primary {
+      border-color: color-mix(in srgb, var(--cr-flare) 45%, var(--cr-border));
+      background: linear-gradient(180deg, color-mix(in srgb, var(--cr-flare) 8%, var(--cr-surface)), var(--cr-surface) 60%);
+    }
+  }
+  
+  .cr-contact-eyebrow {
+    @extend %mono;
+    color: var(--cr-flare);
+  }
+  
+  .cr-contact-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--cr-text-hi);
+  }
+  
+  .cr-contact-body {
+    font-size: 0.78rem;
+    line-height: 1.6;
+    color: var(--cr-text-mid);
+  }
+  
+  /* ── responsive ── */
+  
+  @media (max-width: 991.98px) {
+    .cr-faqpage-body {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  
+    .cr-sidebar {
+      position: static;
+    }
+  
+    .cr-cat-nav {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+  
+    .cr-cat-link {
+      flex: 0 0 auto;
+    }
+  
+    .cr-contact-cards {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    .cr-faq-collapse,
+    .cr-faq-icon::after,
+    .cr-contact-card {
+      transition: none;
+    }
+  }
