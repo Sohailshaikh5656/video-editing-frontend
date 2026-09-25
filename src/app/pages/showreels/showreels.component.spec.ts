@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ShowreelsComponent } from './showreels.component';
+import { ShowreelComponent } from './showreels.component';
 
-describe('ShowreelsComponent', () => {
-  let component: ShowreelsComponent;
-  let fixture: ComponentFixture<ShowreelsComponent>;
+describe('ShowreelComponent', () => {
+  let component: ShowreelComponent;
+  let fixture: ComponentFixture<ShowreelComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ShowreelsComponent]
+      imports: [ShowreelComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(ShowreelsComponent);
+    fixture = TestBed.createComponent(ShowreelComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

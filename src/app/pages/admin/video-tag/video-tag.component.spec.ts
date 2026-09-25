@@ -1,18 +1,21 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
-import { VideoTagComponent } from './video-tag.component';
+import { VideoTagsComponent } from './video-tag.component';
 
-describe('VideoTagComponent', () => {
-  let component: VideoTagComponent;
-  let fixture: ComponentFixture<VideoTagComponent>;
+describe('VideoTagsComponent', () => {
+  let component: VideoTagsComponent;
+  let fixture: ComponentFixture<VideoTagsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [VideoTagComponent]
+      imports: [VideoTagsComponent],
+      providers: [provideHttpClient(), provideHttpClientTesting()],
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(VideoTagComponent);
+    fixture = TestBed.createComponent(VideoTagsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

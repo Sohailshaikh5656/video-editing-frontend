@@ -1,0 +1,213 @@
+<div class="cr-page">
+  <!-- Header -->
+  @if (showHeader) {
+    <div
+      class="cr-page-header d-flex align-items-center justify-content-between flex-wrap gap-3"
+    >
+      <div>
+        <h2>{{ headerTitle() }}</h2>
+        <p class="cr-page-sub">{{ headerSubtitle() }}</p>
+      </div>
+    </div>
+  }
+
+  <div class="cr-upload-card">
+    @if (!selectedFile()) {
+      <!-- Dropzone -->
+      <label
+        class="cr-dropzone"
+        [class.is-dragging]="isDragging()"
+        (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave($event)"
+        (drop)="onDrop($event)"
+      >
+        <input
+          type="file"
+          class="visually-hidden"
+          [accept]="acceptAttribute()"
+          (change)="onFileSelected($event)"
+        />
+        <i class="bi bi-cloud-arrow-up cr-dropzone-icon"></i>
+        <p class="cr-dropzone-title">Drag &amp; drop your file here</p>
+        <p class="cr-dropzone-hint">
+          or click to browse — {{ formatsLabel() }}.<br />
+          {{ sizeLimitLabel() }}
+        </p>
+      </label>
+    } @else {
+      <div class="cr-upload-body d-flex flex-column flex-lg-row gap-4">
+        <!-- Preview -->
+        <div class="cr-preview">
+          <div class="cr-preview-frame">
+            @if (fileType() === "video") {
+              <app-cr-player
+                [src]="previewSrc()"
+                [poster]="result()?.thumbnailUrl ?? ''"
+                label="Video preview"
+              />
+            } @else {
+              <img
+                [src]="previewSrc()"
+                [alt]="selectedFile()?.name ?? 'Selected file'"
+              />
+            }
+          </div>
+          <span class="cr-preview-kind">
+            <i
+              class="bi"
+              [class]="fileType() === 'video' ? 'bi-film' : 'bi-image'"
+            ></i>
+            {{ fileTypeLabel() }} preview
+          </span>
+        </div>
+
+        <!-- Details + actions -->
+        <div class="cr-upload-details flex-grow-1">
+          <dl class="cr-file-meta">
+            <div class="cr-meta-row">
+              <dt>File name</dt>
+              <dd>{{ selectedFile()?.name }}</dd>
+            </div>
+            <div class="cr-meta-row">
+              <dt>Extension</dt>
+              <dd>{{ fileExtension() ? "." + fileExtension() : "—" }}</dd>
+            </div>
+            <div class="cr-meta-row">
+              <dt>Type</dt>
+              <dd>
+                {{ selectedFile()?.type || "unknown" }} · {{ fileTypeLabel() }}
+              </dd>
+            </div>
+            <div class="cr-meta-row">
+              <dt>Size</dt>
+              <dd>{{ fileSizeLabel() }}</dd>
+            </div>
+          </dl>
+
+          <!-- Upload status / progress -->
+          @if (status() !== "idle") {
+            <div
+              class="cr-upload-status"
+              [class.is-success]="status() === 'success'"
+              [class.is-error]="status() === 'error'"
+            >
+              <p class="cr-status-line">
+                @if (status() === "uploading") {
+                  <span class="cr-spinner-sm"></span>
+                  <span>Uploading… {{ progress() }}%</span>
+                } @else if (status() === "success") {
+                  <i class="bi bi-check-circle"></i>
+                  <span>Upload complete</span>
+                } @else {
+                  <i class="bi bi-exclamation-circle"></i>
+                  <span>Upload failed</span>
+                }
+              </p>
+              <div
+                class="cr-progress"
+                role="progressbar"
+                [attr.aria-valuenow]="progress()"
+                aria-valuemin="0"
+                aria-valuemax="100"
+              >
+                <span
+                  class="cr-progress-fill"
+                  [style.width.%]="progress()"
+                ></span>
+              </div>
+            </div>
+          }
+
+          <!-- Uploaded file URL -->
+          @if (result()) {
+            <div class="cr-uploaded-url">
+              <p class="cr-uploaded-label">
+                <i class="bi bi-link-45deg"></i>
+                Uploaded file URL
+              </p>
+              <div class="cr-url-row">
+                <input type="text" readonly [value]="result()!.url" />
+                <button
+                  type="button"
+                  class="cr-btn-secondary"
+                  (click)="copyUrl()"
+                >
+                  <i
+                    class="bi"
+                    [class]="copied() ? 'bi-clipboard-check' : 'bi-clipboard'"
+                  ></i>
+                  {{ copied() ? "Copied" : "Copy" }}
+                </button>
+                <a
+                  class="cr-btn-secondary cr-btn-link"
+                  [href]="result()!.url"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <i class="bi bi-box-arrow-up-right"></i>
+                  Open
+                </a>
+              </div>
+              @if (result()!.thumbnailUrl) {
+                <div class="cr-thumb-row">
+                  <span class="cr-thumb-label">Thumbnail</span>
+                  <img
+                    class="cr-thumb"
+                    [src]="result()!.thumbnailUrl"
+                    alt="Uploaded file thumbnail"
+                  />
+                </div>
+              }
+            </div>
+          }
+
+          <!-- Actions -->
+          <div class="cr-upload-actions d-flex flex-wrap gap-2">
+            @if (status() !== "success") {
+              <button
+                type="button"
+                class="cr-btn-primary"
+                [disabled]="!canUpload()"
+                (click)="upload()"
+              >
+                @if (status() === "uploading") {
+                  <span class="cr-spinner-sm"></span>
+                  Uploading…
+                } @else {
+                  <i class="bi bi-cloud-arrow-up"></i>
+                  {{ status() === "error" ? "Retry upload" : "Upload" }}
+                }
+              </button>
+            }
+            <label class="cr-btn-secondary cr-btn-file">
+              <input
+                type="file"
+                class="visually-hidden"
+                [accept]="acceptAttribute()"
+                (change)="onFileSelected($event)"
+              />
+              <i class="bi bi-arrow-repeat"></i>
+              Choose another file
+            </label>
+            <button
+              type="button"
+              class="cr-btn-danger"
+              [disabled]="status() === 'uploading'"
+              (click)="remove()"
+            >
+              <i class="bi bi-x-lg"></i>
+              Remove
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (errorMsg()) {
+    <div class="cr-alert">
+      <i class="bi bi-exclamation-circle"></i>
+      <span>{{ errorMsg() }}</span>
+    </div>
+  }
+</div>

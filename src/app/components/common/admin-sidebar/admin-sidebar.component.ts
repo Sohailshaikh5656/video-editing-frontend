@@ -29,13 +29,19 @@ export class AdminSidebarComponent {
           id: 'video-tags',
           label: 'Video Tags',
           icon: 'bi-tags',
-          link: '/admin/video-tags',
+          link: '/admin/videoTags',
         },
         {
           id: 'videos',
           label: 'Videos',
           icon: 'bi-film',
           link: '/admin/videos',
+        },
+        {
+          id: 'upload-file',
+          label: 'Upload File',
+          icon: 'bi-cloud-arrow-up',
+          link: '/admin/upload-file',
         },
       ],
     },
@@ -46,7 +52,7 @@ export class AdminSidebarComponent {
           id: 'reels-genre',
           label: 'Reels Genre',
           icon: 'bi-camera-reels',
-          link: '/admin/reels-genre',
+          link: '/admin/reelsGenre',
         },
         {
           id: 'reels',
@@ -63,7 +69,7 @@ export class AdminSidebarComponent {
           id: 'journal-category',
           label: 'Journal Category',
           icon: 'bi-bookmark',
-          link: '/admin/journal-category',
+          link: '/admin/journalGenre',
         },
         {
           id: 'journal',
@@ -74,7 +80,7 @@ export class AdminSidebarComponent {
       ],
     },
     {
-      heading: 'Site Content',
+      heading: 'Process',
       items: [
         {
           id: 'process',
@@ -82,6 +88,11 @@ export class AdminSidebarComponent {
           icon: 'bi-diagram-3',
           link: '/admin/process',
         },
+      ],
+    },
+    {
+      heading: 'Testimonials',
+      items: [
         {
           id: 'testimonials',
           label: 'Testimonials',

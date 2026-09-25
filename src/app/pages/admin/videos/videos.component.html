@@ -1,0 +1,606 @@
+<div class="cr-page">
+  <!-- Header -->
+  <div
+    class="cr-page-header d-flex align-items-center justify-content-between flex-wrap gap-3"
+  >
+    <div>
+      <h2>Videos</h2>
+      <p class="cr-page-sub">Upload and manage the videos on your site.</p>
+    </div>
+    <button type="button" class="cr-btn-primary" (click)="openAddModal()">
+      <i class="bi bi-plus-lg"></i>
+      Add Video
+    </button>
+  </div>
+
+  <!-- Search -->
+  <div class="cr-search-bar">
+    <i class="bi bi-search"></i>
+    <input
+      type="text"
+      placeholder="Search by title…"
+      [ngModel]="searchTerm"
+      (ngModelChange)="onSearchInput($event)"
+    />
+    @if (searchTerm) {
+      <button type="button" class="cr-search-clear" (click)="clearSearch()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    }
+  </div>
+
+  @if (errorMsg()) {
+    <div class="cr-alert">
+      <i class="bi bi-exclamation-circle"></i>
+      <span>{{ errorMsg() }}</span>
+    </div>
+  }
+
+  <!-- Table -->
+  <div class="cr-table-wrap">
+    <div class="cr-table-scroll">
+      <table class="cr-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Video</th>
+            <th>Tags</th>
+            <th>Views</th>
+            <th>Status</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (loading()) {
+            <tr>
+              <td colspan="6" class="cr-table-state">
+                <span class="cr-spinner"></span> Loading videos…
+              </td>
+            </tr>
+          } @else if (paginatedVideos().length === 0) {
+            <tr>
+              <td colspan="6" class="cr-table-state">
+                <i class="bi bi-camera-video"></i>
+                <span>{{
+                  searchTerm
+                    ? "No videos match your search."
+                    : "No videos added yet."
+                }}</span>
+              </td>
+            </tr>
+          } @else {
+            @for (video of paginatedVideos(); track video.id; let i = $index) {
+              <tr>
+                <td class="cr-text-mid">
+                  {{ (currentPage() - 1) * pageSize + i + 1 }}
+                </td>
+                <td>
+                  <div class="cr-video-cell">
+                    <button
+                      type="button"
+                      class="cr-video-thumb"
+                      (click)="openView(video)"
+                      aria-label="Play video"
+                    >
+                      @if (video.thumbnail_url) {
+                        <img
+                          [src]="video.thumbnail_url"
+                          [alt]="video.title"
+                          (error)="$any($event.target).style.display = 'none'"
+                        />
+                      }
+                      <i class="bi bi-film cr-thumb-fallback"></i>
+                      <span class="cr-thumb-play"
+                        ><i class="bi bi-play-fill"></i
+                      ></span>
+                    </button>
+                    <div class="cr-video-info">
+                      <span class="cr-video-title">{{ video.title }}</span>
+                      @if (video.name) {
+                        <span class="cr-video-sub">{{ video.name }}</span>
+                      }
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="cr-chip-list">
+                    @for (tag of video.category; track $index) {
+                      <span class="cr-chip">{{ tag }}</span>
+                    } @empty {
+                      <span class="cr-text-mid">—</span>
+                    }
+                  </div>
+                </td>
+                <td class="cr-text-mid">{{ video.views || 0 | number }}</td>
+                <td>
+                  <div class="cr-badge-list">
+                    <span
+                      class="cr-badge"
+                      [class.is-on]="video.is_active"
+                      [class.is-off]="!video.is_active"
+                    >
+                      {{ video.is_active ? "Active" : "Inactive" }}
+                    </span>
+                    @if (video.is_home_screen) {
+                      <span class="cr-badge is-home">
+                        <i class="bi bi-house-door"></i> Home
+                      </span>
+                    }
+                  </div>
+                </td>
+                <td class="text-end cr-actions-cell">
+                  <button
+                    type="button"
+                    class="cr-icon-action"
+                    (click)="openView(video)"
+                    aria-label="View"
+                    title="View"
+                  >
+                    <i class="bi bi-eye"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="cr-icon-action"
+                    (click)="openEditModal(video)"
+                    aria-label="Edit"
+                    title="Edit"
+                  >
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="cr-icon-action cr-icon-action-danger"
+                    (click)="confirmDelete(video.id)"
+                    aria-label="Delete"
+                    title="Delete"
+                  >
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  @if (!loading() && allVideos().length > 0) {
+    <div
+      class="cr-pagination d-flex align-items-center justify-content-between flex-wrap gap-2"
+    >
+      <span class="cr-page-info">
+        Showing {{ (currentPage() - 1) * pageSize + 1 }}–{{
+          Math.min(currentPage() * pageSize, allVideos().length)
+        }}
+        of {{ allVideos().length }} videos
+      </span>
+      <div class="d-flex align-items-center gap-1">
+        <button
+          type="button"
+          class="cr-page-btn"
+          [disabled]="currentPage() === 1"
+          (click)="goToPage(currentPage() - 1)"
+        >
+          <i class="bi bi-chevron-left"></i>
+        </button>
+        @for (page of [].constructor(totalPages()); track i; let i = $index) {
+          <button
+            type="button"
+            class="cr-page-btn"
+            [class.active]="currentPage() === i + 1"
+            (click)="goToPage(i + 1)"
+          >
+            {{ i + 1 }}
+          </button>
+        }
+        <button
+          type="button"
+          class="cr-page-btn"
+          [disabled]="currentPage() === totalPages()"
+          (click)="goToPage(currentPage() + 1)"
+        >
+          <i class="bi bi-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  }
+</div>
+
+<!-- ═════════════ View Modal ═════════════ -->
+@if (viewTarget(); as v) {
+  <div class="cr-modal-backdrop" (click)="closeView()">
+    <div class="cr-modal cr-modal-view" (click)="$event.stopPropagation()">
+      <button
+        type="button"
+        class="cr-modal-close"
+        (click)="closeView()"
+        aria-label="Close"
+      >
+        <i class="bi bi-x-lg"></i>
+      </button>
+
+      <div class="cr-view-player">
+        <video
+          controls
+          preload="metadata"
+          [src]="v.vedio_url"
+          [poster]="v.thumbnail_url"
+        ></video>
+      </div>
+
+      <div class="cr-modal-body">
+        <div class="cr-view-head">
+          <div class="cr-view-titles">
+            <h3>{{ v.title }}</h3>
+            @if (v.name) {
+              <p class="cr-page-sub">
+                <i class="bi bi-person"></i> {{ v.name }}
+              </p>
+            }
+          </div>
+          <div class="cr-badge-list">
+            <span
+              class="cr-badge"
+              [class.is-on]="v.is_active"
+              [class.is-off]="!v.is_active"
+            >
+              {{ v.is_active ? "Active" : "Inactive" }}
+            </span>
+            @if (v.is_home_screen) {
+              <span class="cr-badge is-home">
+                <i class="bi bi-house-door"></i> On home screen
+              </span>
+            }
+          </div>
+        </div>
+
+        <div class="cr-stat-grid">
+          <div class="cr-stat">
+            <i class="bi bi-eye"></i>
+            <div>
+              <span class="cr-stat-value">{{ v.views || 0 | number }}</span>
+              <span class="cr-stat-label">Views</span>
+            </div>
+          </div>
+          <div class="cr-stat">
+            <i class="bi bi-scissors"></i>
+            <div>
+              <span class="cr-stat-value">{{ v.cuts || 0 | number }}</span>
+              <span class="cr-stat-label">Cuts</span>
+            </div>
+          </div>
+          <div class="cr-stat">
+            <i class="bi bi-calendar-plus"></i>
+            <div>
+              <span class="cr-stat-value">{{
+                v.created_at | date: "mediumDate"
+              }}</span>
+              <span class="cr-stat-label">Created</span>
+            </div>
+          </div>
+          <div class="cr-stat">
+            <i class="bi bi-clock-history"></i>
+            <div>
+              <span class="cr-stat-value">{{
+                v.updated_at | date: "mediumDate"
+              }}</span>
+              <span class="cr-stat-label">Updated</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cr-view-section">
+          <h4>Description</h4>
+          <p class="cr-view-desc">
+            {{ v.description || "No description provided." }}
+          </p>
+        </div>
+
+        <div class="cr-view-section">
+          <h4>Tags</h4>
+          <div class="cr-chip-list">
+            @for (tag of v.category; track $index) {
+              <span class="cr-chip">{{ tag }}</span>
+            } @empty {
+              <span class="cr-text-mid">No tags</span>
+            }
+          </div>
+        </div>
+
+        <div class="cr-view-section">
+          <h4>Links</h4>
+          <div class="cr-link-row">
+            <span class="cr-link-label">Video</span>
+            <span class="cr-link-value">{{ v.vedio_url }}</span>
+            <a
+              class="cr-icon-action"
+              [href]="v.vedio_url"
+              target="_blank"
+              rel="noopener"
+              aria-label="Open video in new tab"
+            >
+              <i class="bi bi-box-arrow-up-right"></i>
+            </a>
+          </div>
+          <div class="cr-link-row">
+            <span class="cr-link-label">Thumbnail</span>
+            <span class="cr-link-value">{{ v.thumbnail_url || "—" }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cr-modal-actions">
+        <button type="button" class="cr-btn-secondary" (click)="closeView()">
+          Close
+        </button>
+        <button type="button" class="cr-btn-primary" (click)="editFromView(v)">
+          <i class="bi bi-pencil"></i>
+          Edit Video
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ═════════════ Add / Edit Modal ═════════════ -->
+@if (modalOpen()) {
+  <div class="cr-modal-backdrop" (click)="closeModal()">
+    <div class="cr-modal cr-modal-lg" (click)="$event.stopPropagation()">
+      <div class="cr-modal-head">
+        <div>
+          <h3>{{ modalMode() === "edit" ? "Edit Video" : "Add Video" }}</h3>
+          <p class="cr-page-sub">
+            {{
+              modalMode() === "edit"
+                ? "Update the details of this video."
+                : "Upload a video and fill in its details."
+            }}
+          </p>
+        </div>
+        <button
+          type="button"
+          class="cr-icon-action cr-no-margin"
+          (click)="closeModal()"
+          aria-label="Close"
+        >
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <div class="cr-modal-body">
+        <!-- 1 · Media -->
+        <section class="cr-form-section">
+          <h4 class="cr-section-title"><span class="cr-step">1</span> Media</h4>
+
+          @if (formVideoUrl && modalMode() === "edit") {
+            <div class="cr-current-video">
+              <video
+                controls
+                preload="metadata"
+                [src]="formVideoUrl"
+                [poster]="formThumbnailUrl"
+              ></video>
+              <span class="cr-hint">
+                Current video. Upload a new file below to replace it.
+              </span>
+            </div>
+          }
+
+          <div class="cr-field">
+            <label>
+              {{ modalMode() === "edit" ? "Replace video file" : "Video file" }}
+            </label>
+            <app-upload-file-controller
+              [showHeader]="false"
+              [allowedTypes]="videoTypes"
+              (uploaded)="onVideoUploaded($event)"
+            />
+          </div>
+
+          <div class="cr-field">
+            <label for="videoUrl">
+              Video URL <span class="cr-req">*</span>
+            </label>
+            <input
+              id="videoUrl"
+              type="text"
+              [(ngModel)]="formVideoUrl"
+              placeholder="Filled automatically after upload"
+            />
+          </div>
+        </section>
+
+        <!-- 2 · Details -->
+        <section class="cr-form-section">
+          <h4 class="cr-section-title">
+            <span class="cr-step">2</span> Details
+          </h4>
+
+          <div class="cr-field-grid">
+            <div class="cr-field">
+              <label for="videoTitle">
+                Title <span class="cr-req">*</span>
+              </label>
+              <input
+                id="videoTitle"
+                type="text"
+                [(ngModel)]="formTitle"
+                placeholder="e.g. Behind the scenes"
+              />
+            </div>
+            <div class="cr-field">
+              <label for="videoName">Creator / Name</label>
+              <input
+                id="videoName"
+                type="text"
+                [(ngModel)]="formName"
+                placeholder="e.g. Testing Developer"
+              />
+            </div>
+          </div>
+
+          <div class="cr-field">
+            <label for="videoDesc">Description</label>
+            <textarea
+              id="videoDesc"
+              rows="4"
+              [(ngModel)]="formDescription"
+              placeholder="What is this video about?"
+            ></textarea>
+          </div>
+
+          <div class="cr-field cr-field-narrow">
+            <label for="videoViews">Views</label>
+            <input
+              id="videoViews"
+              type="number"
+              min="0"
+              [(ngModel)]="formViews"
+            />
+          </div>
+        </section>
+
+        <!-- 3 · Thumbnail -->
+        <section class="cr-form-section">
+          <h4 class="cr-section-title">
+            <span class="cr-step">3</span> Thumbnail
+            <span class="cr-opt">optional</span>
+          </h4>
+
+          <div class="cr-thumb-block">
+            <div class="cr-thumb-preview">
+              @if (formThumbnailUrl) {
+                <img
+                  [src]="formThumbnailUrl"
+                  alt="Thumbnail preview"
+                  (error)="$any($event.target).style.display = 'none'"
+                />
+              }
+              <div class="cr-thumb-empty">
+                <i class="bi bi-image"></i>
+                <span>No thumbnail</span>
+              </div>
+            </div>
+
+            <div class="cr-thumb-fields">
+              <div class="cr-field">
+                <label for="thumbUrl">Thumbnail URL</label>
+                <input
+                  id="thumbUrl"
+                  type="text"
+                  [ngModel]="formThumbnailUrl"
+                  (ngModelChange)="onThumbnailUrlEdited($event)"
+                  placeholder="Auto-filled from the video, or paste a URL"
+                />
+              </div>
+
+              <button
+                type="button"
+                class="cr-link-btn"
+                (click)="toggleThumbnailUpload()"
+              >
+                <i
+                  class="bi"
+                  [class]="
+                    thumbnailUploadOpen() ? 'bi-chevron-up' : 'bi-upload'
+                  "
+                ></i>
+                {{
+                  thumbnailUploadOpen()
+                    ? "Hide thumbnail upload"
+                    : "Upload a custom thumbnail"
+                }}
+              </button>
+            </div>
+          </div>
+
+          @if (thumbnailUploadOpen()) {
+            <div class="cr-thumb-upload">
+              <app-upload-file-controller
+                [showHeader]="false"
+                [allowedTypes]="imageTypes"
+                (uploaded)="onThumbnailUploaded($event)"
+              />
+            </div>
+          }
+        </section>
+
+        <!-- 4 · Tags -->
+        <section class="cr-form-section">
+          <h4 class="cr-section-title">
+            <span class="cr-step">4</span> Tags
+            <span class="cr-opt">{{ selectedTagIds().length }} selected</span>
+          </h4>
+          <div class="cr-chip-list">
+            @for (tag of allTags(); track tag.id) {
+              <button
+                type="button"
+                class="cr-chip cr-chip-select"
+                [class.is-selected]="selectedTagIds().includes(tag.id)"
+                (click)="toggleTag(tag.id)"
+              >
+                @if (selectedTagIds().includes(tag.id)) {
+                  <i class="bi bi-check2"></i>
+                }
+                {{ tag.tags }}
+              </button>
+            } @empty {
+              <span class="cr-page-sub">
+                No tags available. Create some in Video Tags first.
+              </span>
+            }
+          </div>
+        </section>
+      </div>
+
+      <div class="cr-modal-actions">
+        <button type="button" class="cr-btn-secondary" (click)="closeModal()">
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="cr-btn-primary"
+          [disabled]="!canSave() || saving()"
+          (click)="saveVideo()"
+        >
+          @if (saving()) {
+            <span class="cr-spinner-sm"></span>
+          }
+          {{ modalMode() === "edit" ? "Save Changes" : "Add Video" }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ═════════════ Delete Confirm Modal ═════════════ -->
+@if (deleteTargetId !== null) {
+  <div class="cr-modal-backdrop" (click)="cancelDelete()">
+    <div class="cr-modal cr-modal-sm" (click)="$event.stopPropagation()">
+      <div class="cr-modal-icon-danger">
+        <i class="bi bi-exclamation-triangle"></i>
+      </div>
+      <h3>Delete this video?</h3>
+      <p class="cr-page-sub">This action cannot be undone.</p>
+
+      <div class="cr-modal-actions">
+        <button type="button" class="cr-btn-secondary" (click)="cancelDelete()">
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="cr-btn-danger"
+          [disabled]="deleting()"
+          (click)="deleteVideo()"
+        >
+          @if (deleting()) {
+            <span class="cr-spinner-sm"></span>
+          }
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+}

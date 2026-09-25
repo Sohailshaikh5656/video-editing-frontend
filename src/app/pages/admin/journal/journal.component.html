@@ -1,0 +1,344 @@
+<div class="cr-page">
+  <!-- Header -->
+  <div
+    class="cr-page-header d-flex align-items-center justify-content-between flex-wrap gap-3"
+  >
+    <div>
+      <h2>Journals</h2>
+      <p class="cr-page-sub">Manage journal entries shown to users.</p>
+    </div>
+    <button type="button" class="cr-btn-primary" (click)="openAddModal()">
+      <i class="bi bi-plus-lg"></i>
+      Add Journal
+    </button>
+  </div>
+
+  <!-- Search -->
+  <div class="cr-search-bar">
+    <i class="bi bi-search"></i>
+    <input
+      type="text"
+      placeholder="Search by title…"
+      [ngModel]="searchTerm"
+      (ngModelChange)="onSearchInput($event)"
+    />
+    @if (searchTerm) {
+      <button type="button" class="cr-search-clear" (click)="clearSearch()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    }
+  </div>
+
+  @if (errorMsg()) {
+    <div class="cr-alert">
+      <i class="bi bi-exclamation-circle"></i>
+      <span>{{ errorMsg() }}</span>
+    </div>
+  }
+
+  <!-- Table -->
+  <div class="cr-table-wrap">
+    <table class="cr-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Image</th>
+          <th>Title</th>
+          <th>Category</th>
+          <th>Duration</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (loading()) {
+          <tr>
+            <td colspan="6" class="cr-table-state">
+              <span class="cr-spinner"></span> Loading journals…
+            </td>
+          </tr>
+        } @else if (paginatedJournals().length === 0) {
+          <tr>
+            <td colspan="6" class="cr-table-state">
+              <i class="bi bi-journal-text"></i>
+              <span>{{
+                searchTerm
+                  ? "No journals match your search."
+                  : "No journals added yet."
+              }}</span>
+            </td>
+          </tr>
+        } @else {
+          @for (
+            journal of paginatedJournals();
+            track journal.id;
+            let i = $index
+          ) {
+            <tr>
+              <td class="cr-text-mid">
+                {{ (currentPage() - 1) * pageSize + i + 1 }}
+              </td>
+              <td>
+                <img
+                  class="cr-journal-thumb"
+                  [src]="journal.image_url"
+                  [alt]="journal.title"
+                  onerror="this.style.visibility = 'hidden'"
+                />
+              </td>
+              <td class="cr-journal-title">{{ journal.title }}</td>
+              <td class="cr-text-mid">
+                {{ journal.category_name || categoryName(journal.category_id) }}
+              </td>
+              <td class="cr-text-mid">
+                {{ journal.time }} {{ journal.time_type }}
+              </td>
+              <td class="text-end">
+                <button
+                  type="button"
+                  class="cr-icon-action"
+                  (click)="openEditModal(journal)"
+                  aria-label="Edit"
+                  title="Edit"
+                >
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button
+                  type="button"
+                  class="cr-icon-action cr-icon-action-danger"
+                  (click)="confirmDelete(journal.id)"
+                  aria-label="Delete"
+                  title="Delete"
+                >
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  @if (!loading() && allJournals().length > 0) {
+    <div
+      class="cr-pagination d-flex align-items-center justify-content-between flex-wrap gap-2"
+    >
+      <span class="cr-page-info">
+        Showing {{ (currentPage() - 1) * pageSize + 1 }}–{{
+          Math.min(currentPage() * pageSize, allJournals().length)
+        }}
+        of {{ allJournals().length }} journals
+      </span>
+      <div class="d-flex align-items-center gap-1">
+        <button
+          type="button"
+          class="cr-page-btn"
+          [disabled]="currentPage() === 1"
+          (click)="goToPage(currentPage() - 1)"
+        >
+          <i class="bi bi-chevron-left"></i>
+        </button>
+        @for (page of [].constructor(totalPages()); track i; let i = $index) {
+          <button
+            type="button"
+            class="cr-page-btn"
+            [class.active]="currentPage() === i + 1"
+            (click)="goToPage(i + 1)"
+          >
+            {{ i + 1 }}
+          </button>
+        }
+        <button
+          type="button"
+          class="cr-page-btn"
+          [disabled]="currentPage() === totalPages()"
+          (click)="goToPage(currentPage() + 1)"
+        >
+          <i class="bi bi-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  }
+</div>
+
+<!-- Add/Edit Modal -->
+@if (modalOpen()) {
+  <div class="cr-modal-backdrop" (click)="closeModal()">
+    <div class="cr-modal cr-modal-lg" (click)="$event.stopPropagation()">
+      <h3>{{ modalMode() === "edit" ? "Edit Journal" : "Add Journal" }}</h3>
+
+      <!-- Media — fixed-size box so picking/replacing a file never resizes the modal -->
+      <div class="cr-form-section">
+        <div class="cr-form-section-label">
+          <i class="bi bi-image"></i> Thumbnail
+        </div>
+
+        <div class="cr-image-upload">
+          <div class="cr-image-preview">
+            @if (formImageUrl.trim()) {
+              <img
+                [src]="formImageUrl"
+                alt="Journal thumbnail"
+                onerror="this.style.visibility = 'hidden'"
+              />
+            } @else {
+              <div class="cr-image-placeholder">
+                <i class="bi bi-image"></i>
+                <span>No image</span>
+              </div>
+            }
+          </div>
+
+          <div class="cr-image-upload-control">
+            <app-upload-file-controller
+              [showHeader]="false"
+              [allowedTypes]="['image']"
+              (uploaded)="onImageUploaded($event)"
+            />
+            <span class="cr-field-hint">
+              {{
+                formImageUrl.trim()
+                  ? "Upload a new file to replace the current image."
+                  : "PNG or JPG, shown as the card thumbnail."
+              }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Details -->
+      <div class="cr-form-section">
+        <div class="cr-form-section-label">
+          <i class="bi bi-card-text"></i> Details
+        </div>
+
+        <div class="cr-field">
+          <label for="title">Title</label>
+          <input
+            id="title"
+            type="text"
+            [(ngModel)]="formTitle"
+            placeholder="e.g. Morning breathing exercise"
+          />
+        </div>
+
+        <div class="cr-field-row">
+          <div class="cr-field">
+            <label for="categoryId">Category</label>
+            <select id="categoryId" [(ngModel)]="formCategoryId">
+              <option [ngValue]="null" disabled>Select a category…</option>
+              @for (cat of categories(); track cat.id) {
+                <option [ngValue]="cat.id">{{ cat.name }}</option>
+              }
+            </select>
+          </div>
+          <div class="cr-field-row cr-field-row-nested">
+            <div class="cr-field">
+              <label for="time">Time</label>
+              <input
+                id="time"
+                type="text"
+                inputmode="numeric"
+                [(ngModel)]="formTime"
+                placeholder="e.g. 6"
+              />
+            </div>
+            <div class="cr-field">
+              <label for="timeType">Unit</label>
+              <select id="timeType" [(ngModel)]="formTimeType">
+                @for (opt of timeTypeOptions; track opt) {
+                  <option [ngValue]="opt">{{ opt }}</option>
+                }
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="cr-form-section">
+        <div class="cr-form-section-label">
+          <i class="bi bi-file-text"></i> Content
+        </div>
+
+        <div class="cr-field">
+          <label for="description">Description</label>
+          <textarea
+            id="description"
+            rows="2"
+            [(ngModel)]="formDescription"
+            placeholder="Short summary shown in listings…"
+          ></textarea>
+        </div>
+
+        <div class="cr-field cr-field-last">
+          <label for="text">Full text</label>
+          <textarea
+            id="text"
+            rows="5"
+            [(ngModel)]="formText"
+            placeholder="Full journal content…"
+          ></textarea>
+        </div>
+      </div>
+
+      @if (formError()) {
+        <div class="cr-alert cr-alert-inline">
+          <i class="bi bi-exclamation-circle"></i>
+          <span>{{ formError() }}</span>
+        </div>
+      }
+
+      <div class="cr-modal-actions">
+        <button type="button" class="cr-btn-secondary" (click)="closeModal()">
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="cr-btn-primary"
+          [disabled]="saving()"
+          (click)="saveJournal()"
+        >
+          @if (saving()) {
+            <span class="cr-spinner-sm"></span>
+          }
+          {{ modalMode() === "edit" ? "Save Changes" : "Add Journal" }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Delete Confirm Modal -->
+@if (deleteTargetId !== null) {
+  <div class="cr-modal-backdrop" (click)="cancelDelete()">
+    <div class="cr-modal cr-modal-sm" (click)="$event.stopPropagation()">
+      <div class="cr-modal-icon-danger">
+        <i class="bi bi-exclamation-triangle"></i>
+      </div>
+      <h3>Delete this journal?</h3>
+      <p class="cr-page-sub">
+        This will permanently remove the journal entry. This action cannot be
+        undone.
+      </p>
+
+      <div class="cr-modal-actions">
+        <button type="button" class="cr-btn-secondary" (click)="cancelDelete()">
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="cr-btn-danger"
+          [disabled]="deleting()"
+          (click)="deleteJournal()"
+        >
+          @if (deleting()) {
+            <span class="cr-spinner-sm"></span>
+          }
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+}

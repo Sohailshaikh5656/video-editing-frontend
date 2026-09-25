@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SharedModule } from '../../shared/sharedModule';
+import { AdminAuthService } from '../../services/admin/admin-auth.service';
 
 @Component({
   selector: 'app-admin-login',
@@ -18,6 +19,7 @@ import { SharedModule } from '../../shared/sharedModule';
 export class AdminLoginComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
+  private adminAuthService = inject(AdminAuthService);
 
   showPassword = signal<boolean>(false);
   loading = signal<boolean>(false);
@@ -25,7 +27,7 @@ export class AdminLoginComponent {
   isDark = signal<boolean>(this.getInitialTheme());
 
   form: FormGroup = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
+    username: ['', [Validators.required, Validators.minLength(3)]],
     password: ['', [Validators.required, Validators.minLength(6)]],
     remember: [true],
   });
@@ -59,17 +61,25 @@ export class AdminLoginComponent {
 
     this.loading.set(true);
 
-    // TODO: replace with real auth call
-    setTimeout(() => {
-      this.loading.set(false);
-      const { email, password } = this.form.value;
+    const { username, password } = this.form.value;
 
-      if (email === 'admin@cutroom.com' && password === 'admin123') {
-        localStorage.setItem('token', 'demo-token');
-        this.router.navigateByUrl('/admin/home');
-      } else {
-        this.errorMsg.set('Invalid email or password.');
-      }
-    }, 900);
+    this.adminAuthService.login(username, password).subscribe({
+      next: (res: any) => {
+        let data = res.data ?? res;
+        let token = data?.token;
+        localStorage.setItem('user', JSON.stringify(data));
+        localStorage.setItem('token', JSON.stringify(token));
+        this.loading.set(false);
+        this.router.navigateByUrl('/admin/dashboard');
+      },
+      error: (err) => {
+        this.loading.set(false);
+        this.errorMsg.set(
+          typeof err?.error?.message === 'string'
+            ? err.error.message
+            : 'Invalid username or password.',
+        );
+      },
+    });
   }
 }

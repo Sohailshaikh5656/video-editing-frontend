@@ -23,8 +23,8 @@ import { AdminNavbarComponent } from './components/common/admin-navbar/admin-nav
 })
 export class AppComponent {
   token: string | null = localStorage.getItem('token');
-  isAdminRoute = signal<boolean>(false);
-  loadNothing = false;
+  isAdminRoute = signal<boolean>(window.location.pathname.startsWith('/admin'));
+  loadNothing = window.location.pathname === '/admin/login';
 
   constructor(private router: Router) {
     this.router.events
@@ -37,8 +37,6 @@ export class AppComponent {
         this.isAdminRoute.set(event.urlAfterRedirects.startsWith('/admin'));
         this.loadNothing = event.urlAfterRedirects === '/admin/login';
       });
-
-    this.isAdminRoute.set(this.router.url.startsWith('/admin'));
-    this.loadNothing = this.router.url === '/admin/login';
+    // no need for the manual sync calls after this — window.location already got it right
   }
 }
