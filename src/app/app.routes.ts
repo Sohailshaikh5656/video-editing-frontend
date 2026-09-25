@@ -120,6 +120,62 @@ export const routes: Routes = [
             (m) => m.VideoTagsComponent,
           ),
       },
+      {
+        path: 'upload-file',
+        loadComponent: () =>
+          import('./pages/admin/upload-file-controller/upload-file-controller.component').then(
+            (m) => m.UploadFileControllerComponent,
+          ),
+      },
+      {
+        path: 'videos',
+        loadComponent: () =>
+          import('./pages/admin/videos/videos.component').then(
+            (m) => m.VideosComponent,
+          ),
+      },
+      {
+        path: 'reels',
+        loadComponent: () =>
+          import('./pages/admin/reels/reels.component').then(
+            (m) => m.ReelsComponent,
+          ),
+      },
+      {
+        path: 'reelsGenre',
+        loadComponent: () =>
+          import('./pages/admin/reel-genre/reel-genre.component').then(
+            (m) => m.ReelGenreComponent,
+          ),
+      },
+      {
+        path: 'journalGenre',
+        loadComponent: () =>
+          import('./pages/admin/journal-genre/journal-genre.component').then(
+            (m) => m.JournalGenreComponent,
+          ),
+      },
+      {
+        path: 'journal',
+        loadComponent: () =>
+          import('./pages/admin/journal/journal.component').then(
+            (m) => m.JournalComponent,
+          ),
+      },
+      {
+        path: 'testimonials',
+        loadComponent: () =>
+          import('./pages/admin/testimonial/testimonial.component').then(
+            (m) => m.TestimonialComponent,
+          ),
+      },
+      {
+        path: 'process',
+        loadComponent: () =>
+          import('./pages/admin/process/process.component').then(
+            (m) => m.ProcessComponent,
+          ),
+      },
     ],
   },
 

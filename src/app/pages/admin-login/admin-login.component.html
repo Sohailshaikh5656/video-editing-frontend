@@ -73,26 +73,26 @@
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
         <div class="cr-field">
-          <label for="email">Email address</label>
+          <label for="username">Username</label>
           <div
             class="cr-input-wrap"
-            [class.invalid]="f['email'].invalid && f['email'].touched"
+            [class.invalid]="f['username'].invalid && f['username'].touched"
           >
-            <i class="bi bi-envelope"></i>
+            <i class="bi bi-person"></i>
             <input
-              id="email"
-              type="email"
-              formControlName="email"
-              placeholder="admin@cutroom.com"
+              id="username"
+              type="text"
+              formControlName="username"
+              placeholder="Enter your username"
               autocomplete="username"
             />
           </div>
-          @if (f["email"].invalid && f["email"].touched) {
+          @if (f["username"].invalid && f["username"].touched) {
             <span class="cr-field-error">
               {{
-                f["email"].errors?.["required"]
-                  ? "Email is required."
-                  : "Enter a valid email."
+                f["username"].errors?.["required"]
+                  ? "Username is required."
+                  : "Username must be at least 3 characters."
               }}
             </span>
           }
