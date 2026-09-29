@@ -19,6 +19,8 @@ import { JournalGenreService } from '../../../services/admin/journal-genre.servi
 import { SharedModule } from '../../../shared/sharedModule';
 import { UploadFileControllerComponent } from '../upload-file-controller/upload-file-controller.component';
 import { UploadResult } from '../../../services/upload/upload.models';
+import { LoaderComponent } from '../../../components/common/loader/loader.component';
+import { DrawerComponent } from '../../../components/common/drawer/drawer.component';
 
 interface JournalGenre {
   id: number;
@@ -48,6 +50,8 @@ interface Journal {
     FormsModule,
     SharedModule,
     UploadFileControllerComponent,
+    LoaderComponent,
+    DrawerComponent,
   ],
   templateUrl: './journal.component.html',
   styleUrl: './journal.component.scss',

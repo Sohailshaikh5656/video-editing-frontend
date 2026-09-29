@@ -4,14 +4,52 @@
   align-self: stretch;
   background: var(--cr-bg);
   border-right: 1px solid var(--cr-border);
+  transition: width 0.2s ease;
+
+  &.is-collapsed {
+    width: 76px;
+  }
 }
 
 /* ── Brand ───────────────────────────────── */
 
 .cr-sidebar-brand {
+  position: relative;
   flex-shrink: 0;
   padding: 1.1rem 1.25rem;
   border-bottom: 1px solid var(--cr-border);
+}
+
+.cr-collapse-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  margin-left: auto;
+  border: 1px solid var(--cr-border);
+  border-radius: 0.4rem;
+  background: var(--cr-band);
+  color: var(--cr-text-mid);
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+
+  &:hover {
+    background: color-mix(in srgb, var(--cr-flare) 10%, transparent);
+    color: var(--cr-flare);
+    border-color: color-mix(in srgb, var(--cr-flare) 25%, transparent);
+  }
+}
+
+.is-collapsed .cr-collapse-btn {
+  position: absolute;
+  top: 50%;
+  right: -12px;
+  transform: translateY(-50%);
+  background: var(--cr-surface);
+  box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.4);
 }
 
 .cr-brand-mark {
@@ -266,11 +304,110 @@
   border-top: 1px solid var(--cr-border);
 
   .cr-nav-link {
-    margin-bottom: 0;
+    margin-bottom: 0.15rem;
+    width: 100%;
+    border: 1px solid transparent;
+    background: transparent;
+    font-family: inherit;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.cr-nav-link-danger:hover {
+  background: color-mix(in srgb, #e5484d 10%, transparent);
+  border-color: color-mix(in srgb, #e5484d 25%, transparent);
+  color: #e5484d;
+
+  i {
+    background: color-mix(in srgb, #e5484d 14%, transparent);
+    color: #e5484d;
+  }
+}
+
+/* ── Profile chip ─────────────────────────── */
+
+.cr-sidebar-profile {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.6rem;
+  margin-bottom: 0.5rem;
+  border-radius: 0.6rem;
+  background: var(--cr-band);
+}
+
+.cr-profile-avatar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(150deg, var(--cr-flare), color-mix(in srgb, var(--cr-flare) 60%, var(--cr-violet)));
+}
+
+.cr-profile-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.cr-profile-name {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--cr-text-hi);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: capitalize;
+}
+
+.cr-profile-role {
+  font-size: 0.68rem;
+  color: var(--cr-text-mid);
+}
+
+/* ── Collapsed (icon rail) mode ───────────── */
+
+.is-collapsed {
+  .cr-sidebar-brand {
+    padding: 1.1rem 0.6rem;
+    justify-content: center;
+  }
+
+  .cr-brand-text,
+  .cr-nav-heading,
+  .cr-nav-link span,
+  .cr-profile-info {
+    display: none;
+  }
+
+  .cr-sidebar-nav,
+  .cr-sidebar-footer {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  .cr-nav-link {
+    justify-content: center;
+    padding: 0.5rem;
+  }
+
+  .cr-sidebar-profile {
+    justify-content: center;
+    padding: 0.5rem;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .cr-sidebar,
   .cr-nav-link,
   .cr-chevron,
   .cr-submenu {

@@ -1,0 +1,73 @@
+:host {
+  display: contents;
+}
+
+.cr-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 2.25rem 1rem;
+  width: 100%;
+  color: var(--cr-text-mid);
+}
+
+.cr-loader-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  padding: 1rem;
+  background: color-mix(in srgb, var(--cr-surface) 85%, transparent);
+  backdrop-filter: blur(2px);
+  border-radius: inherit;
+}
+
+.cr-loader-spinner {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 3px solid var(--cr-border);
+  border-top-color: var(--cr-flare);
+  animation: cr-loader-spin 0.7s linear infinite;
+}
+
+.cr-loader-sm {
+  padding: 0.5rem;
+  gap: 0.45rem;
+
+  .cr-loader-spinner {
+    width: 16px;
+    height: 16px;
+    border-width: 2px;
+  }
+
+  .cr-loader-label {
+    font-size: 0.72rem;
+  }
+}
+
+.cr-loader-lg .cr-loader-spinner {
+  width: 40px;
+  height: 40px;
+  border-width: 4px;
+}
+
+.cr-loader-label {
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+@keyframes cr-loader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cr-loader-spinner {
+    animation: none;
+  }
+}

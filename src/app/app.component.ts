@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { NavbarComponent } from './components/common/navbar/navbar.component';
@@ -6,6 +6,7 @@ import { FooterComponent } from './components/common/footer/footer.component';
 import { AdminSidebarComponent } from './components/common/admin-sidebar/admin-sidebar.component';
 import { AdminFooterComponent } from './components/common/admin-footer/admin-footer.component';
 import { AdminNavbarComponent } from './components/common/admin-navbar/admin-navbar.component';
+import { LoadingService } from './services/loading.service';
 
 @Component({
   selector: 'app-root',
@@ -22,6 +23,7 @@ import { AdminNavbarComponent } from './components/common/admin-navbar/admin-nav
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
+  readonly loading = inject(LoadingService);
   token: string | null = localStorage.getItem('token');
   isAdminRoute = signal<boolean>(window.location.pathname.startsWith('/admin'));
   loadNothing = window.location.pathname === '/admin/login';

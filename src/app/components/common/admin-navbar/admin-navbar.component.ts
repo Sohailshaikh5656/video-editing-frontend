@@ -46,7 +46,8 @@ export class AdminNavbarComponent {
 
   logout(): void {
     localStorage.removeItem('token');
-    this.router.navigateByUrl('/login');
+    localStorage.removeItem('user');
+    this.router.navigateByUrl('/admin/login');
   }
 
   @HostListener('document:click', ['$event'])

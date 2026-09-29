@@ -49,7 +49,7 @@
           @if (loading()) {
             <tr>
               <td colspan="7" class="cr-table-state">
-                <span class="cr-spinner"></span> Loading inquiries…
+                <app-loader label="Loading inquiries…" />
               </td>
             </tr>
           } @else if (paginatedInquiries().length === 0) {

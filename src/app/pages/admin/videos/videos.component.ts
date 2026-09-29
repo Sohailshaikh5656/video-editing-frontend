@@ -25,6 +25,8 @@ import {
 } from '../../../services/upload/upload.models';
 import { SharedModule } from '../../../shared/sharedModule';
 import { UploadFileControllerComponent } from '../upload-file-controller/upload-file-controller.component';
+import { LoaderComponent } from '../../../components/common/loader/loader.component';
+import { DrawerComponent } from '../../../components/common/drawer/drawer.component';
 
 interface Tag {
   id: number;
@@ -55,6 +57,8 @@ interface Video {
     FormsModule,
     SharedModule,
     UploadFileControllerComponent,
+    LoaderComponent,
+    DrawerComponent,
   ],
   templateUrl: './videos.component.html',
   styleUrl: './videos.component.scss',

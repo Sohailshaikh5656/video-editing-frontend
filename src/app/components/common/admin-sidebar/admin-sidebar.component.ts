@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, computed, inject, signal } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 interface NavItem {
   id: string;
@@ -13,6 +13,8 @@ interface NavSection {
   items: NavItem[];
 }
 
+const COLLAPSE_KEY = 'cr-sidebar-collapsed';
+
 @Component({
   selector: 'app-admin-sidebar',
   standalone: true,
@@ -21,6 +23,35 @@ interface NavSection {
   styleUrl: './admin-sidebar.component.scss',
 })
 export class AdminSidebarComponent {
+  private router = inject(Router);
+
+  /** icon-only rail mode — remembered across sessions */
+  collapsed = signal<boolean>(localStorage.getItem(COLLAPSE_KEY) === '1');
+
+  /** best-effort read of the logged-in admin's username, saved at login */
+  readonly username = computed(() => {
+    try {
+      const raw = localStorage.getItem('user');
+      const parsed = raw ? JSON.parse(raw) : null;
+      return (parsed?.username as string) || 'Admin';
+    } catch {
+      return 'Admin';
+    }
+  });
+
+  readonly initials = computed(() => this.username().charAt(0).toUpperCase());
+
+  toggleCollapsed(): void {
+    this.collapsed.update((v) => !v);
+    localStorage.setItem(COLLAPSE_KEY, this.collapsed() ? '1' : '0');
+  }
+
+  logout(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    this.router.navigateByUrl('/admin/login');
+  }
+
   sections: NavSection[] = [
     {
       heading: 'Video Content',

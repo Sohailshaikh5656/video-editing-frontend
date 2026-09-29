@@ -2,11 +2,12 @@ import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular
 import { Subject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { Inquiry, InquiryService } from '../../../services/admin/inquiry.service';
 import { SharedModule } from '../../../shared/sharedModule';
+import { LoaderComponent } from '../../../components/common/loader/loader.component';
 
 @Component({
   selector: 'app-inquiry',
   standalone: true,
-  imports: [SharedModule],
+  imports: [SharedModule, LoaderComponent],
   templateUrl: './inquiry.component.html',
   styleUrl: './inquiry.component.scss',
 })

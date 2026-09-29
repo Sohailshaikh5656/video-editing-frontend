@@ -1,0 +1,122 @@
+:host {
+  display: contents;
+}
+
+.cr-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(2px);
+  animation: cr-drawer-fade 0.2s ease;
+}
+
+.cr-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 201;
+  width: 80%;
+  max-width: 1180px;
+  display: flex;
+  flex-direction: column;
+  background: var(--cr-surface);
+  border-left: 1px solid var(--cr-border);
+  box-shadow: -24px 0 60px -12px rgba(0, 0, 0, 0.45);
+  animation: cr-drawer-in 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cr-drawer-head {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.5rem 1.75rem;
+  border-bottom: 1px solid var(--cr-border);
+
+  h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--cr-text-hi);
+    margin: 0 0 0.2rem;
+  }
+}
+
+.cr-drawer-sub {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--cr-text-mid);
+}
+
+.cr-drawer-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--cr-border);
+  border-radius: 0.6rem;
+  background: var(--cr-band);
+  color: var(--cr-text-mid);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+
+  &:hover {
+    background: color-mix(in srgb, #e5484d 10%, transparent);
+    color: #e5484d;
+    border-color: color-mix(in srgb, #e5484d 25%, transparent);
+  }
+}
+
+.cr-drawer-body {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 1.75rem;
+}
+
+.cr-drawer-foot {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  padding: 1.1rem 1.75rem;
+  border-top: 1px solid var(--cr-border);
+  background: var(--cr-surface);
+}
+
+@keyframes cr-drawer-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes cr-drawer-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 767.98px) {
+  .cr-drawer {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cr-drawer-backdrop,
+  .cr-drawer {
+    animation: none;
+  }
+}

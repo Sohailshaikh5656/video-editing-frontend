@@ -1,0 +1,13 @@
+<div
+  class="cr-loader"
+  [class.cr-loader-overlay]="overlay"
+  [class.cr-loader-sm]="size === 'sm'"
+  [class.cr-loader-lg]="size === 'lg'"
+  role="status"
+  [attr.aria-label]="label"
+>
+  <span class="cr-loader-spinner" aria-hidden="true"></span>
+  @if (label) {
+    <span class="cr-loader-label">{{ label }}</span>
+  }
+</div>
