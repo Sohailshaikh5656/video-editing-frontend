@@ -6,6 +6,7 @@
     display: block;
     background: var(--cr-bg);
     padding: 5rem 0;
+    --cr-danger: #e5484d;
   }
   
   .cr-flare { color: var(--cr-flare); }
@@ -241,8 +242,24 @@
     }
   
     &.is-flare { border-color: var(--cr-flare); }
+
+    &.is-invalid {
+      border-color: var(--cr-danger);
+
+      &:focus,
+      &:focus-visible {
+        border-color: var(--cr-danger);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--cr-danger) 20%, transparent);
+      }
+    }
   }
-  
+
+  .cr-field-error {
+    font-size: 0.72rem;
+    line-height: 1.4;
+    color: var(--cr-danger);
+  }
+
   .cr-textarea {
     resize: vertical;
     min-height: 6.5rem;
@@ -276,6 +293,8 @@
   }
   
   .cr-drop {
+    position: relative;
+    display: block;
     padding: 1.25rem;
     border: 1px dashed var(--cr-border-strong);
     border-radius: 0.7rem;
@@ -285,11 +304,20 @@
     background: var(--cr-band);
     transition: border-color 0.2s ease, background-color 0.2s ease;
     cursor: pointer;
-  
+
     &:hover {
       border-color: var(--cr-flare);
       background: color-mix(in srgb, var(--cr-flare) 6%, var(--cr-band));
     }
+  }
+
+  .cr-drop-input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
   }
   
   .cr-checkline {
@@ -420,7 +448,13 @@
       background: var(--cr-flare);
     }
   }
-  
+
+  .cr-slot-shift {
+    margin-left: 0.3rem;
+    font-size: 0.6rem;
+    opacity: 0.7;
+  }
+
   .cr-confirm-btn {
     position: relative;
     display: inline-flex;

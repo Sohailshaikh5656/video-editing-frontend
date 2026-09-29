@@ -35,6 +35,7 @@ interface Journal {
   description: string;
   image_url: string;
   text: string;
+  is_active?: boolean | number;
   created_at?: string;
   updated_at?: string;
 }
@@ -88,6 +89,9 @@ export class JournalComponent implements OnInit, OnDestroy {
   // delete confirm state
   deleteTargetId: number | null = null;
   deleting = signal<boolean>(false);
+
+  // status toggle state
+  togglingId = signal<number | null>(null);
 
   totalPages = computed(() =>
     Math.max(1, Math.ceil(this.allJournals().length / this.pageSize)),
@@ -273,6 +277,30 @@ export class JournalComponent implements OnInit, OnDestroy {
       error: () => {
         this.saving.set(false);
         this.formError.set('Failed to save journal. Please try again.');
+      },
+    });
+  }
+
+  // ── Status toggle ──────────────────────────
+
+  toggleStatus(journal: Journal): void {
+    if (this.togglingId() !== null) return;
+
+    const nextStatus = !journal.is_active;
+    this.togglingId.set(journal.id);
+
+    this.journalService.changeStatus(journal.id, nextStatus).subscribe({
+      next: () => {
+        this.togglingId.set(null);
+        this.allJournals.update((list) =>
+          list.map((j) =>
+            j.id === journal.id ? { ...j, is_active: nextStatus } : j,
+          ),
+        );
+      },
+      error: () => {
+        this.togglingId.set(null);
+        this.errorMsg.set('Failed to update status. Please try again.');
       },
     });
   }

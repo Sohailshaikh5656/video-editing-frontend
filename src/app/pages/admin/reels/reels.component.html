@@ -47,19 +47,20 @@
             <th>Category</th>
             <th>Our role</th>
             <th>Duration</th>
+            <th>Status</th>
             <th class="text-end">Actions</th>
           </tr>
         </thead>
         <tbody>
           @if (loading()) {
             <tr>
-              <td colspan="6" class="cr-table-state">
+              <td colspan="7" class="cr-table-state">
                 <span class="cr-spinner"></span> Loading reels…
               </td>
             </tr>
           } @else if (paginatedReels().length === 0) {
             <tr>
-              <td colspan="6" class="cr-table-state">
+              <td colspan="7" class="cr-table-state">
                 <i class="bi bi-collection-play"></i>
                 <span>{{
                   searchTerm
@@ -120,6 +121,23 @@
                   } @else {
                     —
                   }
+                </td>
+                <td>
+                  <button
+                    type="button"
+                    class="cr-status-toggle"
+                    [class.is-on]="reel.is_active"
+                    [disabled]="togglingId() === reel.id"
+                    (click)="toggleStatus(reel)"
+                    [attr.aria-label]="reel.is_active ? 'Deactivate' : 'Activate'"
+                    [title]="
+                      reel.is_active
+                        ? 'Active — click to deactivate'
+                        : 'Inactive — click to activate'
+                    "
+                  >
+                    <span class="cr-status-toggle-thumb"></span>
+                  </button>
                 </td>
                 <td class="text-end cr-actions-cell">
                   <button

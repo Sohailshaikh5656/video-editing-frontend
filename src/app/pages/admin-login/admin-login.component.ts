@@ -68,7 +68,7 @@ export class AdminLoginComponent {
         let data = res.data ?? res;
         let token = data?.token;
         localStorage.setItem('user', JSON.stringify(data));
-        localStorage.setItem('token', JSON.stringify(token));
+        localStorage.setItem('token', token);
         this.loading.set(false);
         this.router.navigateByUrl('/admin/dashboard');
       },

@@ -6,14 +6,17 @@ import { environment } from '../../environments/environment';
 const hostname = window.location.hostname;
 const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
 const protocol = window.location.protocol;
+console.log('Protocal 1: ', protocol);
 
 // CUT_SHORT_COMMON_IP_PORT is injected at runtime via env.js:
 // - localhost           -> "192.168.25.23:9090" (dev machine)
 // - any other hostname  -> "<hostname>:3300"
 const targetHostAndPort = environment.CUT_SHORT_COMMON_IP_PORT;
-
-export const COMMON_BASE_URL = `${protocol}//${targetHostAndPort}`;
-
+const isDynamicProtocal = targetHostAndPort.includes('https')
+  ? targetHostAndPort
+  : `${protocol}//${targetHostAndPort}`;
+export const COMMON_BASE_URL = `${isDynamicProtocal}`;
+console.log('Protocal 2: ', COMMON_BASE_URL);
 // ───────────────────── 2. HTTP HEADER LOGIC ─────────────────────
 
 export const HEADER = new HttpHeaders()

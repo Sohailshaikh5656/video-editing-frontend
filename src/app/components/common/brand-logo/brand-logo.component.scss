@@ -1,0 +1,67 @@
+:host {
+  display: flex;
+  flex-shrink: 0;
+}
+
+/*
+ * Real brand assets are rarely clean transparent cutouts — plenty come in as
+ * flat JPEGs/WEBPs with an opaque white canvas (Google Image thumbnails,
+ * stock-site exports, etc). A plain colour filter can't remove that canvas,
+ * it just repaints it, so opaque logos rendered as solid grey rectangles.
+ *
+ * `mix-blend-mode` fixes that properly: on a dark page, `invert + screen`
+ * makes anything the source image painted "white" melt into the dark
+ * backdrop while its ink shows through bright — no transparency required.
+ * Genuinely transparent PNG/SVG logos are untouched by this (blending only
+ * ever acts on their opaque pixels), so both cases render correctly.
+ */
+.cr-brand-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 42px; /* 1.4x */
+
+  img {
+    height: 100%;
+    width: auto;
+    max-width: 182px; /* 1.4x */
+    object-fit: contain;
+    filter: grayscale(1) invert(1) brightness(1.3) contrast(1.15);
+    mix-blend-mode: screen;
+    opacity: 0.55;
+    transition: opacity 0.2s ease;
+  }
+
+  &:hover img {
+    opacity: 0.9;
+  }
+}
+
+/* light theme: the page is now light, so the logo's own white canvas should
+   melt into a LIGHT backdrop instead — multiply does that without the
+   invert (a bright canvas × a bright page ≈ the same bright page). */
+:host-context([data-bs-theme='light']) .cr-brand-logo img {
+  filter: grayscale(1) brightness(1) contrast(1.1);
+  mix-blend-mode: multiply;
+}
+
+.cr-brand-fallback {
+  font-size: 1.2rem; /* 1.4x */
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  white-space: nowrap;
+  color: var(--cr-text-mid);
+  opacity: 0.55;
+  transition: opacity 0.2s ease;
+}
+
+.cr-brand-logo:hover .cr-brand-fallback {
+  opacity: 0.9;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cr-brand-logo img,
+  .cr-brand-fallback {
+    transition: none;
+  }
+}

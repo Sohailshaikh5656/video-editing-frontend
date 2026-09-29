@@ -44,38 +44,75 @@
           </div>
   
           @if (!submitted()) {
-            <form class="cr-form" (submit)="$event.preventDefault()">
+            <form class="cr-form" [formGroup]="briefForm" (ngSubmit)="submitBrief()">
               <p class="cr-form-heading mb-4">Project brief</p>
-  
+
               @switch (currentStep()) {
                 @case (0) {
-                  <div class="cr-field-grid cr-anim-step">
+                  <div class="cr-field-grid cr-anim-step" [formGroup]="aboutYou">
                     <label class="cr-field">
                       <span class="cr-field-label">Full name</span>
-                      <input type="text" class="cr-input" placeholder="Jane Winfield" />
+                      <input
+                        type="text"
+                        class="cr-input"
+                        placeholder="Jane Winfield"
+                        formControlName="fullName"
+                        [class.is-invalid]="isInvalid(aboutYou.get('fullName'))"
+                      />
+                      @if (isInvalid(aboutYou.get('fullName'))) {
+                        <span class="cr-field-error">{{ errorMessage(aboutYou.get('fullName'), 'Your name') }}</span>
+                      }
                     </label>
                     <label class="cr-field">
                       <span class="cr-field-label">Work email</span>
-                      <input type="email" class="cr-input is-flare" placeholder="jane@northwind.co" />
+                      <input
+                        type="email"
+                        class="cr-input is-flare"
+                        placeholder="jane@northwind.co"
+                        formControlName="email"
+                        [class.is-invalid]="isInvalid(aboutYou.get('email'))"
+                      />
+                      @if (isInvalid(aboutYou.get('email'))) {
+                        <span class="cr-field-error">{{ errorMessage(aboutYou.get('email'), 'Your email') }}</span>
+                      }
                     </label>
                     <label class="cr-field">
                       <span class="cr-field-label">Company</span>
-                      <input type="text" class="cr-input" placeholder="Northwind Coffee" />
+                      <input type="text" class="cr-input" placeholder="Northwind Coffee" formControlName="company" [class.is-invalid]="isInvalid(aboutYou.get('company'))" />
+                      @if (isInvalid(aboutYou.get('company'))) {
+                        <span class="cr-field-error">{{ errorMessage(aboutYou.get('company'), 'Company') }}</span>
+                      }
                     </label>
                     <label class="cr-field">
-                      <span class="cr-field-label">Country / timezone</span>
-                      <input type="text" class="cr-input" placeholder="Germany — CET" />
+                      <span class="cr-field-label">Timezone</span>
+                      <select
+                        class="cr-input"
+                        formControlName="location"
+                        [class.is-invalid]="isInvalid(aboutYou.get('location'))"
+                      >
+                        <option value="" disabled>Select your timezone</option>
+                        @for (tz of timezones; track tz.tzCode) {
+                          <option [value]="tz.tzCode">{{ tz.name }}</option>
+                        }
+                      </select>
+                      @if (isInvalid(aboutYou.get('location'))) {
+                        <span class="cr-field-error">{{ errorMessage(aboutYou.get('location'), 'Timezone') }}</span>
+                      }
                     </label>
                   </div>
                 }
                 @case (1) {
-                  <div class="cr-anim-step">
+                  <div class="cr-anim-step" [formGroup]="project">
                     <span class="cr-field-label d-block mb-2">Project type</span>
                     <div class="cr-chip-select mb-4">
-                      <button type="button" class="cr-chip-opt is-on">Brand film</button>
-                      <button type="button" class="cr-chip-opt">Social system</button>
-                      <button type="button" class="cr-chip-opt">Short-form</button>
-                      <button type="button" class="cr-chip-opt">Not sure yet</button>
+                      @for (type of projectTypes; track type) {
+                        <button
+                          type="button"
+                          class="cr-chip-opt"
+                          [class.is-on]="project.get('projectType')?.value === type"
+                          (click)="setProjectType(type)"
+                        >{{ type }}</button>
+                      }
                     </div>
                     <label class="cr-field">
                       <span class="cr-field-label">Tell me the brief</span>
@@ -83,40 +120,63 @@
                         class="cr-input cr-textarea"
                         rows="4"
                         placeholder="Runtime, where it will run, who it is for, and a link to reference you like. The more specific, the more accurate the quote."
+                        formControlName="brief"
+                        [class.is-invalid]="isInvalid(project.get('brief'))"
                       ></textarea>
+                      @if (isInvalid(project.get('brief'))) {
+                        <span class="cr-field-error">{{ errorMessage(project.get('brief'), 'The brief') }}</span>
+                      }
                     </label>
                   </div>
                 }
                 @case (2) {
-                  <div class="cr-field-grid cr-anim-step">
+                  <div class="cr-field-grid cr-anim-step" [formGroup]="timingBudget">
                     <label class="cr-field">
                       <span class="cr-field-label">Budget range</span>
-                      <select class="cr-input">
-                        <option>$2,500 – $5,000</option>
-                        <option>$5,000 – $12,000</option>
-                        <option>$12,000+</option>
-                        <option>Not sure — advise me</option>
+                      <select class="cr-input" formControlName="budgetRange">
+                        @for (range of budgetRanges; track range) {
+                          <option [value]="range">{{ range }}</option>
+                        }
                       </select>
                     </label>
                     <label class="cr-field">
                       <span class="cr-field-label">Target date</span>
-                      <input type="text" class="cr-input" placeholder="Select a date" />
+                      <input
+                        type="date"
+                        class="cr-input"
+                        [min]="todayIso"
+                        formControlName="targetDate"
+                        [class.is-invalid]="isInvalid(timingBudget.get('targetDate'))"
+                      />
+                      @if (isInvalid(timingBudget.get('targetDate'))) {
+                        <span class="cr-field-error">{{ errorMessage(timingBudget.get('targetDate'), 'Target date') }}</span>
+                      }
                     </label>
-                    <label class="cr-field cr-field-full">
-                      <span class="cr-field-label">Footage — optional</span>
-                      <div class="cr-drop">
-                        Drop a sample clip or paste a Drive / Dropbox / Frame.io link
-                      </div>
-                    </label>
+                    <div class="cr-field cr-field-full">
+                      <span class="cr-field-label">Footage <span class="cr-req">*</span></span>
+                      <app-upload-file-controller
+                        [showHeader]="false"
+                        [allowedTypes]="footageAllowedTypes"
+                        [maxSizeMb]="footageMaxSizeMb"
+                        (uploaded)="onFootageUploaded($event)"
+                      />
+                      @if (isInvalid(timingBudget.get('footageUrl'))) {
+                        <span class="cr-field-error">{{ errorMessage(timingBudget.get('footageUrl'), 'Footage') }}</span>
+                      }
+                    </div>
                   </div>
                 }
               }
-  
+
               <label class="cr-checkline">
-                <input type="checkbox" checked />
+                <input type="checkbox" formControlName="sendRateCard" />
                 Send the rate card and a copy of the standard contract with the reply.
               </label>
-  
+
+              @if (submitError()) {
+                <p class="cr-field-error mb-3">{{ submitError() }}</p>
+              }
+
               <div class="cr-form-actions">
                 @if (currentStep() > 0) {
                   <button type="button" class="btn btn-outline-secondary" (click)="back()">Back</button>
@@ -124,7 +184,18 @@
                 @if (!isLastStep()) {
                   <button type="button" class="btn btn-primary ms-auto" (click)="next()">Continue →</button>
                 } @else {
-                  <button type="button" class="btn btn-primary ms-auto" (click)="confirmSlot()">Send the brief →</button>
+                  <button
+                    type="submit"
+                    class="btn btn-primary ms-auto cr-confirm-btn"
+                    [class.is-loading]="submitting()"
+                    [disabled]="submitting()"
+                  >
+                    @if (submitting()) {
+                      <span class="cr-spinner" aria-hidden="true"></span> Sending…
+                    } @else {
+                      Send the brief →
+                    }
+                  </button>
                 }
               </div>
             </form>
@@ -134,7 +205,8 @@
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
               </span>
               <p class="cr-form-heading mb-2">Brief sent.</p>
-              <p class="cr-success-note mb-0">A real reply lands in your inbox within six working hours. Nothing else to do for now.</p>
+              <p class="cr-success-note mb-3">A real reply lands in your inbox within six working hours. Nothing else to do for now.</p>
+              <button type="button" class="btn btn-outline-secondary btn-sm" (click)="sendAnother()">Send another brief</button>
             </div>
           }
         </div>
@@ -155,7 +227,7 @@
                   type="button"
                   class="cr-cal-day"
                   [class.is-disabled]="day.disabled"
-                  [class.is-selected]="selectedDay() === day.date && !day.disabled"
+                  [class.is-selected]="selectedDate() === day.iso && !day.disabled"
                   [disabled]="day.disabled"
                   (click)="pickDay(day)"
                 >
@@ -165,29 +237,36 @@
               }
             </div>
   
-            <p class="cr-field-label mb-2">Time — shown in your timezone</p>
+            <p class="cr-field-label mb-2">Time — in {{ timezoneAbbrev() }}</p>
             <div class="cr-slots">
-              @for (slot of timeSlots; track trackSlot($index, slot)) {
+              @for (slot of timeSlots(); track trackSlot($index, slot)) {
                 <button
                   type="button"
                   class="cr-slot"
-                  [class.is-selected]="selectedTime() === slot.label"
+                  [class.is-selected]="selectedTime() === slot.ist"
                   (click)="pickTime(slot)"
-                >{{ slot.label }}</button>
+                >
+                  {{ slot.label }}
+                  @if (slot.dayShift !== 0) {
+                    <span class="cr-slot-shift">{{ slot.dayShift > 0 ? "+1d" : "-1d" }}</span>
+                  }
+                </button>
               }
             </div>
-  
+
             <button
               type="button"
               class="btn btn-primary w-100 mt-3 cr-confirm-btn"
-              [class.is-loading]="submitting()"
-              [disabled]="submitting()"
+              [class.is-loading]="callSubmitting()"
+              [disabled]="callSubmitting() || callConfirmed()"
               (click)="confirmSlot()"
             >
-              @if (submitting()) {
+              @if (callConfirmed()) {
+                Call booked ✓
+              } @else if (callSubmitting()) {
                 <span class="cr-spinner" aria-hidden="true"></span> Booking…
               } @else {
-                Confirm {{ selectedTime() }} CET
+                Confirm {{ selectedSlotLabel() }} {{ timezoneAbbrev() }}
               }
             </button>
   

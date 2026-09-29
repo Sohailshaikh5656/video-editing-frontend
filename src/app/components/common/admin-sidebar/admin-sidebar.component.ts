@@ -38,10 +38,10 @@ export class AdminSidebarComponent {
           link: '/admin/videos',
         },
         {
-          id: 'upload-file',
-          label: 'Upload File',
-          icon: 'bi-cloud-arrow-up',
-          link: '/admin/upload-file',
+          id: 'brand',
+          label: 'Brand Logo',
+          icon: 'bi-award',
+          link: '/admin/brand',
         },
       ],
     },
@@ -98,6 +98,17 @@ export class AdminSidebarComponent {
           label: 'Testimonials',
           icon: 'bi-chat-quote',
           link: '/admin/testimonials',
+        },
+      ],
+    },
+    {
+      heading: 'Inquiries',
+      items: [
+        {
+          id: 'inquiry',
+          label: 'Inquiries',
+          icon: 'bi-envelope-paper',
+          link: '/admin/inquiry',
         },
       ],
     },

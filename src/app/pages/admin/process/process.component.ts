@@ -23,6 +23,7 @@ interface Process {
   description: string;
   points: string[];
   is_home_screen?: boolean;
+  is_active?: boolean | number;
   created_at?: string;
   updated_at?: string;
 }
@@ -73,6 +74,9 @@ export class ProcessComponent implements OnInit, OnDestroy {
   // delete confirm state
   deleteTargetId: number | null = null;
   deleting = signal<boolean>(false);
+
+  // status toggle state
+  togglingId = signal<number | null>(null);
 
   totalPages = computed(() =>
     Math.max(1, Math.ceil(this.allProcesses().length / this.pageSize)),
@@ -243,6 +247,30 @@ export class ProcessComponent implements OnInit, OnDestroy {
         this.formErrors.set({
           _general: apiMsg || 'Failed to save process item. Please try again.',
         });
+      },
+    });
+  }
+
+  // ── Status toggle ──────────────────────────
+
+  toggleStatus(item: Process): void {
+    if (this.togglingId() !== null) return;
+
+    const nextStatus = !item.is_active;
+    this.togglingId.set(item.id);
+
+    this.processService.changeStatus(item.id, nextStatus).subscribe({
+      next: () => {
+        this.togglingId.set(null);
+        this.allProcesses.update((list) =>
+          list.map((p) =>
+            p.id === item.id ? { ...p, is_active: nextStatus } : p,
+          ),
+        );
+      },
+      error: () => {
+        this.togglingId.set(null);
+        this.errorMsg.set('Failed to update status. Please try again.');
       },
     });
   }

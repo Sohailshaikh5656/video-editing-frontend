@@ -45,19 +45,20 @@
         <tr>
           <th>#</th>
           <th>Category Name</th>
+          <th>Status</th>
           <th class="text-end">Actions</th>
         </tr>
       </thead>
       <tbody>
         @if (loading()) {
           <tr>
-            <td colspan="3" class="cr-table-state">
+            <td colspan="4" class="cr-table-state">
               <span class="cr-spinner"></span> Loading categories…
             </td>
           </tr>
         } @else if (paginatedGenres().length === 0) {
           <tr>
-            <td colspan="3" class="cr-table-state">
+            <td colspan="4" class="cr-table-state">
               <i class="bi bi-journal-bookmark"></i>
               <span>{{
                 searchTerm
@@ -73,6 +74,23 @@
                 {{ (currentPage() - 1) * pageSize + i + 1 }}
               </td>
               <td class="cr-genre-name">{{ genre.name }}</td>
+              <td>
+                <button
+                  type="button"
+                  class="cr-status-toggle"
+                  [class.is-on]="genre.is_active"
+                  [disabled]="togglingId() === genre.id"
+                  (click)="toggleStatus(genre)"
+                  [attr.aria-label]="genre.is_active ? 'Deactivate' : 'Activate'"
+                  [title]="
+                    genre.is_active
+                      ? 'Active — click to deactivate'
+                      : 'Inactive — click to activate'
+                  "
+                >
+                  <span class="cr-status-toggle-thumb"></span>
+                </button>
+              </td>
               <td class="text-end">
                 <button
                   type="button"

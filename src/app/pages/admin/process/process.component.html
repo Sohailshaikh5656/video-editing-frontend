@@ -46,19 +46,20 @@
           <th>Description</th>
           <th>Points</th>
           <th>Home screen</th>
+          <th>Status</th>
           <th class="text-end">Actions</th>
         </tr>
       </thead>
       <tbody>
         @if (loading()) {
           <tr>
-            <td colspan="6" class="cr-table-state">
+            <td colspan="7" class="cr-table-state">
               <span class="cr-spinner"></span> Loading process items…
             </td>
           </tr>
         } @else if (paginatedProcesses().length === 0) {
           <tr>
-            <td colspan="6" class="cr-table-state">
+            <td colspan="7" class="cr-table-state">
               <i class="bi bi-diagram-3"></i>
               <span>{{
                 searchTerm
@@ -94,6 +95,23 @@
                 } @else {
                   <span class="cr-badge cr-badge-muted">—</span>
                 }
+              </td>
+              <td>
+                <button
+                  type="button"
+                  class="cr-status-toggle"
+                  [class.is-on]="item.is_active"
+                  [disabled]="togglingId() === item.id"
+                  (click)="toggleStatus(item)"
+                  [attr.aria-label]="item.is_active ? 'Deactivate' : 'Activate'"
+                  [title]="
+                    item.is_active
+                      ? 'Active — click to deactivate'
+                      : 'Inactive — click to activate'
+                  "
+                >
+                  <span class="cr-status-toggle-thumb"></span>
+                </button>
               </td>
               <td class="text-end">
                 <button

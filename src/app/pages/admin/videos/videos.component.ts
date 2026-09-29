@@ -40,7 +40,7 @@ interface Video {
   thumbnail_url: string;
   views: number;
   cuts: number;
-  is_home_screen: number;
+  is_home_screen: boolean | number;
   is_active: number;
   created_at: string;
   updated_at: string;
@@ -88,6 +88,7 @@ export class VideosComponent implements OnInit, OnDestroy {
   formVideoUrl = '';
   formThumbnailUrl = '';
   formViews = 0;
+  formHomeScreen: boolean | number = false;
   selectedTagIds = signal<number[]>([]);
 
   /** Media-kind restrictions passed to the embedded upload widgets. */
@@ -102,6 +103,9 @@ export class VideosComponent implements OnInit, OnDestroy {
   // delete confirm state
   deleteTargetId: number | null = null;
   deleting = signal<boolean>(false);
+
+  // status toggle state
+  togglingId = signal<number | null>(null);
 
   totalPages = computed(() =>
     Math.max(1, Math.ceil(this.allVideos().length / this.pageSize)),
@@ -207,6 +211,7 @@ export class VideosComponent implements OnInit, OnDestroy {
     this.formVideoUrl = video.vedio_url;
     this.formThumbnailUrl = video.thumbnail_url;
     this.formViews = video.views ?? 0;
+    this.formHomeScreen = !!video.is_home_screen;
     this.selectedTagIds.set(
       this.allTags()
         .filter((t) => (video.category ?? []).includes(t.tags))
@@ -228,6 +233,7 @@ export class VideosComponent implements OnInit, OnDestroy {
     this.formVideoUrl = '';
     this.formThumbnailUrl = '';
     this.formViews = 0;
+    this.formHomeScreen = false;
     this.selectedTagIds.set([]);
     this.thumbnailUploadOpen.set(false);
     this.thumbnailCustomised = false;
@@ -284,6 +290,7 @@ export class VideosComponent implements OnInit, OnDestroy {
       thumbnail_url: this.formThumbnailUrl.trim(),
       views: Number(this.formViews) || 0,
       tags: this.selectedTagIds(),
+      is_home_screen: this.formHomeScreen ? true : false,
     };
 
     this.saving.set(true);
@@ -302,6 +309,30 @@ export class VideosComponent implements OnInit, OnDestroy {
       error: () => {
         this.saving.set(false);
         this.errorMsg.set('Failed to save video. Please try again.');
+      },
+    });
+  }
+
+  // ── Status toggle ──────────────────────────
+
+  toggleStatus(video: Video): void {
+    if (this.togglingId() !== null) return;
+
+    const nextStatus = !video.is_active;
+    this.togglingId.set(video.id);
+
+    this.videoService.changeStatus(video.id, nextStatus).subscribe({
+      next: () => {
+        this.togglingId.set(null);
+        this.allVideos.update((list) =>
+          list.map((v) =>
+            v.id === video.id ? { ...v, is_active: nextStatus ? 1 : 0 } : v,
+          ),
+        );
+      },
+      error: () => {
+        this.togglingId.set(null);
+        this.errorMsg.set('Failed to update status. Please try again.');
       },
     });
   }

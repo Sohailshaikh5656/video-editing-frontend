@@ -27,6 +27,7 @@ interface Testimonial {
   country: string;
   role: string;
   is_retained?: boolean;
+  is_active?: boolean | number;
   message: string;
   created_at?: string;
   updated_at?: string;
@@ -89,6 +90,9 @@ export class TestimonialComponent implements OnInit, OnDestroy {
   // delete confirm state
   deleteTargetId: number | null = null;
   deleting = signal<boolean>(false);
+
+  // status toggle state
+  togglingId = signal<number | null>(null);
 
   totalPages = computed(() =>
     Math.max(1, Math.ceil(this.allTestimonials().length / this.pageSize)),
@@ -270,6 +274,30 @@ export class TestimonialComponent implements OnInit, OnDestroy {
         this.formErrors.set({
           _general: apiMsg || 'Failed to save testimonial. Please try again.',
         });
+      },
+    });
+  }
+
+  // ── Status toggle ──────────────────────────
+
+  toggleStatus(item: Testimonial): void {
+    if (this.togglingId() !== null) return;
+
+    const nextStatus = !item.is_active;
+    this.togglingId.set(item.id);
+
+    this.testimonialService.changeStatus(item.id, nextStatus).subscribe({
+      next: () => {
+        this.togglingId.set(null);
+        this.allTestimonials.update((list) =>
+          list.map((t) =>
+            t.id === item.id ? { ...t, is_active: nextStatus } : t,
+          ),
+        );
+      },
+      error: () => {
+        this.togglingId.set(null);
+        this.errorMsg.set('Failed to update status. Please try again.');
       },
     });
   }

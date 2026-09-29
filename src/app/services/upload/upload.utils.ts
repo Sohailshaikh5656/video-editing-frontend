@@ -37,11 +37,21 @@ export function getAllowedFormatsLabel(
     : 'images (JPG, PNG, WEBP, GIF, AVIF)';
 }
 
-/** Size-limit hint for the accepted kinds, e.g. "Videos up to 100 MB.". */
+/**
+ * Size-limit hint for the accepted kinds, e.g. "Videos up to 100 MB.".
+ * `maxSizeMbOverride` lets one caller (e.g. a lightweight footage field)
+ * apply a stricter cap than the app-wide defaults without changing them.
+ */
 export function getSizeLimitLabel(
   allowedTypes?: UploadFileType[] | null,
+  maxSizeMbOverride?: number,
 ): string {
   const types = resolveAllowedTypes(allowedTypes);
+
+  if (maxSizeMbOverride) {
+    return `Up to ${maxSizeMbOverride} MB.`;
+  }
+
   const parts: string[] = [];
 
   if (types.includes('image')) parts.push(`images up to ${MAX_IMAGE_SIZE_MB} MB`);
@@ -110,11 +120,13 @@ export function formatFileSize(bytes: number): string {
  *
  * `allowedTypes` optionally narrows the accepted media kinds (e.g. `['video']`
  * for a video-only field). Used by the UI for instant feedback and re-checked
- * by `UploadService` before the provider is called.
+ * by `UploadService` before the provider is called. `maxSizeMbOverride` lets a
+ * caller enforce a stricter cap than the shared image/video defaults.
  */
 export function validateUploadFile(
   file: File,
   allowedTypes?: UploadFileType[] | null,
+  maxSizeMbOverride?: number,
 ): string | null {
   const type = resolveUploadFileType(file);
   const allowed = resolveAllowedTypes(allowedTypes);
@@ -128,9 +140,10 @@ export function validateUploadFile(
     return `"${file.name}" is empty — nothing to upload.`;
   }
 
-  const maxBytes =
-    type === 'image' ? MAX_IMAGE_SIZE_BYTES : MAX_VIDEO_SIZE_BYTES;
-  const maxMb = type === 'image' ? MAX_IMAGE_SIZE_MB : MAX_VIDEO_SIZE_MB;
+  const defaultMaxMb = type === 'image' ? MAX_IMAGE_SIZE_MB : MAX_VIDEO_SIZE_MB;
+  const defaultMaxBytes = type === 'image' ? MAX_IMAGE_SIZE_BYTES : MAX_VIDEO_SIZE_BYTES;
+  const maxMb = maxSizeMbOverride ?? defaultMaxMb;
+  const maxBytes = maxSizeMbOverride ? maxSizeMbOverride * 1024 * 1024 : defaultMaxBytes;
 
   if (file.size > maxBytes) {
     return `"${file.name}" is ${formatFileSize(file.size)} — the maximum ${type} size is ${maxMb} MB.`;

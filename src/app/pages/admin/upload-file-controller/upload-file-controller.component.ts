@@ -67,6 +67,9 @@ export class UploadFileControllerComponent implements OnDestroy {
     return this.allowedTypesSignal();
   }
 
+  /** Overrides the shared image/video size caps for this instance only, e.g. `[maxSizeMb]="15"`. */
+  @Input() maxSizeMb?: number;
+
   /** Emits the result on success, and null whenever the widget is reset. */
   @Output() uploaded = new EventEmitter<UploadResult | null>();
 
@@ -79,7 +82,7 @@ export class UploadFileControllerComponent implements OnDestroy {
   );
 
   sizeLimitLabel = computed<string>(() =>
-    getSizeLimitLabel(this.allowedTypesSignal()),
+    getSizeLimitLabel(this.allowedTypesSignal(), this.maxSizeMb),
   );
 
   /** Optional heading override (e.g. `heading="Video file"`); falls back to a
@@ -199,6 +202,7 @@ export class UploadFileControllerComponent implements OnDestroy {
     const validationError = this.uploadService.validate(
       file,
       this.allowedTypesSignal(),
+      this.maxSizeMb,
     );
     if (validationError) {
       this.errorMsg.set(validationError);
@@ -226,7 +230,7 @@ export class UploadFileControllerComponent implements OnDestroy {
     this.copied.set(false);
 
     this.uploadSub = this.uploadService
-      .upload(file, this.allowedTypesSignal())
+      .upload(file, this.allowedTypesSignal(), this.maxSizeMb)
       .subscribe({
         next: (event) => {
           if (event.type === 'progress') {

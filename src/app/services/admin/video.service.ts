@@ -10,6 +10,7 @@ export interface VideoPayload {
   thumbnail_url: string;
   views: number;
   tags: number[];
+  is_home_screen: boolean | number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -22,7 +23,7 @@ export class VideoService {
   }
 
   getVideo(id?: number) {
-    return this.http.get(`${this.backendUrl}${id ? '/'+id : ''}`);
+    return this.http.get(`${this.backendUrl}${id ? '/' + id : ''}`);
   }
 
   searchVideo(search: string) {
@@ -37,5 +38,9 @@ export class VideoService {
 
   deleteVideo(id: number) {
     return this.http.delete(`${this.backendUrl}/${id}`);
+  }
+
+  changeStatus(id:number, status:boolean){
+    return this.http.put(`${this.backendUrl}/status/${id}`, {is_active : status})
   }
 }

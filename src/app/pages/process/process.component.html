@@ -5,7 +5,7 @@
       <header class="cr-process-head">
         <div class="cr-process-head-main">
           <p class="cr-eyebrow text-uppercase fw-semibold cr-flare mb-3">{{ eyebrow }}</p>
-          <h2 class="cr-process-title mb-3">{{ heading1 }}<br />{{ heading2 }}</h2>
+          <h2 class="cr-process-title mb-3">{{ phases().length }} {{ phases().length === 1 ? 'phase.' : 'phases.' }}<br />{{ heading2 }}</h2>
           <p class="cr-process-sub mb-0">{{ subheading }}</p>
         </div>
   
@@ -58,11 +58,13 @@
   
       <!-- ── phases ── -->
       <div class="cr-phases">
-        @for (phase of phases; track trackByIndex($index, phase); let odd = $odd) {
+        @for (phase of phases(); track trackByIndex($index, phase); let odd = $odd) {
           <article class="cr-phase" [class.is-reverse]="odd">
             <div class="cr-phase-main">
               <p class="cr-phase-index mb-2">{{ phase.index }}</p>
-              <span class="cr-phase-day">{{ phase.dayRange }}</span>
+              @if (phase.dayRange) {
+                <span class="cr-phase-day">{{ phase.dayRange }}</span>
+              }
               <h3 class="cr-phase-title mb-3">{{ phase.title }}</h3>
               <p class="cr-phase-body mb-0">{{ phase.body }}</p>
             </div>

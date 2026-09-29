@@ -1,4 +1,11 @@
-import { HttpContextToken, HttpInterceptorFn } from '@angular/common/http';
+import {
+  HttpContextToken,
+  HttpErrorResponse,
+  HttpInterceptorFn,
+} from '@angular/common/http';
+import { inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { catchError, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 /**
@@ -10,6 +17,8 @@ import { environment } from '../../../environments/environment';
 export const SKIP_AUTH_HEADERS = new HttpContextToken<boolean>(() => false);
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  const router = inject(Router);
+
   if (req.context.get(SKIP_AUTH_HEADERS)) {
     return next(req);
   }
@@ -24,5 +33,14 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   const clonedReq = req.clone({ headers });
 
-  return next(clonedReq);
+  return next(clonedReq).pipe(
+    catchError((error: HttpErrorResponse) => {
+      if (error.error?.keyword === 'Invalid_Token_Provided') {
+        localStorage.removeItem('token');
+        router.navigateByUrl('/admin/login');
+      }
+
+      return throwError(() => error);
+    }),
+  );
 };
