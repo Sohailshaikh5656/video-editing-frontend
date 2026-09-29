@@ -53,7 +53,7 @@
         @if (loading()) {
           <tr>
             <td colspan="4" class="cr-table-state">
-              <span class="cr-spinner"></span> Loading categories…
+              <app-loader label="Loading categories…" />
             </td>
           </tr>
         } @else if (paginatedGenres().length === 0) {
@@ -161,49 +161,48 @@
   }
 </div>
 
-<!-- Add/Edit Modal -->
-@if (modalOpen()) {
-  <div class="cr-modal-backdrop" (click)="closeModal()">
-    <div class="cr-modal" (click)="$event.stopPropagation()">
-      <h3>{{ modalMode() === "edit" ? "Edit Category" : "Add Category" }}</h3>
-
-      <div class="cr-field">
-        <label for="genreName">Category name</label>
-        <input
-          id="genreName"
-          type="text"
-          [(ngModel)]="formName"
-          placeholder="e.g. Behind the scenes, Case study, News"
-          (keyup.enter)="saveGenre()"
-        />
-      </div>
-
-      @if (formError()) {
-        <div class="cr-alert cr-alert-inline">
-          <i class="bi bi-exclamation-circle"></i>
-          <span>{{ formError() }}</span>
-        </div>
-      }
-
-      <div class="cr-modal-actions">
-        <button type="button" class="cr-btn-secondary" (click)="closeModal()">
-          Cancel
-        </button>
-        <button
-          type="button"
-          class="cr-btn-primary"
-          [disabled]="!formName.trim() || saving()"
-          (click)="saveGenre()"
-        >
-          @if (saving()) {
-            <span class="cr-spinner-sm"></span>
-          }
-          {{ modalMode() === "edit" ? "Save Changes" : "Add Category" }}
-        </button>
-      </div>
+<!-- Add/Edit Drawer -->
+<app-drawer
+  [open]="modalOpen()"
+  [title]="modalMode() === 'edit' ? 'Edit Category' : 'Add Category'"
+  (closed)="closeModal()"
+>
+  <div drawerBody>
+    <div class="cr-field">
+      <label for="genreName">Category name</label>
+      <input
+        id="genreName"
+        type="text"
+        [(ngModel)]="formName"
+        placeholder="e.g. Behind the scenes, Case study, News"
+        (keyup.enter)="saveGenre()"
+      />
     </div>
+
+    @if (formError()) {
+      <div class="cr-alert cr-alert-inline">
+        <i class="bi bi-exclamation-circle"></i>
+        <span>{{ formError() }}</span>
+      </div>
+    }
   </div>
-}
+  <ng-container drawerActions>
+    <button type="button" class="cr-btn-secondary" (click)="closeModal()">
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="cr-btn-primary"
+      [disabled]="!formName.trim() || saving()"
+      (click)="saveGenre()"
+    >
+      @if (saving()) {
+        <span class="cr-spinner-sm"></span>
+      }
+      {{ modalMode() === "edit" ? "Save Changes" : "Add Category" }}
+    </button>
+  </ng-container>
+</app-drawer>
 
 <!-- Delete Confirm Modal -->
 @if (deleteTargetId !== null) {

@@ -16,6 +16,8 @@ import {
 } from 'rxjs';
 import { ReelGenreService } from '../../../services/admin/reel-genre.service';
 import { SharedModule } from '../../../shared/sharedModule';
+import { LoaderComponent } from '../../../components/common/loader/loader.component';
+import { DrawerComponent } from '../../../components/common/drawer/drawer.component';
 
 interface Genre {
   id: number;
@@ -28,7 +30,7 @@ interface Genre {
 @Component({
   selector: 'app-reel-genre',
   standalone: true,
-  imports: [CommonModule, FormsModule, SharedModule],
+  imports: [CommonModule, FormsModule, SharedModule, LoaderComponent, DrawerComponent],
   templateUrl: './reel-genre.component.html',
   styleUrl: './reel-genre.component.scss',
 })

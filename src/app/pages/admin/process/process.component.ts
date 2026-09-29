@@ -16,6 +16,8 @@ import {
 } from 'rxjs';
 import { ProcessService } from '../../../services/admin/process.service';
 import { SharedModule } from '../../../shared/sharedModule';
+import { LoaderComponent } from '../../../components/common/loader/loader.component';
+import { DrawerComponent } from '../../../components/common/drawer/drawer.component';
 
 interface Process {
   id: number;
@@ -45,7 +47,7 @@ const EMPTY_FORM = (): ProcessForm => ({
 @Component({
   selector: 'app-process',
   standalone: true,
-  imports: [CommonModule, FormsModule, SharedModule],
+  imports: [CommonModule, FormsModule, SharedModule, LoaderComponent, DrawerComponent],
   templateUrl: './process.component.html',
   styleUrl: './process.component.scss',
 })

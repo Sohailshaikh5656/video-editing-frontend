@@ -18,6 +18,8 @@ import { BrandService } from '../../../services/admin/brand.service';
 import { SharedModule } from '../../../shared/sharedModule';
 import { UploadFileControllerComponent } from '../upload-file-controller/upload-file-controller.component';
 import { UploadResult } from '../../../services/upload/upload.models';
+import { LoaderComponent } from '../../../components/common/loader/loader.component';
+import { DrawerComponent } from '../../../components/common/drawer/drawer.component';
 
 interface Brand {
   id: number;
@@ -36,6 +38,8 @@ interface Brand {
     FormsModule,
     SharedModule,
     UploadFileControllerComponent,
+    LoaderComponent,
+    DrawerComponent,
   ],
   templateUrl: './brand.component.html',
   styleUrl: './brand.component.scss',

@@ -16,6 +16,8 @@ import {
 } from 'rxjs';
 import { JournalGenreService } from '../../../services/admin/journal-genre.service';
 import { SharedModule } from '../../../shared/sharedModule';
+import { LoaderComponent } from '../../../components/common/loader/loader.component';
+import { DrawerComponent } from '../../../components/common/drawer/drawer.component';
 
 interface JournalGenre {
   id: number;
@@ -28,7 +30,7 @@ interface JournalGenre {
 @Component({
   selector: 'app-journal-genre',
   standalone: true,
-  imports: [CommonModule, FormsModule, SharedModule],
+  imports: [CommonModule, FormsModule, SharedModule, LoaderComponent, DrawerComponent],
   templateUrl: './journal-genre.component.html',
   styleUrl: './journal-genre.component.scss',
 })

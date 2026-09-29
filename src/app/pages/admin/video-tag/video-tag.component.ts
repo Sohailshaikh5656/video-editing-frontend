@@ -16,6 +16,8 @@ import {
 } from 'rxjs';
 import { VideoTagsService } from '../../../services/admin/video-tags.service';
 import { SharedModule } from '../../../shared/sharedModule';
+import { LoaderComponent } from '../../../components/common/loader/loader.component';
+import { DrawerComponent } from '../../../components/common/drawer/drawer.component';
 
 interface Tag {
   id: number;
@@ -28,7 +30,7 @@ interface Tag {
 @Component({
   selector: 'app-video-tags',
   standalone: true,
-  imports: [CommonModule, FormsModule, SharedModule],
+  imports: [CommonModule, FormsModule, SharedModule, LoaderComponent, DrawerComponent],
   templateUrl: './video-tag.component.html',
   styleUrl: './video-tag.component.scss',
 })

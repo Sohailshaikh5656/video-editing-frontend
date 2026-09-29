@@ -55,7 +55,7 @@
           @if (loading()) {
             <tr>
               <td colspan="7" class="cr-table-state">
-                <span class="cr-spinner"></span> Loading reels…
+                <app-loader label="Loading reels…" />
               </td>
             </tr>
           } @else if (paginatedReels().length === 0) {
@@ -328,32 +328,18 @@
   </div>
 }
 
-<!-- ═════════════ Add / Edit Modal ═════════════ -->
-@if (modalOpen()) {
-  <div class="cr-modal-backdrop" (click)="closeModal()">
-    <div class="cr-modal cr-modal-lg" (click)="$event.stopPropagation()">
-      <div class="cr-modal-head">
-        <div>
-          <h3>{{ modalMode() === "edit" ? "Edit Reel" : "Add Reel" }}</h3>
-          <p class="cr-page-sub">
-            {{
-              modalMode() === "edit"
-                ? "Update the details of this reel."
-                : "Upload a reel and fill in its details."
-            }}
-          </p>
-        </div>
-        <button
-          type="button"
-          class="cr-icon-action cr-no-margin"
-          (click)="closeModal()"
-          aria-label="Close"
-        >
-          <i class="bi bi-x-lg"></i>
-        </button>
-      </div>
-
-      <div class="cr-modal-body">
+<!-- ═════════════ Add / Edit Drawer ═════════════ -->
+<app-drawer
+  [open]="modalOpen()"
+  [title]="modalMode() === 'edit' ? 'Edit Reel' : 'Add Reel'"
+  [subtitle]="
+    modalMode() === 'edit'
+      ? 'Update the details of this reel.'
+      : 'Upload a reel and fill in its details.'
+  "
+  (closed)="closeModal()"
+>
+  <div drawerBody>
         <!-- 1 · Media -->
         <section class="cr-form-section">
           <h4 class="cr-section-title">
@@ -537,7 +523,6 @@
             </div>
           }
         </section>
-      </div>
 
       @if (formError()) {
         <div class="cr-alert cr-alert-inline">
@@ -545,26 +530,24 @@
           <span>{{ formError() }}</span>
         </div>
       }
-
-      <div class="cr-modal-actions">
-        <button type="button" class="cr-btn-secondary" (click)="closeModal()">
-          Cancel
-        </button>
-        <button
-          type="button"
-          class="cr-btn-primary"
-          [disabled]="!canSave() || saving()"
-          (click)="saveReel()"
-        >
-          @if (saving()) {
-            <span class="cr-spinner-sm"></span>
-          }
-          {{ modalMode() === "edit" ? "Save Changes" : "Add Reel" }}
-        </button>
-      </div>
-    </div>
   </div>
-}
+  <ng-container drawerActions>
+    <button type="button" class="cr-btn-secondary" (click)="closeModal()">
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="cr-btn-primary"
+      [disabled]="!canSave() || saving()"
+      (click)="saveReel()"
+    >
+      @if (saving()) {
+        <span class="cr-spinner-sm"></span>
+      }
+      {{ modalMode() === "edit" ? "Save Changes" : "Add Reel" }}
+    </button>
+  </ng-container>
+</app-drawer>
 
 <!-- ═════════════ Delete Confirm Modal ═════════════ -->
 @if (deleteTargetId !== null) {

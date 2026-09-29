@@ -16,6 +16,8 @@ import {
 } from 'rxjs';
 import { TestimonialService } from '../../../services/admin/testimonial.service';
 import { SharedModule } from '../../../shared/sharedModule';
+import { LoaderComponent } from '../../../components/common/loader/loader.component';
+import { DrawerComponent } from '../../../components/common/drawer/drawer.component';
 
 interface Testimonial {
   id: number;
@@ -60,7 +62,7 @@ const EMPTY_FORM: TestimonialForm = {
 @Component({
   selector: 'app-testimonial',
   standalone: true,
-  imports: [CommonModule, FormsModule, SharedModule],
+  imports: [CommonModule, FormsModule, SharedModule, LoaderComponent, DrawerComponent],
   templateUrl: './testimonial.component.html',
   styleUrl: './testimonial.component.scss',
 })

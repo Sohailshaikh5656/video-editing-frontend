@@ -1,9 +1,18 @@
-<aside class="cr-sidebar d-flex flex-column">
+<aside class="cr-sidebar d-flex flex-column" [class.is-collapsed]="collapsed()">
 
   <!-- Brand -->
   <div class="cr-sidebar-brand d-flex align-items-center gap-2">
     <div class="cr-brand-mark">C</div>
     <span class="cr-brand-text">Cutroom<span class="cr-brand-accent">.</span></span>
+    <button
+      type="button"
+      class="cr-collapse-btn"
+      (click)="toggleCollapsed()"
+      [attr.aria-label]="collapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+      [title]="collapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+    >
+      <i class="bi" [class.bi-chevron-left]="!collapsed()" [class.bi-chevron-right]="collapsed()"></i>
+    </button>
   </div>
 
   <!-- Scrollable nav -->
@@ -12,7 +21,8 @@
     <a routerLink="/admin/dashboard"
        routerLinkActive="active"
        [routerLinkActiveOptions]="{exact:true}"
-       class="cr-nav-link">
+       class="cr-nav-link"
+       [title]="collapsed() ? 'Dashboard' : ''">
       <i class="bi bi-speedometer2"></i>
       <span>Dashboard</span>
     </a>
@@ -24,7 +34,8 @@
         <a [routerLink]="item.link"
            routerLinkActive="active"
            [routerLinkActiveOptions]="{exact:true}"
-           class="cr-nav-link">
+           class="cr-nav-link"
+           [title]="collapsed() ? item.label : ''">
           <i class="bi" [class]="item.icon"></i>
           <span>{{ item.label }}</span>
         </a>
@@ -35,10 +46,27 @@
 
   <!-- Footer -->
   <div class="cr-sidebar-footer">
-    <a routerLink="/" class="cr-nav-link">
+    <div class="cr-sidebar-profile" [title]="collapsed() ? username() : ''">
+      <span class="cr-profile-avatar">{{ initials() }}</span>
+      <span class="cr-profile-info">
+        <span class="cr-profile-name">{{ username() }}</span>
+        <span class="cr-profile-role">Administrator</span>
+      </span>
+    </div>
+
+    <a routerLink="/" class="cr-nav-link" [title]="collapsed() ? 'Back to Site' : ''">
       <i class="bi bi-box-arrow-left"></i>
       <span>Back to Site</span>
     </a>
+    <button
+      type="button"
+      class="cr-nav-link cr-nav-link-danger"
+      (click)="logout()"
+      [title]="collapsed() ? 'Logout' : ''"
+    >
+      <i class="bi bi-power"></i>
+      <span>Logout</span>
+    </button>
   </div>
 
 </aside>

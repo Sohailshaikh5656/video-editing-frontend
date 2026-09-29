@@ -1,0 +1,34 @@
+@if (open) {
+  <div class="cr-drawer-backdrop" (click)="close()"></div>
+  <aside
+    class="cr-drawer"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-label]="title"
+  >
+    <header class="cr-drawer-head">
+      <div>
+        <h3>{{ title }}</h3>
+        @if (subtitle) {
+          <p class="cr-drawer-sub">{{ subtitle }}</p>
+        }
+      </div>
+      <button
+        type="button"
+        class="cr-drawer-close"
+        (click)="close()"
+        aria-label="Close"
+      >
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </header>
+
+    <div class="cr-drawer-body">
+      <ng-content select="[drawerBody]" />
+    </div>
+
+    <footer class="cr-drawer-foot">
+      <ng-content select="[drawerActions]" />
+    </footer>
+  </aside>
+}

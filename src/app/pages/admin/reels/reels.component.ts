@@ -22,6 +22,8 @@ import {
 } from '../../../services/upload/upload.models';
 import { SharedModule } from '../../../shared/sharedModule';
 import { UploadFileControllerComponent } from '../upload-file-controller/upload-file-controller.component';
+import { LoaderComponent } from '../../../components/common/loader/loader.component';
+import { DrawerComponent } from '../../../components/common/drawer/drawer.component';
 
 interface Genre {
   id: number;
@@ -54,6 +56,8 @@ interface Reel {
     FormsModule,
     SharedModule,
     UploadFileControllerComponent,
+    LoaderComponent,
+    DrawerComponent,
   ],
   templateUrl: './reels.component.html',
   styleUrl: './reels.component.scss',
