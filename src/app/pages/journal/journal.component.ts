@@ -1,17 +1,25 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  signal,
+} from '@angular/core';
+import { forkJoin } from 'rxjs';
+import { UserControllerService } from '../../services/user-controller.service';
 
-export type JournalCategory = 'Craft' | 'Workflow' | 'Business' | 'Gear';
-export type JournalFilter = 'All' | JournalCategory;
+export type JournalFilter = string;
 
 export interface JournalPost {
   slug: string;
   title: string;
   excerpt: string;
-  category: JournalCategory;
-  readMins: number;
+  category: string;
+  readLabel: string;
   date: string; // display string
-  /** two hex colours for the thumbnail gradient */
+  /** two hex colours for the thumbnail gradient — used when there is no real image */
   tone: [string, string];
+  image_url?: string;
   featured?: boolean;
   author?: { name: string; initials: string };
 }
@@ -19,9 +27,58 @@ export interface JournalPost {
 export interface EarlierPost {
   slug: string;
   title: string;
-  category: JournalCategory;
-  readMins: number;
+  category: string;
+  readLabel: string;
   date: string;
+}
+
+interface ApiJournal {
+  id: number;
+  category_id: number;
+  time: number;
+  time_type: string;
+  title: string;
+  description: string;
+  image_url: string;
+  text: string;
+  is_active: number;
+  is_deleted: number;
+  created_at: string;
+  updated_at: string;
+}
+
+interface ApiJournalCategory {
+  id: number;
+  name: string;
+}
+
+/** how many of the most recent live posts go in the featured/grid area before the rest fall into "Earlier posts" */
+const RECENT_COUNT = 7;
+
+const FALLBACK_TONES: [string, string][] = [
+  ['#3a2a0c', '#a67c2e'],
+  ['#10203f', '#33558f'],
+  ['#16241a', '#5c7a45'],
+  ['#0c3d3a', '#1f9d92'],
+  ['#20153f', '#6a55c7'],
+  ['#3b1c0a', '#b5622a'],
+  ['#3a0f14', '#a83a45'],
+];
+
+/** e.g. (6, "Min") -> "6 min" */
+function formatRead(time: number, timeType: string): string {
+  if (!time) return '';
+  return `${time} ${timeType.toLowerCase()}`;
+}
+
+/** e.g. "2026-03-12T00:00:00.000Z" -> "12 Mar 2026" */
+function formatDate(iso: string): string {
+  if (!iso) return '';
+  return new Date(iso).toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  });
 }
 
 @Component({
@@ -31,20 +88,22 @@ export interface EarlierPost {
   styleUrl: './journal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class JournalComponent {
-  readonly filters: JournalFilter[] = ['All', 'Craft', 'Workflow', 'Business', 'Gear'];
+export class JournalComponent implements OnInit {
+  constructor(private userController: UserControllerService) {}
+
+  readonly filters = signal<JournalFilter[]>(['All', 'Craft', 'Workflow', 'Business', 'Gear']);
   readonly activeFilter = signal<JournalFilter>('All');
 
-  /* ───────────── data (swap for API later) ───────────── */
+  /* ───────────── data (mock fallback until the API responds) ───────────── */
 
-  private readonly posts: JournalPost[] = [
+  private readonly posts = signal<JournalPost[]>([
     {
       slug: 'the-first-1-2-seconds',
       title: 'The first 1.2 seconds',
       excerpt:
         'The hook is not a sentence, it is a frame. Here is how to find one in footage you have already shot — and why the shot your crew filmed as filler is usually the answer.',
       category: 'Craft',
-      readMins: 6,
+      readLabel: '6 min',
       date: '12 Mar 2026',
       tone: ['#3a2a0c', '#a67c2e'],
       featured: true,
@@ -56,7 +115,7 @@ export class JournalComponent {
       excerpt:
         'The exact Premiere and Resolve settings used here so review copies stay instant and masters stay untouched. Includes the preset file.',
       category: 'Workflow',
-      readMins: 9,
+      readLabel: '9 min',
       date: '04 Mar 2026',
       tone: ['#10203f', '#33558f'],
     },
@@ -66,7 +125,7 @@ export class JournalComponent {
       excerpt:
         'A one-page checklist that cuts roughly a week off most projects. Written for marketing teams, not for editors.',
       category: 'Business',
-      readMins: 4,
+      readLabel: '4 min',
       date: '26 Feb 2026',
       tone: ['#16241a', '#5c7a45'],
     },
@@ -76,7 +135,7 @@ export class JournalComponent {
       excerpt:
         'Why matching every cut to the music makes a film feel cheaper, and what to use as a rhythm reference instead.',
       category: 'Craft',
-      readMins: 7,
+      readLabel: '7 min',
       date: '18 Feb 2026',
       tone: ['#0c3d3a', '#1f9d92'],
     },
@@ -86,7 +145,7 @@ export class JournalComponent {
       excerpt:
         'How to leave feedback an editor can act on, with four examples rewritten from vague to specific.',
       category: 'Workflow',
-      readMins: 5,
+      readLabel: '5 min',
       date: '09 Feb 2026',
       tone: ['#20153f', '#6a55c7'],
     },
@@ -96,7 +155,7 @@ export class JournalComponent {
       excerpt:
         'Everything is graded on a calibrated 27-inch display and watched on a phone at 40% brightness. Here is how to bridge that gap.',
       category: 'Craft',
-      readMins: 8,
+      readLabel: '8 min',
       date: '31 Jan 2026',
       tone: ['#3b1c0a', '#b5622a'],
     },
@@ -106,23 +165,23 @@ export class JournalComponent {
       excerpt:
         'Why published prices win more work than “contact us for a quote”, with the numbers from switching to them in 2023.',
       category: 'Business',
-      readMins: 11,
+      readLabel: '11 min',
       date: '22 Jan 2026',
       tone: ['#3a0f14', '#a83a45'],
     },
-  ];
+  ]);
 
-  private readonly earlierAll: EarlierPost[] = [
-    { slug: 'six-transitions', title: 'Six transitions to stop using in brand films', category: 'Craft', readMins: 6, date: '11 Jan 2026' },
-    { slug: 'retainer-contract', title: 'A retainer contract that protects both sides', category: 'Business', readMins: 12, date: '02 Jan 2026' },
-    { slug: 'dialogue-clean-up', title: 'Dialogue clean-up before you reach for a plugin', category: 'Craft', readMins: 7, date: '19 Dec 2025' },
-    { slug: 'storage-plan', title: 'Storage that will not lose your client footage', category: 'Gear', readMins: 8, date: '08 Dec 2025' },
-    { slug: 'brand-film-length', title: 'How long should a brand film actually be?', category: 'Business', readMins: 5, date: '27 Nov 2025' },
-    { slug: 'reframing-16-9', title: 'Reframing 16:9 to 9:16 without ruining the shot', category: 'Workflow', readMins: 8, date: '11 Nov 2025' },
-    { slug: 'nine-years', title: 'What nine years of client notes taught me', category: 'Business', readMins: 10, date: '03 Nov 2025' },
-    { slug: 'monitor-calibration', title: 'Calibrating a monitor without a lab budget', category: 'Gear', readMins: 6, date: '20 Oct 2025' },
-    { slug: 'mix-for-headphones', title: 'Mixing for people wearing earbuds', category: 'Craft', readMins: 7, date: '06 Oct 2025' },
-  ];
+  private readonly earlierAll = signal<EarlierPost[]>([
+    { slug: 'six-transitions', title: 'Six transitions to stop using in brand films', category: 'Craft', readLabel: '6 min', date: '11 Jan 2026' },
+    { slug: 'retainer-contract', title: 'A retainer contract that protects both sides', category: 'Business', readLabel: '12 min', date: '02 Jan 2026' },
+    { slug: 'dialogue-clean-up', title: 'Dialogue clean-up before you reach for a plugin', category: 'Craft', readLabel: '7 min', date: '19 Dec 2025' },
+    { slug: 'storage-plan', title: 'Storage that will not lose your client footage', category: 'Gear', readLabel: '8 min', date: '08 Dec 2025' },
+    { slug: 'brand-film-length', title: 'How long should a brand film actually be?', category: 'Business', readLabel: '5 min', date: '27 Nov 2025' },
+    { slug: 'reframing-16-9', title: 'Reframing 16:9 to 9:16 without ruining the shot', category: 'Workflow', readLabel: '8 min', date: '11 Nov 2025' },
+    { slug: 'nine-years', title: 'What nine years of client notes taught me', category: 'Business', readLabel: '10 min', date: '03 Nov 2025' },
+    { slug: 'monitor-calibration', title: 'Calibrating a monitor without a lab budget', category: 'Gear', readLabel: '6 min', date: '20 Oct 2025' },
+    { slug: 'mix-for-headphones', title: 'Mixing for people wearing earbuds', category: 'Craft', readLabel: '7 min', date: '06 Oct 2025' },
+  ]);
 
   readonly topics = [
     'Colour grading',
@@ -133,27 +192,89 @@ export class JournalComponent {
     'Sound & mixing',
   ];
 
+  ngOnInit(): void {
+    forkJoin({
+      journals: this.userController.getJournal(),
+      categories: this.userController.getJournalCategory(),
+    }).subscribe({
+      next: ({ journals, categories }: any) => {
+        const categoryList: ApiJournalCategory[] = categories?.data ?? [];
+        const categoryMap = new Map<number, string>(
+          categoryList.map((c) => [c.id, c.name]),
+        );
+        this.filters.set(['All', ...categoryList.map((c) => c.name)]);
+
+        const live: ApiJournal[] = (journals?.data ?? [])
+          .filter((j: ApiJournal) => j.is_active === 1 && j.is_deleted === 0)
+          .sort(
+            (a: ApiJournal, b: ApiJournal) =>
+              new Date(b.created_at).getTime() -
+              new Date(a.created_at).getTime(),
+          );
+
+        if (!live.length) return;
+
+        const toPost = (j: ApiJournal, i: number): JournalPost => ({
+          slug: String(j.id),
+          title: j.title,
+          excerpt: j.description,
+          category: categoryMap.get(j.category_id) || 'Journal',
+          readLabel: formatRead(j.time, j.time_type),
+          date: formatDate(j.created_at),
+          tone: FALLBACK_TONES[i % FALLBACK_TONES.length],
+          image_url: j.image_url,
+          featured: i === 0,
+        });
+
+        const toEarlier = (j: ApiJournal): EarlierPost => ({
+          slug: String(j.id),
+          title: j.title,
+          category: categoryMap.get(j.category_id) || 'Journal',
+          readLabel: formatRead(j.time, j.time_type),
+          date: formatDate(j.created_at),
+        });
+
+        this.posts.set(live.slice(0, RECENT_COUNT).map(toPost));
+        this.earlierAll.set(live.slice(RECENT_COUNT).map(toEarlier));
+      },
+      error: () => {
+        // keep the fallback posts already set above
+      },
+    });
+  }
+
   /* ───────────── derived state ───────────── */
 
-  readonly totalPosts = computed(() => this.posts.length + this.earlierAll.length);
+  readonly totalPosts = computed(
+    () => this.posts().length + this.earlierAll().length,
+  );
 
   private readonly visiblePosts = computed(() => {
     const f = this.activeFilter();
-    return f === 'All' ? this.posts : this.posts.filter((p) => p.category === f);
+    return f === 'All'
+      ? this.posts()
+      : this.posts().filter((p) => p.category === f);
   });
 
-  readonly featured = computed(() => this.visiblePosts().find((p) => p.featured) ?? null);
+  readonly featured = computed(
+    () => this.visiblePosts().find((p) => p.featured) ?? null,
+  );
   readonly grid = computed(() => this.visiblePosts().filter((p) => !p.featured));
 
   readonly earlierLimit = signal(7);
   readonly earlier = computed(() => {
     const f = this.activeFilter();
-    const list = f === 'All' ? this.earlierAll : this.earlierAll.filter((p) => p.category === f);
+    const list =
+      f === 'All'
+        ? this.earlierAll()
+        : this.earlierAll().filter((p) => p.category === f);
     return list.slice(0, this.earlierLimit());
   });
   readonly earlierTotal = computed(() => {
     const f = this.activeFilter();
-    return f === 'All' ? this.earlierAll.length : this.earlierAll.filter((p) => p.category === f).length;
+    return f === 'All'
+      ? this.earlierAll().length
+      : this.earlierAll().filter((p) => p.category === f).length;
   });
   readonly canLoadMore = computed(() => this.earlier().length < this.earlierTotal());
 
@@ -169,7 +290,7 @@ export class JournalComponent {
   }
 
   countFor(f: JournalFilter): number {
-    const all = [...this.posts, ...this.earlierAll];
+    const all = [...this.posts(), ...this.earlierAll()];
     return f === 'All' ? all.length : all.filter((p) => p.category === f).length;
   }
 
@@ -177,7 +298,9 @@ export class JournalComponent {
     this.earlierLimit.update((n) => n + 5);
   }
 
-  gradient(p: JournalPost): string {
+  /** the thumbnail's real image when the API provided one, otherwise the tone gradient */
+  thumbBackground(p: JournalPost): string {
+    if (p.image_url) return `url(${p.image_url}) center / cover no-repeat`;
     return `linear-gradient(140deg, ${p.tone[0]} 25%, ${p.tone[1]})`;
   }
 

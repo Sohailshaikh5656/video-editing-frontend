@@ -20,6 +20,7 @@ import { SharedModule } from '../../../shared/sharedModule';
 interface JournalGenre {
   id: number;
   name: string;
+  is_active?: boolean | number;
   created_at?: string;
   updated_at?: string;
 }
@@ -56,6 +57,9 @@ export class JournalGenreComponent implements OnInit, OnDestroy {
   // delete confirm state
   deleteTargetId: number | null = null;
   deleting = signal<boolean>(false);
+
+  // status toggle state
+  togglingId = signal<number | null>(null);
 
   totalPages = computed(() =>
     Math.max(1, Math.ceil(this.allGenres().length / this.pageSize)),
@@ -176,6 +180,30 @@ export class JournalGenreComponent implements OnInit, OnDestroy {
       error: () => {
         this.saving.set(false);
         this.formError.set('Failed to save category. Please try again.');
+      },
+    });
+  }
+
+  // ── Status toggle ──────────────────────────
+
+  toggleStatus(genre: JournalGenre): void {
+    if (this.togglingId() !== null) return;
+
+    const nextStatus = !genre.is_active;
+    this.togglingId.set(genre.id);
+
+    this.genreService.changeStatus(genre.id, nextStatus).subscribe({
+      next: () => {
+        this.togglingId.set(null);
+        this.allGenres.update((list) =>
+          list.map((g) =>
+            g.id === genre.id ? { ...g, is_active: nextStatus } : g,
+          ),
+        );
+      },
+      error: () => {
+        this.togglingId.set(null);
+        this.errorMsg.set('Failed to update status. Please try again.');
       },
     });
   }

@@ -114,13 +114,23 @@
                 <td class="cr-text-mid">{{ video.views || 0 | number }}</td>
                 <td>
                   <div class="cr-badge-list">
-                    <span
-                      class="cr-badge"
+                    <button
+                      type="button"
+                      class="cr-status-toggle"
                       [class.is-on]="video.is_active"
-                      [class.is-off]="!video.is_active"
+                      [disabled]="togglingId() === video.id"
+                      (click)="toggleStatus(video)"
+                      [attr.aria-label]="
+                        video.is_active ? 'Deactivate' : 'Activate'
+                      "
+                      [title]="
+                        video.is_active
+                          ? 'Active — click to deactivate'
+                          : 'Inactive — click to activate'
+                      "
                     >
-                      {{ video.is_active ? "Active" : "Inactive" }}
-                    </span>
+                      <span class="cr-status-toggle-thumb"></span>
+                    </button>
                     @if (video.is_home_screen) {
                       <span class="cr-badge is-home">
                         <i class="bi bi-house-door"></i> Home
@@ -460,6 +470,11 @@
               [(ngModel)]="formViews"
             />
           </div>
+
+          <label class="cr-checkbox-row">
+            <input type="checkbox" [(ngModel)]="formHomeScreen" />
+            <span><i class="bi bi-house-door"></i> Show on home screen</span>
+          </label>
         </section>
 
         <!-- 3 · Thumbnail -->

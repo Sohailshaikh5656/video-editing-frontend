@@ -28,4 +28,7 @@ export class JournalService {
     deleteJournal(id:number){
       return this.http.delete(`${this.backendUrl}/${id}`)
     }
+    changeStatus(id:number, status:boolean){
+    return this.http.put(`${this.backendUrl}/status/${id}`, {is_active : status})
+  }
 }

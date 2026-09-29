@@ -43,18 +43,19 @@
         </div>
       }
     </div>
-    <p class="cr-meta text-center pt-4 pb-2 mb-0 border-top">
-      Trusted by teams at
-    </p>
-    
-    <div class="brand-marquee mb-4">
-      <div class="brand-track">
-    
-        <!-- First set -->
-        <div *ngFor="let item of brandName" class="brand-name">{{item.label}}</div>
-    
+    @if (brandLogos().length) {
+      <p class="cr-meta text-center pt-4 pb-2 mb-0 border-top">
+        Trusted by teams at
+      </p>
+
+      <div class="brand-marquee mb-4">
+        <div class="brand-track">
+          @for (item of brandMarqueeItems(); track item.name + '-' + $index) {
+            <app-brand-logo [brand]="item" />
+          }
+        </div>
       </div>
-    </div>
+    }
   </div>
 </section>
 
@@ -77,13 +78,13 @@
       <article class="cr-case row g-4 g-lg-5 align-items-center" [class]="'cr-case-' + w.color">
         <div class="col-lg-6">
           <div class="cr-shot ratio ratio-16x9 rounded-3 overflow-hidden">
-            <app-cr-player [src]="w.video" [length]="w.length" [label]="w.title" />
+            <app-cr-player [src]="w.vedio_url" [poster]="w.thumbnail_url" [label]="w.title" />
             <span class="cr-shot-label cr-meta">{{ w.client }}</span>
           </div>
         </div>
 
         <div class="col-lg-6">
-          <p class="cr-meta mb-2">{{ w.year }} · {{ w.client }}</p>
+          <p class="cr-meta mb-2">{{ w.year }} · {{ w.client }} · {{ w.views }} views</p>
           <h3 class="cr-case-title mb-3">{{ w.title }}</h3>
           <p class="cr-case-text mb-3">{{ w.text }}</p>
 
@@ -122,7 +123,7 @@
             <h3 class="fw-semibold mb-2">{{ item.title }}</h3>
             <small class="what-we-do-text text-secondary mb-3">{{ item.description }}</small>
             <ul class="what-we-do-points list-unstyled flex-grow-1">
-              @for (point of item.points; track point) {
+              @for (point of getPoints(item.points); track point) {
                 <li class="mb-1 d-flex align-items-center">
                   <span class="what-we-do-tick">
                     <!-- Green Tick SVG -->
@@ -241,8 +242,18 @@
     </div>
 
     <div class="cr-compare" [style.--split.%]="grade()">
-      <div class="cr-compare-frame cr-compare-before"><span class="cr-compare-tag">Before · Log · Ungraded</span></div>
-      <div class="cr-compare-frame cr-compare-after"><span class="cr-compare-tag">After · Final grade</span></div>
+      <div
+        class="cr-compare-frame cr-compare-before"
+        [style.background-image]="latestVideo?.thumbnail_url ? 'url(' + latestVideo!.thumbnail_url + ')' : null"
+      >
+        <span class="cr-compare-tag">Before · Log · Ungraded</span>
+      </div>
+      <div
+        class="cr-compare-frame cr-compare-after"
+        [style.background-image]="latestVideo?.thumbnail_url ? 'url(' + latestVideo!.thumbnail_url + ')' : null"
+      >
+        <span class="cr-compare-tag">After · Final grade</span>
+      </div>
       <span class="cr-compare-line"></span>
       <input
         class="cr-compare-input"
@@ -379,7 +390,11 @@
       @for (post of posts; track post.title) {
         <div class="col">
           <a class="cr-post h-100" routerLink="/journal">
-            <span class="cr-post-thumb ratio ratio-16x9 rounded-3" [class]="'cr-post-' + post.tone"></span>
+            <span
+              class="cr-post-thumb ratio ratio-16x9 rounded-3"
+              [class]="'cr-post-' + post.tone"
+              [style.background-image]="post.image_url ? 'url(' + post.image_url + ')' : null"
+            ></span>
             <span class="cr-post-meta">
               <span class="cr-meta text-primary">{{ post.tag }}</span>
               <span class="cr-meta">{{ post.read }}</span>

@@ -43,19 +43,20 @@
         <tr>
           <th>#</th>
           <th>Tag Name</th>
+          <th>Status</th>
           <th class="text-end">Actions</th>
         </tr>
       </thead>
       <tbody>
         @if (loading()) {
           <tr>
-            <td colspan="3" class="cr-table-state">
+            <td colspan="4" class="cr-table-state">
               <span class="cr-spinner"></span> Loading tags…
             </td>
           </tr>
         } @else if (paginatedTags().length === 0) {
           <tr>
-            <td colspan="3" class="cr-table-state">
+            <td colspan="4" class="cr-table-state">
               <i class="bi bi-tags"></i>
               <span>{{
                 searchTerm ? "No tags match your search." : "No tags added yet."
@@ -69,6 +70,23 @@
                 {{ (currentPage() - 1) * pageSize + i + 1 }}
               </td>
               <td class="cr-tag-name">{{ tag.tags }}</td>
+              <td>
+                <button
+                  type="button"
+                  class="cr-status-toggle"
+                  [class.is-on]="tag.is_active"
+                  [disabled]="togglingId() === tag.id"
+                  (click)="toggleStatus(tag)"
+                  [attr.aria-label]="tag.is_active ? 'Deactivate' : 'Activate'"
+                  [title]="
+                    tag.is_active
+                      ? 'Active — click to deactivate'
+                      : 'Inactive — click to activate'
+                  "
+                >
+                  <span class="cr-status-toggle-thumb"></span>
+                </button>
+              </td>
               <td class="text-end">
                 <button
                   type="button"

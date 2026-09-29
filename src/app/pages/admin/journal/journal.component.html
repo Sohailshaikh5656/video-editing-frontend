@@ -46,19 +46,20 @@
           <th>Title</th>
           <th>Category</th>
           <th>Duration</th>
+          <th>Status</th>
           <th class="text-end">Actions</th>
         </tr>
       </thead>
       <tbody>
         @if (loading()) {
           <tr>
-            <td colspan="6" class="cr-table-state">
+            <td colspan="7" class="cr-table-state">
               <span class="cr-spinner"></span> Loading journals…
             </td>
           </tr>
         } @else if (paginatedJournals().length === 0) {
           <tr>
-            <td colspan="6" class="cr-table-state">
+            <td colspan="7" class="cr-table-state">
               <i class="bi bi-journal-text"></i>
               <span>{{
                 searchTerm
@@ -91,6 +92,25 @@
               </td>
               <td class="cr-text-mid">
                 {{ journal.time }} {{ journal.time_type }}
+              </td>
+              <td>
+                <button
+                  type="button"
+                  class="cr-status-toggle"
+                  [class.is-on]="journal.is_active"
+                  [disabled]="togglingId() === journal.id"
+                  (click)="toggleStatus(journal)"
+                  [attr.aria-label]="
+                    journal.is_active ? 'Deactivate' : 'Activate'
+                  "
+                  [title]="
+                    journal.is_active
+                      ? 'Active — click to deactivate'
+                      : 'Inactive — click to activate'
+                  "
+                >
+                  <span class="cr-status-toggle-thumb"></span>
+                </button>
               </td>
               <td class="text-end">
                 <button

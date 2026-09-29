@@ -14,7 +14,7 @@
           </p>
   
           <div class="d-flex flex-wrap gap-2" role="group" aria-label="Filter posts by category">
-            @for (f of filters; track f) {
+            @for (f of filters(); track f) {
               <button
                 type="button"
                 class="cr-chip font-monospace text-uppercase"
@@ -41,16 +41,16 @@
         <div class="container">
           <article class="row align-items-center g-4 g-lg-5 cr-featured">
             <div class="col-lg-6">
-              <a class="cr-thumb cr-thumb-lg d-block" [href]="'/journal/' + post.slug" [style.background]="gradient(post)" [attr.aria-label]="post.title">
+              <a class="cr-thumb cr-thumb-lg d-block" [href]="'/journal/' + post.slug" [style.background]="thumbBackground(post)" [attr.aria-label]="post.title">
                 <span class="cr-badge font-monospace text-uppercase">Featured</span>
               </a>
             </div>
-  
+
             <div class="col-lg-6">
               <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
                 <span class="cr-tag cr-tag-flare font-monospace text-uppercase">Most read</span>
                 <span class="cr-meta font-monospace text-uppercase">
-                  {{ post.category }} · {{ post.readMins }} min · {{ post.date }}
+                  {{ post.category }} · {{ post.readLabel }} · {{ post.date }}
                 </span>
               </div>
   
@@ -81,13 +81,13 @@
             @for (post of grid(); track post.slug) {
               <div class="col-md-6 col-lg-4">
                 <article class="cr-card-post h-100">
-                  <a class="cr-thumb d-block mb-3" [href]="'/journal/' + post.slug" [style.background]="gradient(post)" [attr.aria-label]="post.title">
+                  <a class="cr-thumb d-block mb-3" [href]="'/journal/' + post.slug" [style.background]="thumbBackground(post)" [attr.aria-label]="post.title">
                     <span class="cr-badge font-monospace text-uppercase">{{ post.category }}</span>
                   </a>
-  
+
                   <div class="d-flex justify-content-between font-monospace cr-meta mb-2">
                     <span class="text-primary">{{ post.category }}</span>
-                    <span>{{ post.readMins }} min</span>
+                    <span>{{ post.readLabel }}</span>
                   </div>
   
                   <h3 class="cr-post-title text-body-emphasis mb-2">
@@ -124,7 +124,7 @@
                 <time class="cr-meta font-monospace">{{ p.date }}</time>
                 <span class="cr-list-title text-body-emphasis">{{ p.title }}</span>
                 <span class="cr-list-cat font-monospace text-uppercase text-primary">{{ p.category }}</span>
-                <span class="cr-meta font-monospace text-end">{{ p.readMins }} min</span>
+                <span class="cr-meta font-monospace text-end">{{ p.readLabel }}</span>
               </a>
             </li>
           }

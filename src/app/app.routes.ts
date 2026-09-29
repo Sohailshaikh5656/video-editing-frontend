@@ -176,6 +176,20 @@ export const routes: Routes = [
             (m) => m.ProcessComponent,
           ),
       },
+      {
+        path: 'inquiry',
+        loadComponent: () =>
+          import('./pages/admin/inquiry/inquiry.component').then(
+            (m) => m.InquiryComponent,
+          ),
+      },
+      {
+        path: 'brand',
+        loadComponent: () =>
+          import('./pages/admin/brand/brand.component').then(
+            (m) => m.BrandComponent,
+          ),
+      },
     ],
   },
 

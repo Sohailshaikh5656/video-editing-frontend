@@ -25,14 +25,16 @@ export class UploadService {
 
   /**
    * Synchronous pre-flight check so the UI can react before an upload starts.
-   * `allowedTypes` optionally narrows the accepted media kinds.
+   * `allowedTypes` optionally narrows the accepted media kinds. `maxSizeMb`
+   * optionally enforces a stricter cap than the shared defaults.
    * Returns an error message, or null when the file is valid.
    */
   validate(
     file: File,
     allowedTypes?: UploadFileType[],
+    maxSizeMb?: number,
   ): string | null {
-    return validateUploadFile(file, allowedTypes);
+    return validateUploadFile(file, allowedTypes, maxSizeMb);
   }
 
   /**
@@ -43,8 +45,9 @@ export class UploadService {
   upload(
     file: File,
     allowedTypes?: UploadFileType[],
+    maxSizeMb?: number,
   ): Observable<UploadEvent> {
-    const validationError = validateUploadFile(file, allowedTypes);
+    const validationError = validateUploadFile(file, allowedTypes, maxSizeMb);
 
     if (validationError) {
       return throwError(() => new Error(validationError));

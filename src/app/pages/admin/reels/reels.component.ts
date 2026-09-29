@@ -104,6 +104,9 @@ export class ReelsComponent implements OnInit, OnDestroy {
   deleteTargetId: number | null = null;
   deleting = signal<boolean>(false);
 
+  // status toggle state
+  togglingId = signal<number | null>(null);
+
   totalPages = computed(() =>
     Math.max(1, Math.ceil(this.allReels().length / this.pageSize)),
   );
@@ -322,6 +325,30 @@ export class ReelsComponent implements OnInit, OnDestroy {
       error: () => {
         this.saving.set(false);
         this.formError.set('Failed to save reel. Please try again.');
+      },
+    });
+  }
+
+  // ── Status toggle ──────────────────────────
+
+  toggleStatus(reel: Reel): void {
+    if (this.togglingId() !== null) return;
+
+    const nextStatus = !reel.is_active;
+    this.togglingId.set(reel.id);
+
+    this.reelsService.changeStatus(reel.id, nextStatus).subscribe({
+      next: () => {
+        this.togglingId.set(null);
+        this.allReels.update((list) =>
+          list.map((r) =>
+            r.id === reel.id ? { ...r, is_active: nextStatus ? 1 : 0 } : r,
+          ),
+        );
+      },
+      error: () => {
+        this.togglingId.set(null);
+        this.errorMsg.set('Failed to update status. Please try again.');
       },
     });
   }

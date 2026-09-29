@@ -1,0 +1,12 @@
+<div class="cr-brand-logo" [attr.title]="brand.name">
+  @if (brand.image_url) {
+    <img
+      [src]="brand.image_url"
+      [alt]="brand.name"
+      loading="lazy"
+      (error)="$any($event.target).style.display = 'none'"
+    />
+  } @else {
+    <span class="cr-brand-fallback">{{ brand.name }}</span>
+  }
+</div>

@@ -1,10 +1,12 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  OnInit,
   computed,
   signal,
 } from '@angular/core';
 import { SharedModule } from '../../shared/sharedModule';
+import { UserControllerService } from '../../services/user-controller.service';
 
 interface HeadStat {
   label: string;
@@ -32,6 +34,27 @@ interface Phase {
   title: string;
   body: string;
   deliverables: PhaseDeliverable[];
+}
+
+interface ApiProcess {
+  id: number;
+  title: string;
+  description: string;
+  points: string;
+  is_home_screen: number;
+  is_active: number;
+  is_deleted: number;
+  created_at: string;
+  updated_at: string;
+}
+
+function parsePoints(raw: string): string[] {
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
 }
 
 interface NeedItem {
@@ -193,9 +216,35 @@ const TURNAROUNDS: TurnaroundRow[] = [
   styleUrl: './process.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProcessComponent {
+export class ProcessComponent implements OnInit {
+  constructor(private userController: UserControllerService) {}
+
+  ngOnInit(): void {
+    this.userController.getProcess().subscribe({
+      next: (res: any) => {
+        const items: ApiProcess[] = res?.data ?? [];
+        const live = items.filter(
+          (p) => p.is_active === 1 && p.is_deleted === 0,
+        );
+        if (!live.length) return;
+
+        this.phases.set(
+          live.map((p, i) => ({
+            index: String(i + 1).padStart(2, '0'),
+            dayRange: '',
+            title: p.title,
+            body: p.description,
+            deliverables: parsePoints(p.points).map((text) => ({ text })),
+          })),
+        );
+      },
+      error: () => {
+        // keep the fallback phases already set below
+      },
+    });
+  }
+
   readonly eyebrow = 'How we work';
-  readonly heading1 = 'Six phases.';
   readonly heading2 = 'Nothing improvised.';
   readonly subheading =
     'The same process runs on a $490 single video and a $40k campaign. It is written down because a process you cannot describe is not a process, it is a habit.';
@@ -207,7 +256,7 @@ export class ProcessComponent {
   readonly ganttCaption = 'A typical eleven-day project';
   readonly ganttTag = 'Signature package · Brand film';
 
-  readonly phases = PHASES;
+  phases = signal<Phase[]>(PHASES);
   readonly needItems = NEED_ITEMS;
   readonly tools = TOOLS;
   readonly turnarounds = TURNAROUNDS;

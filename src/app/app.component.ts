@@ -36,6 +36,7 @@ export class AppComponent {
       .subscribe((event: NavigationEnd) => {
         this.isAdminRoute.set(event.urlAfterRedirects.startsWith('/admin'));
         this.loadNothing = event.urlAfterRedirects === '/admin/login';
+        this.token = localStorage.getItem('token');
       });
     // no need for the manual sync calls after this — window.location already got it right
   }

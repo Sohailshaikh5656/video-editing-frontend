@@ -57,6 +57,9 @@ export class VideoTagsComponent implements OnInit, OnDestroy {
   deleteTargetId: number | null = null;
   deleting = signal<boolean>(false);
 
+  // status toggle state
+  togglingId = signal<number | null>(null);
+
   totalPages = computed(() =>
     Math.max(1, Math.ceil(this.allTags().length / this.pageSize)),
   );
@@ -157,6 +160,30 @@ export class VideoTagsComponent implements OnInit, OnDestroy {
       error: () => {
         this.saving.set(false);
         this.errorMsg.set('Failed to save tag. Please try again.');
+      },
+    });
+  }
+
+  // ── Status toggle ──────────────────────────
+
+  toggleStatus(tag: Tag): void {
+    if (this.togglingId() !== null) return;
+
+    const nextStatus = !tag.is_active;
+    this.togglingId.set(tag.id);
+
+    this.tagsService.changeStatus(tag.id, nextStatus).subscribe({
+      next: () => {
+        this.togglingId.set(null);
+        this.allTags.update((list) =>
+          list.map((t) =>
+            t.id === tag.id ? { ...t, is_active: nextStatus } : t,
+          ),
+        );
+      },
+      error: () => {
+        this.togglingId.set(null);
+        this.errorMsg.set('Failed to update status. Please try again.');
       },
     });
   }

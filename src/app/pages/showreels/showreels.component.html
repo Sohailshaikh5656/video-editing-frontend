@@ -32,7 +32,9 @@
       <div class="cr-stage">
         <div class="cr-stage-frame">
           <span class="cr-chip cr-chip-tl">{{ reel.category }} &nbsp;·&nbsp; {{ reel.year }}</span>
-          <span class="cr-chip cr-chip-tr">{{ reel.length }}</span>
+          @if (reel.length) {
+            <span class="cr-chip cr-chip-tr">{{ reel.length }}</span>
+          }
           <div class="ratio ratio-16x9 cr-stage-media">
             <app-cr-player
               [src]="reel.src"

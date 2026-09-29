@@ -5,7 +5,7 @@ import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/ro
 import { filter, map } from 'rxjs';
 import { ThemeService } from '../../../services/theme.service';
 
-type NavIcon = 'play' | 'flow' | 'star' | 'help';
+type NavIcon = 'play' | 'flow' | 'star' | 'help' | 'mail';
 type NavTone = 'flare' | 'teal' | 'amber' | 'violet';
 
 interface NavLink {
@@ -87,6 +87,7 @@ export class NavbarComponent {
     { label: 'Process', path: '/process', hint: 'How a project runs', icon: 'flow', tone: 'flare' },
     { label: 'Testimonials', path: '/testimonials', hint: 'What clients say', icon: 'star', tone: 'amber' },
     { label: 'FAQ', path: '/faq', hint: 'Quick answers', icon: 'help', tone: 'teal' },
+    { label: 'Contact', path: '/contact', hint: 'Say hello, start a project', icon: 'mail', tone: 'flare' },
   ];
 
   /* ───────────── accent colour panel ───────────── */
