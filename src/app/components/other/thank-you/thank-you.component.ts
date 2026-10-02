@@ -40,10 +40,10 @@ interface NextStep {
       </div>
 
       <div class="d-flex flex-wrap justify-content-center gap-2">
-        <a class="btn btn-outline-secondary rounded-pill px-4" routerLink="/showreel">
+        <a class="btn btn-outline-secondary rounded-pill px-4" routerLink="/showReels">
           <span aria-hidden="true">&#9654;</span> Watch the showreel
         </a>
-        <a class="btn btn-outline-secondary rounded-pill px-4" routerLink="/process">Read the process &rarr;</a>
+        <a class="btn btn-outline-secondary rounded-pill px-4" routerLink="/work" fragment="workflow">Read the process &rarr;</a>
       </div>
 
       <p class="cr-caption font-monospace text-uppercase mt-5 mb-0">

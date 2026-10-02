@@ -1,7 +1,21 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, ElementRef, HostListener, computed, effect, inject, signal, viewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  computed,
+  effect,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import {
+  NavigationEnd,
+  Router,
+  RouterLink,
+  RouterLinkActive,
+} from '@angular/router';
 import { filter, map } from 'rxjs';
 import { ThemeService } from '../../../services/theme.service';
 
@@ -31,7 +45,11 @@ type Rgb = [number, number, number];
 /** '#abc' | 'ABCDEF' | '#aabbcc' → '#aabbcc' (or null when invalid) */
 const normalizeHex = (value: string): string | null => {
   let h = value.trim().replace(/^#/, '');
-  if (/^[0-9a-f]{3}$/i.test(h)) h = h.split('').map((c) => c + c).join('');
+  if (/^[0-9a-f]{3}$/i.test(h))
+    h = h
+      .split('')
+      .map((c) => c + c)
+      .join('');
   return /^[0-9a-f]{6}$/i.test(h) ? '#' + h.toLowerCase() : null;
 };
 
@@ -49,7 +67,8 @@ const luminance = ([r, g, b]: Rgb): number => {
   return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
 };
 
-const contrast = (a: number, b: number): number => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+const contrast = (a: number, b: number): number =>
+  (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
 
 const darken = (rgb: Rgb, amount: number): Rgb =>
   rgb.map((c) => Math.round(c * (1 - amount))) as Rgb;
@@ -77,17 +96,47 @@ export class NavbarComponent {
     { label: 'Work', path: '/work' },
     { label: 'Services', path: '/services' },
     { label: 'About', path: '/about' },
-    { label: 'Pricing', path: '/pricing' },
+    // { label: 'Pricing', path: '/pricing' },
     { label: 'Journal', path: '/journal' },
   ];
 
   /** everything else lives in the dropdown – add new pages here */
   moreLinks: NavLink[] = [
-    { label: 'Showreels', path: '/showReels', hint: 'Recent cuts, front to back', icon: 'play', tone: 'violet' },
-    { label: 'Process', path: '/process', hint: 'How a project runs', icon: 'flow', tone: 'flare' },
-    { label: 'Testimonials', path: '/testimonials', hint: 'What clients say', icon: 'star', tone: 'amber' },
-    { label: 'FAQ', path: '/faq', hint: 'Quick answers', icon: 'help', tone: 'teal' },
-    { label: 'Contact', path: '/contact', hint: 'Say hello, start a project', icon: 'mail', tone: 'flare' },
+    {
+      label: 'Showreels',
+      path: '/showReels',
+      hint: 'Recent cuts, front to back',
+      icon: 'play',
+      tone: 'violet',
+    },
+    {
+      label: 'Process',
+      path: '/process',
+      hint: 'How a project runs',
+      icon: 'flow',
+      tone: 'flare',
+    },
+    {
+      label: 'Testimonials',
+      path: '/testimonials',
+      hint: 'What clients say',
+      icon: 'star',
+      tone: 'amber',
+    },
+    {
+      label: 'FAQ',
+      path: '/faq',
+      hint: 'Quick answers',
+      icon: 'help',
+      tone: 'teal',
+    },
+    {
+      label: 'Contact',
+      path: '/contact',
+      hint: 'Say hello, start a project',
+      icon: 'mail',
+      tone: 'flare',
+    },
   ];
 
   /* ───────────── accent colour panel ───────────── */
@@ -110,7 +159,9 @@ export class NavbarComponent {
   hexDraft = signal<string>(this.accent().toUpperCase());
   hexInvalid = signal(false);
 
-  accentName = computed(() => this.swatches.find((s) => s.hex === this.accent())?.name ?? 'Custom');
+  accentName = computed(
+    () => this.swatches.find((s) => s.hex === this.accent())?.name ?? 'Custom',
+  );
   isDefaultAccent = computed(() => this.accent() === DEFAULT_ACCENT);
 
   /** current URL after redirects */
@@ -128,7 +179,9 @@ export class NavbarComponent {
   isHome = computed(() => this.pathOf(this.url()) === '/');
 
   /** highlights the "More" toggle when a dropdown page is open */
-  moreActive = computed(() => this.moreLinks.some((l) => this.pathOf(this.url()) === l.path));
+  moreActive = computed(() =>
+    this.moreLinks.some((l) => this.pathOf(this.url()) === l.path),
+  );
 
   constructor() {
     // every new page starts at the top (leave #anchor links alone)
@@ -142,7 +195,11 @@ export class NavbarComponent {
         this.moreOpen.set(false);
         this.panelOpen.set(false);
         if (!e.urlAfterRedirects.includes('#')) {
-          this.doc.defaultView?.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+          this.doc.defaultView?.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'instant' as ScrollBehavior,
+          });
         }
       });
 
@@ -151,7 +208,9 @@ export class NavbarComponent {
 
     // lock page scroll while the panel is open
     effect(() => {
-      this.doc.documentElement.style.overflow = this.panelOpen() ? 'hidden' : '';
+      this.doc.documentElement.style.overflow = this.panelOpen()
+        ? 'hidden'
+        : '';
     });
   }
 
@@ -163,7 +222,10 @@ export class NavbarComponent {
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(e: MouseEvent): void {
-    if (this.moreOpen() && !this.moreEl()?.nativeElement.contains(e.target as Node)) {
+    if (
+      this.moreOpen() &&
+      !this.moreEl()?.nativeElement.contains(e.target as Node)
+    ) {
       this.moreOpen.set(false);
     }
   }
@@ -249,7 +311,10 @@ export class NavbarComponent {
     if (mode === 'light') rgb = darken(rgb, 0.1);
 
     const lum = luminance(rgb);
-    const onAccent = contrast(lum, 1) >= contrast(lum, luminance([14, 14, 18])) ? '#ffffff' : '#0e0e12';
+    const onAccent =
+      contrast(lum, 1) >= contrast(lum, luminance([14, 14, 18]))
+        ? '#ffffff'
+        : '#0e0e12';
 
     root.style.setProperty('--cr-flare', `rgb(${rgb.join(', ')})`);
     root.style.setProperty('--bs-primary-rgb', rgb.join(', '));

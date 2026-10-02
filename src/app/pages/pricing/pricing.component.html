@@ -57,9 +57,9 @@
               }
             </ul>
   
-            <button type="button" class="btn w-100" [class.btn-primary]="plan.highlighted" [class.btn-outline-secondary]="!plan.highlighted">
+            <a class="btn w-100" [class.btn-primary]="plan.highlighted" [class.btn-outline-secondary]="!plan.highlighted" routerLink="/contact" [queryParams]="{ plan: plan.id }">
               {{ plan.cta }}
-            </button>
+            </a>
             <p class="cr-plan-footnote mt-3 mb-0">{{ plan.footnote }}</p>
           </article>
         }

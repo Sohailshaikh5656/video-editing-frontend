@@ -66,18 +66,35 @@
                 <span class="cr-phase-day">{{ phase.dayRange }}</span>
               }
               <h3 class="cr-phase-title mb-3">{{ phase.title }}</h3>
-              <p class="cr-phase-body mb-0">{{ phase.body }}</p>
+              <p class="cr-phase-body mb-0">
+                @if (phase.body.length > DESC_LIMIT && !isExpanded('d-' + phase.index)) {
+                  {{ truncate(phase.body, DESC_LIMIT) }}
+                  <button type="button" class="cr-read-more" (click)="toggleExpanded('d-' + phase.index)">Read more</button>
+                } @else {
+                  {{ phase.body }}
+                  @if (phase.body.length > DESC_LIMIT) {
+                    <button type="button" class="cr-read-more" (click)="toggleExpanded('d-' + phase.index)">Show less</button>
+                  }
+                }
+              </p>
             </div>
   
             <div class="cr-phase-card">
               <p class="cr-phase-card-label mb-3">What happens</p>
               <ul class="cr-phase-list list-unstyled mb-0">
-                @for (d of phase.deliverables; track d.text) {
+                @for (d of visibleDeliverables(phase); track $index) {
                   <li>
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                       <path d="M20 6L9 17l-5-5" />
                     </svg>
                     <span>{{ d.text }}</span>
+                  </li>
+                }
+                @if (phase.deliverables.length > POINTS_LIMIT) {
+                  <li class="cr-read-more-row">
+                    <button type="button" class="cr-read-more" (click)="toggleExpanded('p-' + phase.index)">
+                      {{ isExpanded('p-' + phase.index) ? 'Show less' : 'Read more (+' + (phase.deliverables.length - POINTS_LIMIT) + ' more)' }}
+                    </button>
                   </li>
                 }
               </ul>

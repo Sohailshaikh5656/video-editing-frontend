@@ -21,7 +21,7 @@
         </p>
       </div>
       <div class="col-lg-6 offset-lg-1 d-flex flex-wrap gap-3 justify-content-lg-end">
-        <a class="btn btn-primary rounded-pill px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2" routerLink="/work">
+        <a class="btn btn-primary rounded-pill px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2" routerLink="/showReels">
           Watch the showreel
           <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z" /></svg>
         </a>
@@ -121,9 +121,19 @@
               {{ item.id < 10 ? ('0' + item.id) : item.id }}
             </span>
             <h3 class="fw-semibold mb-2">{{ item.title }}</h3>
-            <small class="what-we-do-text text-secondary mb-3">{{ item.description }}</small>
+            <small class="what-we-do-text text-secondary mb-3">
+              @if (item.description.length > DESC_LIMIT && !isExpanded('d-' + item.id)) {
+                {{ truncate(item.description, DESC_LIMIT) }}
+                <button type="button" class="cr-read-more" (click)="toggleExpanded('d-' + item.id)">Read more</button>
+              } @else {
+                {{ item.description }}
+                @if (item.description.length > DESC_LIMIT) {
+                  <button type="button" class="cr-read-more" (click)="toggleExpanded('d-' + item.id)">Show less</button>
+                }
+              }
+            </small>
             <ul class="what-we-do-points list-unstyled flex-grow-1">
-              @for (point of getPoints(item.points); track point) {
+              @for (point of visiblePoints(item); track $index) {
                 <li class="mb-1 d-flex align-items-center">
                   <span class="what-we-do-tick">
                     <!-- Green Tick SVG -->
@@ -133,6 +143,13 @@
                   </span>
    
                   <span>{{ point }}</span>
+                </li>
+              }
+              @if (hiddenPointCount(item) > 0) {
+                <li class="mt-1">
+                  <button type="button" class="cr-read-more" (click)="toggleExpanded('p-' + item.id)">
+                    {{ isExpanded('p-' + item.id) ? 'Show less' : 'Read more (+' + hiddenPointCount(item) + ')' }}
+                  </button>
                 </li>
               }
             </ul>
@@ -221,7 +238,7 @@
     </div>
 
     <div class="d-flex flex-wrap align-items-center gap-3 mt-5">
-      <a class="btn btn-primary rounded-pill px-4 py-2 fw-semibold" routerLink="/services">See the full process →</a>
+      <a class="btn btn-primary rounded-pill px-4 py-2 fw-semibold" routerLink="/work" fragment="workflow">See the full process →</a>
       <span class="cr-pill">Average first cut: 72 hours</span>
       <span class="cr-pill">2 revision rounds included</span>
     </div>
@@ -316,7 +333,7 @@
         <span class="cr-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
         <span class="cr-meta">4.9 average across 88 reviews · 96% of clients book again</span>
       </p>
-      <a class="cr-textlink" routerLink="/about">Read all reviews →</a>
+      <a class="cr-textlink" routerLink="/testimonials">Read all reviews →</a>
     </div>
   </div>
 </section>
@@ -389,7 +406,7 @@
     <div class="row row-cols-1 row-cols-md-3 g-4">
       @for (post of posts; track post.title) {
         <div class="col">
-          <a class="cr-post h-100" routerLink="/journal">
+          <a class="cr-post h-100" [routerLink]="postLink(post)">
             <span
               class="cr-post-thumb ratio ratio-16x9 rounded-3"
               [class]="'cr-post-' + post.tone"
@@ -400,7 +417,10 @@
               <span class="cr-meta">{{ post.read }}</span>
             </span>
             <span class="cr-post-title">{{ post.title }}</span>
-            <span class="cr-post-text">{{ post.text }}</span>
+            <span class="cr-post-text">{{ postPreview(post.text) }}</span>
+            @if (postIsLong(post.text)) {
+              <span class="cr-read-more mt-2">Read more &rarr;</span>
+            }
           </a>
         </div>
       }
@@ -416,7 +436,7 @@
         <p class="cr-meta text-primary mb-3">FAQ</p>
         <h2 class="cr-h2 mb-3">Quick answers.</h2>
         <p class="cr-lede mb-4">Everything else lives on the full FAQ page.</p>
-        <a class="btn btn-outline-secondary rounded-pill px-4 py-2" routerLink="/about">All questions →</a>
+        <a class="btn btn-outline-secondary rounded-pill px-4 py-2" routerLink="/faq">All questions →</a>
       </div>
 
       <div class="col-lg-8">

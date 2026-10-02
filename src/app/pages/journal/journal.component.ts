@@ -5,8 +5,13 @@ import {
   computed,
   signal,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { UserControllerService } from '../../services/user-controller.service';
+import { truncate } from '../../shared/text.utils';
+
+/** Listing cards show at most this many characters of a journal's description. */
+const PREVIEW_LIMIT = 128;
 
 export type JournalFilter = string;
 
@@ -84,6 +89,7 @@ function formatDate(iso: string): string {
 @Component({
   selector: 'app-journal',
   standalone: true,
+  imports: [RouterLink],
   templateUrl: './journal.component.html',
   styleUrl: './journal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -277,6 +283,15 @@ export class JournalComponent implements OnInit {
       : this.earlierAll().filter((p) => p.category === f).length;
   });
   readonly canLoadMore = computed(() => this.earlier().length < this.earlierTotal());
+
+  /** short card preview of a journal description (max PREVIEW_LIMIT characters) */
+  preview(text: string): string {
+    return truncate(text, PREVIEW_LIMIT);
+  }
+
+  isLong(text: string): boolean {
+    return (text ?? '').trim().length > PREVIEW_LIMIT;
+  }
 
   /* ───────────── newsletter ───────────── */
 

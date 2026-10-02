@@ -1,3 +1,4 @@
+import { RouterLink } from '@angular/router';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -24,7 +25,11 @@ interface ContactCard {
   title: string;
   body: string;
   cta: string;
-  href: string;
+  /** in-app route; takes precedence over `href` */
+  link?: string;
+  /** optional #fragment on `link` */
+  fragment?: string;
+  href?: string;
   isPrimary?: boolean;
 }
 
@@ -131,14 +136,14 @@ const CATEGORIES: FaqCategory[] = [
 
 const CONTACT_CARDS: ContactCard[] = [
   { eyebrow: 'Ask directly', title: 'Email a question', body: 'One question or twenty. No obligation and no follow-up sequence, a reply is all it is.', cta: 'hello@cutroom.studio', href: 'mailto:hello@cutroom.studio' },
-  { eyebrow: 'Talk it through', title: 'Book 20 minutes', body: 'Faster than email for anything with nuance. Bring the footage link and the deadline.', cta: 'Pick a slot →', href: '#contact', isPrimary: true },
-  { eyebrow: 'Read ahead', title: 'The full process', body: 'Step by step, from first call to final master, with the timings that actually apply.', cta: 'How it works →', href: '#process' },
+  { eyebrow: 'Talk it through', title: 'Book 20 minutes', body: 'Faster than email for anything with nuance. Bring the footage link and the deadline.', cta: 'Pick a slot →', link: '/contact', isPrimary: true },
+  { eyebrow: 'Read ahead', title: 'The full process', body: 'Step by step, from first call to final master, with the timings that actually apply.', cta: 'How it works →', link: '/work', fragment: 'workflow' },
 ];
 
 @Component({
   selector: 'app-faq',
   standalone: true,
-  imports: [SharedModule],
+  imports: [SharedModule, RouterLink],
   templateUrl: './faq.component.html',
   styleUrl: './faq.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -3,6 +3,12 @@ import { RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { SharedModule } from '../../shared/sharedModule';
 import { UserControllerService } from '../../services/user-controller.service';
+import { parsePoints, truncate } from '../../shared/text.utils';
+
+/** Cards show a short preview; the rest sits behind "Read more". */
+const PROCESS_DESC_LIMIT = 100;
+const PROCESS_POINTS_LIMIT = 5;
+const JOURNAL_PREVIEW_LIMIT = 128;
 import {
   BrandLogo,
   BrandLogoComponent,
@@ -74,6 +80,8 @@ interface ApiBrand {
 }
 
 interface JournalPost {
+  /** undefined for the built-in fallback posts, which have no detail page */
+  id?: number;
   tag: string;
   read: string;
   tone: string;
@@ -530,6 +538,7 @@ export class HomeComponent implements OnInit {
         );
 
         this.posts = live.map((j, i) => ({
+          id: j.id,
           tag: categoryMap.get(j.category_id) || 'Journal',
           read: formatReadTime(j.time, j.time_type),
           tone: POST_TONES[i % POST_TONES.length],
@@ -635,7 +644,51 @@ export class HomeComponent implements OnInit {
     },
   ];
 
-  getPoints(points:any){
-    return JSON.parse(points)
+  getPoints(points: unknown): string[] {
+    return parsePoints(points);
+  }
+
+  // ── Process cards: read more ──
+
+  readonly DESC_LIMIT = PROCESS_DESC_LIMIT;
+  readonly POINTS_LIMIT = PROCESS_POINTS_LIMIT;
+  readonly truncate = truncate;
+
+  /** Keys ("d-<id>" / "p-<id>") of process cards whose description or points are fully shown. */
+  private expanded = signal<ReadonlySet<string>>(new Set());
+
+  isExpanded(key: string): boolean {
+    return this.expanded().has(key);
+  }
+
+  toggleExpanded(key: string): void {
+    this.expanded.update((set) => {
+      const next = new Set(set);
+      if (!next.delete(key)) next.add(key);
+      return next;
+    });
+  }
+
+  visiblePoints(item: { id: number; points: unknown }): string[] {
+    const points = this.getPoints(item.points);
+    return this.isExpanded('p-' + item.id) ? points : points.slice(0, PROCESS_POINTS_LIMIT);
+  }
+
+  hiddenPointCount(item: { points: unknown }): number {
+    return Math.max(0, this.getPoints(item.points).length - PROCESS_POINTS_LIMIT);
+  }
+
+  // ── Journal cards ──
+
+  postPreview(text: string): string {
+    return truncate(text, JOURNAL_PREVIEW_LIMIT);
+  }
+
+  postIsLong(text: string): boolean {
+    return (text ?? '').trim().length > JOURNAL_PREVIEW_LIMIT;
+  }
+
+  postLink(post: JournalPost): (string | number)[] {
+    return post.id ? ['/journal', post.id] : ['/journal'];
   }
 }

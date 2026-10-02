@@ -89,6 +89,43 @@ export const routes: Routes = [
       ),
   },
 
+  {
+    path: 'journal/:id',
+    title: 'Journal',
+    loadComponent: () =>
+      import('./pages/view-journal/view-journal.component').then(
+        (m) => m.ViewJournalComponent,
+      ),
+  },
+  {
+    path: 'work',
+    title: 'Our Work',
+    loadComponent: () =>
+      import('./pages/work/work.component').then((m) => m.WorkComponent),
+  },
+
+  // Case-insensitive aliases for the showreels page (canonical path is /showReels)
+  { path: 'showreels', redirectTo: 'showReels', pathMatch: 'full' },
+  { path: 'showreel', redirectTo: 'showReels', pathMatch: 'full' },
+
+  {
+    path: 'legal',
+    title: 'Legal',
+    loadComponent: () =>
+      import('./components/other/legal/legal.component').then(
+        (m) => m.LegalComponent,
+      ),
+  },
+
+  {
+    path: 'thank-you',
+    title: 'Thank you',
+    loadComponent: () =>
+      import('./components/other/thank-you/thank-you.component').then(
+        (m) => m.ThankYouComponent,
+      ),
+  },
+
   // =========================
   // Admin Routes
   // =========================

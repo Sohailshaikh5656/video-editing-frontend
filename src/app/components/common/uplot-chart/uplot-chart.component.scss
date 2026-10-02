@@ -1,0 +1,45 @@
+/* Unscoped on purpose (ViewEncapsulation.None): uPlot builds its own DOM at runtime,
+   so scoped selectors would never match it. Everything is namespaced under the host tag. */
+
+app-uplot-chart {
+  display: block;
+  position: relative;
+  min-width: 0;
+
+  .cr-chart-host { width: 100%; min-width: 0; }
+
+  .cr-chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--cr-text-mid);
+
+    span { display: inline-flex; align-items: center; gap: 0.4rem; }
+    i { width: 0.6rem; height: 0.6rem; border-radius: 50%; }
+  }
+
+  .u-legend { display: none; }
+
+  .cr-chart-tip {
+    position: absolute;
+    z-index: 5;
+    display: none;
+    min-width: 8rem;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid var(--cr-border-strong);
+    border-radius: 0.6rem;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--cr-text-hi);
+    background: var(--cr-surface);
+    box-shadow: 0 10px 30px -8px rgb(0 0 0 / 0.45);
+    pointer-events: none;
+
+    .tip-title { margin-bottom: 0.2rem; color: var(--cr-text-mid); }
+    .tip-row { display: flex; align-items: center; gap: 0.45rem; }
+    .tip-row i { width: 0.5rem; height: 0.5rem; border-radius: 50%; }
+    .tip-row b { margin-left: auto; padding-left: 0.8rem; }
+  }
+}
