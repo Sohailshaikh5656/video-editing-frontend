@@ -1,4 +1,12 @@
-<aside class="cr-sidebar d-flex flex-column" [class.is-collapsed]="collapsed()">
+@if (shell.mobileSidebarOpen()) {
+  <div class="cr-sidebar-backdrop d-lg-none" (click)="shell.closeMobileSidebar()"></div>
+}
+
+<aside
+  class="cr-sidebar d-flex flex-column"
+  [class.is-collapsed]="collapsed()"
+  [class.is-mobile-open]="shell.mobileSidebarOpen()"
+>
 
   <!-- Brand -->
   <div class="cr-sidebar-brand d-flex align-items-center gap-2">
@@ -6,7 +14,7 @@
     <span class="cr-brand-text">Cutroom<span class="cr-brand-accent">.</span></span>
     <button
       type="button"
-      class="cr-collapse-btn"
+      class="cr-collapse-btn d-none d-lg-inline-flex"
       (click)="toggleCollapsed()"
       [attr.aria-label]="collapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
       [title]="collapsed() ? 'Expand sidebar' : 'Collapse sidebar'"

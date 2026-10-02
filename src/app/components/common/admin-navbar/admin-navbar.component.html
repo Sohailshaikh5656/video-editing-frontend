@@ -6,9 +6,11 @@
     <button
       type="button"
       class="cr-icon-btn d-lg-none"
+      (click)="shell.toggleMobileSidebar()"
+      [attr.aria-expanded]="shell.mobileSidebarOpen()"
       aria-label="Toggle menu"
     >
-      <i class="bi bi-list"></i>
+      <i class="bi" [class.bi-list]="!shell.mobileSidebarOpen()" [class.bi-x-lg]="shell.mobileSidebarOpen()"></i>
     </button>
 
     <div class="cr-search">

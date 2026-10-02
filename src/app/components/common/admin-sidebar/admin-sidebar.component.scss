@@ -11,6 +11,49 @@
   }
 }
 
+/* ── Mobile off-canvas ─────────────────────
+   Below the `lg` breakpoint the sidebar is no longer part of the flex row
+   (the admin shell gives it up entirely to the content) — instead it's a
+   fixed drawer that slides in over everything, dismissed by the backdrop,
+   a nav tap, or the topbar's hamburger button. ──*/
+
+.cr-sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 299;
+  background: rgba(0, 0, 0, 0.55);
+  animation: cr-sidebar-fade 0.2s ease;
+}
+
+@keyframes cr-sidebar-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 991.98px) {
+  .cr-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 300;
+    width: 268px;
+    transform: translateX(-100%);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 24px 0 60px -12px rgba(0, 0, 0, 0.5);
+
+    /* icon-rail collapse is a desktop-only space saving — always full width
+       when it's already an overlay */
+    &.is-collapsed {
+      width: 268px;
+    }
+
+    &.is-mobile-open {
+      transform: translateX(0);
+    }
+  }
+}
+
 /* ── Brand ───────────────────────────────── */
 
 .cr-sidebar-brand {
@@ -406,11 +449,45 @@
   }
 }
 
+@media (max-width: 991.98px) {
+  /* the icon-rail collapse is a desktop affordance — a mobile visit that
+     inherited `collapsed=true` from a previous desktop session should still
+     open as a normal, readable full-width drawer. */
+  .is-collapsed {
+    .cr-sidebar-brand {
+      padding: 1.1rem 1.25rem;
+      justify-content: flex-start;
+    }
+
+    .cr-brand-text,
+    .cr-nav-heading,
+    .cr-nav-link span {
+      display: initial;
+    }
+
+    .cr-profile-info {
+      display: flex;
+    }
+
+    .cr-nav-link {
+      justify-content: flex-start;
+      padding: 0.5rem 0.6rem;
+    }
+
+    .cr-sidebar-profile {
+      justify-content: flex-start;
+      padding: 0.5rem 0.6rem;
+    }
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .cr-sidebar,
+  .cr-sidebar-backdrop,
   .cr-nav-link,
   .cr-chevron,
   .cr-submenu {
     transition: none;
+    animation: none;
   }
 }

@@ -6,6 +6,7 @@ import {
   inject,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { AdminShellService } from '../../../services/admin-shell.service';
 
 @Component({
   selector: 'app-admin-navbar',
@@ -17,6 +18,7 @@ import { Router } from '@angular/router';
 export class AdminNavbarComponent {
   private el = inject(ElementRef);
   private router = inject(Router);
+  readonly shell = inject(AdminShellService);
 
   isDark = signal<boolean>(this.getInitialTheme());
   profileOpen = signal<boolean>(false);
