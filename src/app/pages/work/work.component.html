@@ -1,0 +1,537 @@
+<!-- ═════════════ HERO ═════════════ -->
+<section class="cr-hero-work">
+  <div class="cr-orb cr-orb-a" aria-hidden="true"></div>
+  <div class="cr-orb cr-orb-b" aria-hidden="true"></div>
+
+  <div class="container position-relative">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6" appReveal>
+        <p class="cr-eyebrow text-uppercase fw-semibold cr-flare mb-3">Our work</p>
+        <h1 class="cr-work-title mb-3">From raw footage to <span class="cr-grad">final cut.</span></h1>
+        <p class="cr-lead mb-4">
+          Every frame is planned, crafted and polished. Explore finished projects, see exactly how a video comes
+          together, and meet the tools and craft behind it.
+        </p>
+        <div class="d-flex flex-wrap gap-2">
+          <button type="button" class="btn btn-primary rounded-pill px-4 py-2 fw-semibold" (click)="scrollTo('showcase')">
+            See the projects
+          </button>
+          <button type="button" class="btn btn-outline-secondary rounded-pill px-4 py-2" (click)="scrollTo('workflow')">
+            How we work
+          </button>
+        </div>
+      </div>
+
+      <!-- Mock editor timeline -->
+      <div class="col-lg-6" [appReveal]="150">
+        <div class="cr-editor" aria-hidden="true">
+          <div class="cr-editor-bar">
+            <span></span><span></span><span></span>
+            <em>aurora_final_v3.prproj</em>
+          </div>
+          <div class="cr-editor-monitor">
+            <div class="cr-monitor-glow"></div>
+            <i class="bi bi-play-fill"></i>
+            <span class="cr-timecode">00:00:12:08</span>
+          </div>
+          <div class="cr-tracks">
+            <div class="cr-track"><span data-tone="violet" style="--w: 34%"></span><span data-tone="flare" style="--w: 22%"></span><span data-tone="violet" style="--w: 30%"></span></div>
+            <div class="cr-track"><span class="gap" style="--w: 10%"></span><span data-tone="teal" style="--w: 40%"></span><span data-tone="amber" style="--w: 28%"></span></div>
+            <div class="cr-track audio"><span data-tone="teal" style="--w: 96%"></span></div>
+            <div class="cr-playhead"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cr-stats" appReveal>
+      @for (s of stats(); track s.label) {
+        <div class="cr-stat">
+          <b>{{ s.value }}</b>
+          <span>{{ s.label }}</span>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════ PROJECT SHOWCASE ═════════════ -->
+<section id="showcase" class="cr-block">
+  <div class="container">
+    <header class="cr-head" appReveal>
+      <p class="cr-eyebrow text-uppercase fw-semibold cr-flare mb-2">Project showcase</p>
+      <h2>Finished work, <span class="cr-grad">in motion.</span></h2>
+      <p class="cr-lead">Press play on any project — each one began as hours of raw footage.</p>
+    </header>
+
+    <div class="cr-filters" appReveal role="tablist" aria-label="Filter projects">
+      @for (t of tags(); track t) {
+        <button
+          type="button"
+          class="cr-filter"
+          role="tab"
+          [class.is-active]="activeTag() === t"
+          [attr.aria-selected]="activeTag() === t"
+          (click)="pickTag(t)"
+        >{{ t }}</button>
+      }
+    </div>
+
+    <div class="cr-projects">
+      @for (p of visible(); track p.id; let i = $index) {
+        <article
+          class="cr-proj"
+          [class.is-featured]="i === 0 && activeTag() === ALL && visible().length > 2"
+          [attr.data-tone]="p.tone"
+          [appReveal]="(i % 3) * 110"
+        >
+          <div class="cr-proj-media ratio ratio-16x9">
+            @if (p.video) {
+              <app-cr-player [src]="p.video" [poster]="p.poster" [label]="p.title" />
+            } @else {
+              <div class="cr-proj-ph">
+                <i class="bi bi-play-circle"></i>
+                <span>Preview coming soon</span>
+              </div>
+            }
+          </div>
+          <div class="cr-proj-body">
+            <p class="cr-meta">
+              {{ p.client }}@if (p.year) { · {{ p.year }} }@if (p.views) { · {{ formatViews(p.views) }} views }
+            </p>
+            <h3>{{ p.title }}</h3>
+            <p class="cr-proj-text">{{ p.description }}</p>
+            <div class="cr-chips">
+              @for (t of p.tags; track t) {
+                <span class="cr-chip">{{ t }}</span>
+              }
+            </div>
+          </div>
+        </article>
+      } @empty {
+        <p class="cr-empty">No projects in this category yet.</p>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════ PROGRESS VISUALIZATION ═════════════ -->
+<section id="progress" class="cr-block cr-band">
+  <div class="container">
+    <header class="cr-head" appReveal>
+      <p class="cr-eyebrow text-uppercase fw-semibold cr-teal mb-2">Progress visualization</p>
+      <h2>Watch a project <span class="cr-grad">take shape.</span></h2>
+      <p class="cr-lead">
+        You always know where things stand — from the first upload to final delivery. Figures below show a typical
+        two-week brand film.
+      </p>
+    </header>
+
+    <div class="cr-panels">
+      <!-- Tracker -->
+      <div class="cr-panel span-5" appReveal>
+        <div class="cr-panel-head">
+          <div>
+            <h3>Live project tracker</h3>
+            <p>Sample · “Aurora Brand Film”</p>
+          </div>
+          <span class="cr-live"><i></i>In progress</span>
+        </div>
+        <ul class="cr-tracker">
+          @for (t of tracker; track t.label; let i = $index) {
+            <li [attr.data-state]="t.state">
+              <div class="cr-tracker-row">
+                <span class="cr-tracker-icon">
+                  @if (t.state === 'done') { <i class="bi bi-check-lg"></i> } @else { {{ i + 1 }} }
+                </span>
+                <span class="cr-tracker-label">{{ t.label }}</span>
+                <span class="cr-tracker-pct">{{ t.pct }}%</span>
+              </div>
+              <div class="cr-bar"><span [style.--w]="t.pct + '%'" [style.--d]="(i * 140) + 'ms'"></span></div>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <!-- Progress over time -->
+      <div class="cr-panel span-7" [appReveal]="120">
+        <div class="cr-panel-head">
+          <div>
+            <h3>Progress by stage</h3>
+            <p>Percent complete across a 14-day project</p>
+          </div>
+        </div>
+        <app-uplot-chart
+          mode="line"
+          [timeAxis]="false"
+          [x]="progressX"
+          [series]="progressSeries"
+          [xFormat]="dayLabel"
+          [valueFormat]="percent"
+          [yMax]="100"
+          [height]="270"
+        />
+      </div>
+
+      <!-- Hours -->
+      <div class="cr-panel" [class.span-6]="hasDelivered()" [class.span-12]="!hasDelivered()" appReveal>
+        <div class="cr-panel-head">
+          <div>
+            <h3>Where the hours go</h3>
+            <p>Typical effort per stage · 60-second film</p>
+          </div>
+        </div>
+        <app-uplot-chart
+          mode="bars"
+          [x]="hoursX"
+          [categories]="hoursCategories"
+          [series]="hoursSeries"
+          [valueFormat]="hoursFormat"
+          [height]="240"
+        />
+      </div>
+
+      @if (hasDelivered()) {
+        <div class="cr-panel span-6" [appReveal]="120">
+          <div class="cr-panel-head">
+            <div>
+              <h3>Delivered per month</h3>
+              <p>Projects shipped · last 12 months</p>
+            </div>
+          </div>
+          <app-uplot-chart mode="line" [x]="deliveredX()" [series]="deliveredSeries()" [height]="240" />
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════ WORKFLOW ═════════════ -->
+<section id="workflow" class="cr-block">
+  <div class="container">
+    <header class="cr-head" appReveal>
+      <p class="cr-eyebrow text-uppercase fw-semibold cr-violet mb-2">Video editing process</p>
+      <h2>Raw footage to <span class="cr-grad">final video.</span></h2>
+      <p class="cr-lead">Seven clear steps. Tap any stage to see what happens inside it.</p>
+    </header>
+
+    <div class="cr-flow" appReveal>
+      <div class="cr-flow-line" aria-hidden="true"><span [style.width.%]="stepFill()"></span></div>
+      <div class="cr-flow-steps" role="tablist">
+        @for (s of steps; track s.title; let i = $index) {
+          <button
+            type="button"
+            class="cr-flow-step"
+            role="tab"
+            [class.is-active]="activeStep() === i"
+            [class.is-done]="activeStep() > i"
+            [attr.aria-selected]="activeStep() === i"
+            (click)="pickStep(i)"
+          >
+            <span class="cr-flow-dot"><i class="bi" [class]="s.icon"></i></span>
+            <span class="cr-flow-name">{{ s.title }}</span>
+          </button>
+        }
+      </div>
+
+      <div class="cr-flow-detail" [attr.data-step]="activeStep()">
+        @for (s of steps; track s.title; let i = $index) {
+          @if (activeStep() === i) {
+            <div class="cr-flow-card">
+              <span class="cr-flow-index">0{{ i + 1 }}</span>
+              <div>
+                <p class="cr-meta">{{ s.time }}</p>
+                <h3>{{ s.title }}</h3>
+                <p class="cr-lead mb-3">{{ s.text }}</p>
+                <div class="cr-chips">
+                  @for (t of s.tools; track t) { <span class="cr-chip">{{ t }}</span> }
+                </div>
+              </div>
+            </div>
+          }
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════ SCRIPTING ═════════════ -->
+<section id="scripting" class="cr-block cr-band">
+  <div class="container">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-5" appReveal>
+        <p class="cr-eyebrow text-uppercase fw-semibold cr-flare mb-2">Scripting</p>
+        <h2 class="mb-3">The story is written <span class="cr-grad">before the first cut.</span></h2>
+        <p class="cr-lead mb-4">
+          We shape your idea into a script, beat sheet and storyboard, so the edit has a spine and every second earns
+          its place.
+        </p>
+        <ul class="cr-checks">
+          @for (p of planning; track p) {
+            <li><i class="bi bi-check2-circle"></i>{{ p }}</li>
+          }
+        </ul>
+      </div>
+
+      <div class="col-lg-7" [appReveal]="120">
+        <div class="cr-script-wrap">
+          <div class="cr-script">
+            <div class="cr-script-bar"><i class="bi bi-file-earmark-text"></i> aurora_script_v2.fountain</div>
+            @for (l of scriptLines; track l.text; let i = $index) {
+              <p class="cr-line" [attr.data-kind]="l.kind" [style.--i]="i">{{ l.text }}</p>
+            }
+            <span class="cr-caret"></span>
+          </div>
+
+          <div class="cr-board">
+            @for (f of storyboard; track f.shot; let i = $index) {
+              <figure class="cr-frame" [attr.data-tone]="f.tone" [style.--i]="i">
+                <div class="cr-frame-art"><span>{{ i + 1 }}</span></div>
+                <figcaption><b>{{ f.shot }}</b>{{ f.note }}</figcaption>
+              </figure>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════ ANIMATION & MOTION ═════════════ -->
+<section id="motion" class="cr-block">
+  <div class="container">
+    <header class="cr-head" appReveal>
+      <p class="cr-eyebrow text-uppercase fw-semibold cr-violet mb-2">Animation &amp; motion graphics</p>
+      <h2>Movement with <span class="cr-grad">intent.</span></h2>
+      <p class="cr-lead">Titles, transitions, VFX and brand animation — built to feel smooth and look unmistakably yours.</p>
+    </header>
+
+    <div class="cr-motion-grid">
+      <div class="cr-motion" appReveal>
+        <div class="cr-stage stage-type" aria-hidden="true">
+          <span>MAKE</span><span>IT</span><span class="hl">MOVE</span>
+        </div>
+        <h4>Kinetic typography</h4>
+        <p>Words that land on the beat.</p>
+      </div>
+
+      <div class="cr-motion" [appReveal]="90">
+        <div class="cr-stage stage-wipe" aria-hidden="true">
+          <i class="a"></i><i class="b"></i><i class="c"></i>
+        </div>
+        <h4>Transitions</h4>
+        <p>Wipes, whip pans and morph cuts.</p>
+      </div>
+
+      <div class="cr-motion" [appReveal]="180">
+        <div class="cr-stage stage-morph" aria-hidden="true"><i></i><i></i><i></i></div>
+        <h4>Shape &amp; logo animation</h4>
+        <p>Brand systems that come alive.</p>
+      </div>
+
+      <div class="cr-motion" [appReveal]="270">
+        <div class="cr-stage stage-vfx" aria-hidden="true">
+          <i class="ring"></i><i class="ring r2"></i><i class="core"></i>
+          @for (n of [1, 2, 3, 4, 5, 6, 7, 8]; track n) { <b [style.--n]="n"></b> }
+        </div>
+        <h4>Visual effects</h4>
+        <p>Glow, particles, tracking and cleanup.</p>
+      </div>
+    </div>
+
+    <div class="cr-chips cr-chips-center" appReveal>
+      @for (c of motionChips; track c) { <span class="cr-chip big">{{ c }}</span> }
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════ PROFESSIONAL EDITING ═════════════ -->
+<section id="editing" class="cr-block cr-band">
+  <div class="container">
+    <header class="cr-head" appReveal>
+      <p class="cr-eyebrow text-uppercase fw-semibold cr-amber mb-2">Professional editing</p>
+      <h2>The details that make it <span class="cr-grad">feel premium.</span></h2>
+      <p class="cr-lead">Colour, sound, rhythm and finish — each one tuned by hand.</p>
+    </header>
+
+    <div class="row g-4">
+      <!-- Colour grade -->
+      <div class="col-lg-7" appReveal>
+        <div class="cr-panel h-100">
+          <div class="cr-panel-head">
+            <div>
+              <h3>Colour grading</h3>
+              <p>Drag to compare ungraded and graded</p>
+            </div>
+            <span class="cr-tag-pill">Before / After</span>
+          </div>
+          <div class="cr-grade" [style.--pos]="gradePos() + '%'">
+            <div class="cr-scene before"><i class="sun"></i><i class="hill h1"></i><i class="hill h2"></i><i class="hill h3"></i></div>
+            <div class="cr-scene after"><i class="sun"></i><i class="hill h1"></i><i class="hill h2"></i><i class="hill h3"></i></div>
+            <span class="cr-grade-label l">Ungraded</span>
+            <span class="cr-grade-label r">Graded</span>
+            <span class="cr-grade-handle"><i class="bi bi-arrows"></i></span>
+            <input
+              type="range"
+              min="0"
+              max="100"
+              [value]="gradePos()"
+              (input)="onGrade($event)"
+              aria-label="Compare ungraded and graded frame"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Audio -->
+      <div class="col-lg-5" [appReveal]="120">
+        <div class="cr-panel h-100">
+          <div class="cr-panel-head">
+            <div>
+              <h3>Audio enhancement</h3>
+              <p>Noise out, clarity in</p>
+            </div>
+            <span class="cr-tag-pill">−14 LUFS</span>
+          </div>
+
+          <p class="cr-wave-label">Raw recording</p>
+          <div class="cr-wave raw" aria-hidden="true">
+            @for (h of waveBefore; track $index) { <i [style.--h]="h + 'px'"></i> }
+          </div>
+
+          <p class="cr-wave-label">After clean-up &amp; mastering</p>
+          <div class="cr-wave clean" aria-hidden="true">
+            @for (h of waveAfter; track $index) { <i [style.--h]="h + 'px'" [style.--i]="$index"></i> }
+          </div>
+
+          <div class="cr-audio-stats">
+            <span><b>−18 dB</b> background noise</span>
+            <span><b>EQ</b> voice presence</span>
+            <span><b>2-pass</b> loudness</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cr-polish">
+      @for (p of polish; track p.title; let i = $index) {
+        <div class="cr-polish-card" [appReveal]="(i % 3) * 90">
+          <span class="cr-polish-icon"><i class="bi" [class]="p.icon"></i></span>
+          <div>
+            <h4>{{ p.title }}</h4>
+            <p>{{ p.text }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════ ADOBE EXPERTISE ═════════════ -->
+<section id="adobe" class="cr-block">
+  <div class="container">
+    <header class="cr-head" appReveal>
+      <p class="cr-eyebrow text-uppercase fw-semibold cr-teal mb-2">Adobe expertise</p>
+      <h2>Industry-standard tools, <span class="cr-grad">mastered.</span></h2>
+      <p class="cr-lead">One connected toolkit from first cut to final pixel.</p>
+    </header>
+
+    <div class="cr-adobe">
+      @for (t of adobe; track t.code; let i = $index) {
+        <article class="cr-tool" [attr.data-tone]="t.tone" [appReveal]="i * 100">
+          <span class="cr-tool-badge">{{ t.code }}</span>
+          <h3>{{ t.name }}</h3>
+          <p class="cr-meta">{{ t.role }}</p>
+          <div class="cr-meter">
+            <div class="cr-meter-top"><span>Proficiency</span><b>{{ t.level }}%</b></div>
+            <div class="cr-bar"><span [style.--w]="t.level + '%'" [style.--d]="(i * 120) + 'ms'"></span></div>
+          </div>
+          <div class="cr-chips">
+            @for (s of t.skills; track s) { <span class="cr-chip">{{ s }}</span> }
+          </div>
+        </article>
+      }
+    </div>
+    <p class="cr-fine" appReveal>Adobe, Premiere Pro, After Effects, Photoshop and Audition are trademarks of Adobe Inc.</p>
+  </div>
+</section>
+
+<!-- ═════════════ FINAL DELIVERY ═════════════ -->
+<section id="delivery" class="cr-block cr-band">
+  <div class="container">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-6" appReveal>
+        <p class="cr-eyebrow text-uppercase fw-semibold cr-flare mb-2">Final delivery</p>
+        <h2 class="mb-3">Exported right. <span class="cr-grad">Delivered on time.</span></h2>
+        <p class="cr-lead mb-4">
+          Every project ships in the exact formats you need, checked frame by frame and handed over with everything
+          required to publish.
+        </p>
+
+        <div class="cr-presets">
+          @for (p of presets; track p.name) {
+            <div class="cr-preset">
+              <span class="cr-preset-icon"><i class="bi" [class]="p.icon"></i></span>
+              <span class="cr-preset-main">
+                <b>{{ p.name }}</b>
+                <small>{{ p.spec }}</small>
+              </span>
+              <span class="cr-preset-use">{{ p.use }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="col-lg-6" [appReveal]="140">
+        <div class="cr-panel cr-render">
+          <div class="cr-panel-head">
+            <div>
+              <h3>Render &amp; delivery</h3>
+              <p>aurora_final_4k.mp4</p>
+            </div>
+            <span class="cr-tag-pill">Ready</span>
+          </div>
+
+          <div class="cr-render-track" aria-hidden="true">
+            <div class="cr-render-bar"><span></span></div>
+            <div class="cr-render-steps">
+              @for (s of renderSteps; track s; let i = $index) {
+                <span class="cr-render-step" [class]="'s' + i"><i></i>{{ s }}</span>
+              }
+            </div>
+          </div>
+
+          <ul class="cr-deliver-list">
+            @for (d of deliverables; track d) {
+              <li><i class="bi bi-check-circle-fill"></i>{{ d }}</li>
+            }
+          </ul>
+
+          <div class="cr-delivered">
+            <i class="bi bi-send-check"></i>
+            <div>
+              <b>Delivered to your inbox</b>
+              <small>Private download link · files kept for 90 days</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════ CTA ═════════════ -->
+<section class="cr-block">
+  <div class="container">
+    <div class="cr-cta" appReveal>
+      <div>
+        <h2 class="mb-2">Have footage waiting to become something?</h2>
+        <p class="cr-lead mb-0">Tell us about your project — we’ll send a plan and a quote within a day.</p>
+      </div>
+      <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-primary rounded-pill px-4 py-2 fw-semibold" routerLink="/contact">Start a project</a>
+        <a class="btn btn-outline-secondary rounded-pill px-4 py-2" routerLink="/pricing">See pricing</a>
+      </div>
+    </div>
+  </div>
+</section>

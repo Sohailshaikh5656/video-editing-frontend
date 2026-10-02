@@ -1,1 +1,256 @@
-<p>dashboard works!</p>
+<div class="cr-page">
+  <!-- Header -->
+  <div class="cr-page-header d-flex align-items-center justify-content-between flex-wrap gap-3">
+    <div>
+      <h2>Dashboard</h2>
+      <p class="cr-page-sub">
+        A snapshot of your portfolio content
+        @if (lastUpdated(); as t) {
+          · updated {{ t | date: 'shortTime' }}
+        }
+      </p>
+    </div>
+    <button type="button" class="cr-btn-secondary cr-refresh" (click)="load()" [disabled]="loading()">
+      <i class="bi bi-arrow-clockwise" [class.is-spinning]="loading()"></i>
+      Refresh
+    </button>
+  </div>
+
+  @if (failedSources().length) {
+    <div class="cr-alert">
+      <i class="bi bi-exclamation-circle"></i>
+      <span>Couldn't load {{ failedSources().join(', ') }}. Those numbers may be incomplete.</span>
+    </div>
+  }
+
+  @if (loading() && !lastUpdated()) {
+    <app-loader label="Loading dashboard…" />
+  } @else {
+    <!-- KPI cards -->
+    <div class="cr-kpis">
+      @for (k of kpis(); track k.label) {
+        <a class="cr-kpi" [routerLink]="k.link" [attr.data-color]="k.color">
+          <span class="cr-kpi-icon"><i class="bi" [class]="k.icon"></i></span>
+          <span class="cr-kpi-body">
+            <span class="cr-kpi-label">{{ k.label }}</span>
+            <span class="cr-kpi-value">{{ k.value | number: '1.0-0' }}</span>
+            <span class="cr-kpi-sub">{{ k.sub }}</span>
+          </span>
+          <i class="bi bi-arrow-up-right cr-kpi-arrow"></i>
+        </a>
+      }
+    </div>
+
+    <!-- Activity + ratings -->
+    <div class="cr-grid">
+      <section class="cr-card span-8">
+        <header class="cr-card-head">
+          <div>
+            <h3>Activity</h3>
+            <p>New videos, feedback and inquiries · last 12 months</p>
+          </div>
+        </header>
+        @if (hasActivity()) {
+          <app-uplot-chart mode="line" [x]="activityX()" [series]="activitySeries()" [height]="280" />
+        } @else {
+          <div class="cr-empty"><i class="bi bi-graph-up"></i>No activity in the last 12 months</div>
+        }
+      </section>
+
+      <section class="cr-card span-4">
+        <header class="cr-card-head">
+          <div>
+            <h3>Ratings</h3>
+            <p>How clients scored your work</p>
+          </div>
+        </header>
+        @if (feedback().length) {
+          <div class="cr-rating-summary">
+            <span class="cr-rating-big">{{ avgRating() | number: '1.1-1' }}</span>
+            <span class="cr-rating-stars">
+              @for (s of stars; track s) {
+                <i class="bi" [class.bi-star-fill]="s <= avgRating() + 0.25" [class.bi-star]="s > avgRating() + 0.25"></i>
+              }
+            </span>
+            <span class="cr-rating-count">{{ feedback().length }} reviews</span>
+          </div>
+          <app-uplot-chart
+            mode="bars"
+            [x]="ratingX"
+            [categories]="ratingCategories"
+            [series]="ratingSeries()"
+            [height]="190"
+          />
+        } @else {
+          <div class="cr-empty"><i class="bi bi-star"></i>No feedback yet</div>
+        }
+      </section>
+
+      <!-- Top videos + tags -->
+      <section class="cr-card span-7">
+        <header class="cr-card-head">
+          <div>
+            <h3>Top videos</h3>
+            <p>Most viewed</p>
+          </div>
+          <a routerLink="/admin/videos" class="cr-link">View all</a>
+        </header>
+        @if (topVideos().length) {
+          <app-uplot-chart
+            mode="bars"
+            [x]="topVideosX()"
+            [categories]="topVideosCategories()"
+            [series]="topVideosSeries()"
+            [height]="260"
+          />
+        } @else {
+          <div class="cr-empty"><i class="bi bi-camera-reels"></i>No videos yet</div>
+        }
+      </section>
+
+      <section class="cr-card span-5">
+        <header class="cr-card-head">
+          <div>
+            <h3>Videos per tag</h3>
+            <p>Top {{ tagUsage().length }} tags</p>
+          </div>
+          <a routerLink="/admin/videoTags" class="cr-link">Manage</a>
+        </header>
+        @if (tagUsage().length) {
+          <app-uplot-chart
+            mode="bars"
+            [x]="tagX()"
+            [categories]="tagCategories()"
+            [series]="tagSeries()"
+            [height]="260"
+          />
+        } @else {
+          <div class="cr-empty"><i class="bi bi-tags"></i>No tags yet</div>
+        }
+      </section>
+
+      <!-- Lists -->
+      <section class="cr-card span-7">
+        <header class="cr-card-head">
+          <div>
+            <h3>Latest videos</h3>
+            <p>Recently added</p>
+          </div>
+          <a routerLink="/admin/videos" class="cr-link">View all</a>
+        </header>
+        @for (v of latestVideos(); track v.id) {
+          <div class="cr-row">
+            <span class="cr-thumb">
+              <i class="bi bi-play-fill"></i>
+              @if (v.thumbnail_url) {
+                <img [src]="v.thumbnail_url" alt="" loading="lazy" (error)="$any($event.target).remove()" />
+              }
+            </span>
+            <span class="cr-row-main">
+              <span class="cr-row-title">{{ v.title }}</span>
+              <span class="cr-row-meta">
+                {{ asDate(v.created_at) | date: 'mediumDate' }}
+                @for (c of v.category?.slice(0, 2); track c) {
+                  <span class="cr-chip">{{ c }}</span>
+                }
+              </span>
+            </span>
+            <span class="cr-row-end">
+              <b>{{ v.views || 0 | number }}</b>
+              <small>views</small>
+            </span>
+            <span class="cr-status" [class.is-on]="!!v.is_active" [title]="v.is_active ? 'Active' : 'Inactive'"></span>
+          </div>
+        } @empty {
+          <div class="cr-empty"><i class="bi bi-camera-reels"></i>No videos yet</div>
+        }
+      </section>
+
+      <section class="cr-card span-5">
+        <header class="cr-card-head">
+          <div>
+            <h3>Latest feedback</h3>
+            <p>What clients are saying</p>
+          </div>
+          <a routerLink="/admin/testimonials" class="cr-link">View all</a>
+        </header>
+        @for (f of latestFeedback(); track f.id) {
+          <div class="cr-feedback">
+            <div class="cr-feedback-head">
+              <span class="cr-avatar">{{ initials(fullName(f)) }}</span>
+              <span class="cr-row-main">
+                <span class="cr-row-title">{{ fullName(f) }}</span>
+                <span class="cr-row-meta">{{ f.occupation }}@if (f.occupation && f.country) { · }{{ f.country }}</span>
+              </span>
+              <span class="cr-mini-stars">
+                @for (s of stars; track s) {
+                  <i class="bi" [class.bi-star-fill]="s <= f.rating" [class.bi-star]="s > f.rating"></i>
+                }
+              </span>
+            </div>
+            <p class="cr-feedback-msg">{{ f.message }}</p>
+          </div>
+        } @empty {
+          <div class="cr-empty"><i class="bi bi-chat-heart"></i>No feedback yet</div>
+        }
+      </section>
+
+      <section class="cr-card span-5">
+        <header class="cr-card-head">
+          <div>
+            <h3>Brands</h3>
+            <p>{{ brands().length }} working with you</p>
+          </div>
+          <a routerLink="/admin/brand" class="cr-link">Manage</a>
+        </header>
+        @if (brandList().length) {
+          <div class="cr-brands">
+            @for (b of brandList(); track b.id) {
+              <span class="cr-brand" [title]="b.name">
+                @if (b.image_url) {
+                  <img [src]="b.image_url" [alt]="b.name" loading="lazy" (error)="$any($event.target).remove()" />
+                }
+                <span>{{ b.name }}</span>
+              </span>
+            }
+          </div>
+        } @else {
+          <div class="cr-empty"><i class="bi bi-award"></i>No brands yet</div>
+        }
+
+        <div class="cr-health">
+          <span class="cr-ring" [style.--p]="activeShare()"><b>{{ activeShare() }}%</b></span>
+          <span>
+            <span class="cr-row-title">Content live</span>
+            <span class="cr-row-meta">of your videos are active on the site</span>
+          </span>
+        </div>
+      </section>
+
+      <section class="cr-card span-7">
+        <header class="cr-card-head">
+          <div>
+            <h3>Recent inquiries</h3>
+            <p>From the contact form</p>
+          </div>
+          <a routerLink="/admin/inquiry" class="cr-link">View all</a>
+        </header>
+        @for (q of latestInquiries(); track $index) {
+          <div class="cr-row">
+            <span class="cr-avatar">{{ initials(q.full_name) }}</span>
+            <span class="cr-row-main">
+              <span class="cr-row-title">{{ q.full_name }}</span>
+              <span class="cr-row-meta">{{ q.company || q.project_type }}</span>
+            </span>
+            <span class="cr-row-end">
+              <b>{{ q.budget || '–' }}</b>
+              <small>{{ asDate(q.created_at) | date: 'MMM d' }}</small>
+            </span>
+          </div>
+        } @empty {
+          <div class="cr-empty"><i class="bi bi-inbox"></i>No inquiries yet</div>
+        }
+      </section>
+    </div>
+  }
+</div>

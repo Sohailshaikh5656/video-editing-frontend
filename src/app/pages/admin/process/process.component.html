@@ -76,14 +76,31 @@
               </td>
               <td class="cr-genre-name">{{ item.title }}</td>
               <td>
-                <div class="cr-process-desc" [title]="item.description">
-                  {{ item.description }}
+                <div class="cr-process-desc">
+                  @if (item.description.length > DESC_LIMIT && !isExpanded('d-' + item.id)) {
+                    {{ truncate(item.description, DESC_LIMIT) }}
+                    <button type="button" class="cr-read-more" (click)="toggleExpanded('d-' + item.id)">
+                      Read more
+                    </button>
+                  } @else {
+                    {{ item.description }}
+                    @if (item.description.length > DESC_LIMIT) {
+                      <button type="button" class="cr-read-more" (click)="toggleExpanded('d-' + item.id)">
+                        Show less
+                      </button>
+                    }
+                  }
                 </div>
               </td>
               <td>
                 <div class="cr-points-preview">
-                  @for (point of getPoints(item.points); track point) {
-                    <span class="cr-point-chip">{{ point }}</span>
+                  @for (point of visiblePoints(item); track $index) {
+                    <span class="cr-point-chip" [title]="point">{{ point }}</span>
+                  }
+                  @if (hiddenPointCount(item) > 0 || isExpanded('p-' + item.id)) {
+                    <button type="button" class="cr-read-more" (click)="toggleExpanded('p-' + item.id)">
+                      {{ isExpanded('p-' + item.id) ? 'Show less' : 'Read more (+' + hiddenPointCount(item) + ')' }}
+                    </button>
                   }
                 </div>
               </td>

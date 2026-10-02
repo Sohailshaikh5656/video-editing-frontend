@@ -1,0 +1,72 @@
+<article class="cr-story">
+  <div class="container cr-story-wrap">
+    <a routerLink="/journal" class="cr-back">&larr; All posts</a>
+
+    @switch (status()) {
+      @case ('loading') {
+        <div class="cr-state" role="status" aria-live="polite">
+          <span class="cr-spinner" aria-hidden="true"></span>
+          Loading story…
+        </div>
+      }
+
+      @case ('missing') {
+        <div class="cr-state">
+          <h1 class="cr-story-title">Story not found</h1>
+          <p>This post may have been unpublished, or the link is out of date.</p>
+          <a routerLink="/journal" class="btn btn-primary rounded-pill px-4">Browse the journal</a>
+        </div>
+      }
+
+      @case ('error') {
+        <div class="cr-state" role="alert">
+          <h1 class="cr-story-title">Couldn't load this story</h1>
+          <p>Check your connection and try again.</p>
+          <a routerLink="/journal" class="btn btn-outline-secondary rounded-pill px-4">Back to the journal</a>
+        </div>
+      }
+
+      @case ('ready') {
+        @if (story(); as s) {
+          <header class="cr-story-head">
+            <p class="cr-story-meta font-monospace text-uppercase">
+              <span class="text-primary">{{ s.category }}</span>
+              @if (s.readLabel) { <span>· {{ s.readLabel }}</span> }
+              @if (s.date) { <span>· {{ s.date }}</span> }
+            </p>
+            <h1 class="cr-story-title text-body-emphasis">{{ s.title }}</h1>
+            @if (s.lead) {
+              <p class="cr-story-lead">{{ s.lead }}</p>
+            }
+          </header>
+
+          @if (hasImage()) {
+            <img class="cr-story-image" [src]="s.image" [alt]="s.title" />
+          }
+
+          <div class="cr-story-body">
+            @for (p of s.paragraphs; track $index) {
+              <p>{{ p }}</p>
+            }
+          </div>
+
+          @if (related().length) {
+            <aside class="cr-related" aria-label="More from the journal">
+              <h2 class="cr-related-title">More from the journal</h2>
+              <div class="cr-related-grid">
+                @for (r of related(); track r.id) {
+                  <a class="cr-related-card" [routerLink]="['/journal', r.id]">
+                    <span class="cr-story-meta font-monospace text-uppercase text-primary">{{ r.category }}</span>
+                    <b>{{ r.title }}</b>
+                    @if (r.summary) { <span>{{ r.summary }}</span> }
+                    <time class="font-monospace">{{ r.date }}</time>
+                  </a>
+                }
+              </div>
+            </aside>
+          }
+        }
+      }
+    }
+  </div>
+</article>

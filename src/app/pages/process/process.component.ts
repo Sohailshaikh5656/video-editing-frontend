@@ -7,6 +7,11 @@ import {
 } from '@angular/core';
 import { SharedModule } from '../../shared/sharedModule';
 import { UserControllerService } from '../../services/user-controller.service';
+import { truncate } from '../../shared/text.utils';
+
+/** Phase previews: longer descriptions / extra points sit behind "Read more". */
+const DESC_LIMIT = 100;
+const POINTS_LIMIT = 5;
 
 interface HeadStat {
   label: string;
@@ -273,6 +278,33 @@ export class ProcessComponent implements OnInit {
     const left = ((row.startDay - 1) / this.totalDays) * 100;
     const width = (row.span / this.totalDays) * 100;
     return { left: `${left}%`, width: `${width}%` };
+  }
+
+  // ── Read more ──
+
+  readonly DESC_LIMIT = DESC_LIMIT;
+  readonly POINTS_LIMIT = POINTS_LIMIT;
+  readonly truncate = truncate;
+
+  /** Keys ("d-<index>" / "p-<index>") of phases whose description or points are fully shown. */
+  private expanded = signal<ReadonlySet<string>>(new Set());
+
+  isExpanded(key: string): boolean {
+    return this.expanded().has(key);
+  }
+
+  toggleExpanded(key: string): void {
+    this.expanded.update((set) => {
+      const next = new Set(set);
+      if (!next.delete(key)) next.add(key);
+      return next;
+    });
+  }
+
+  visibleDeliverables(phase: Phase): PhaseDeliverable[] {
+    return this.isExpanded('p-' + phase.index)
+      ? phase.deliverables
+      : phase.deliverables.slice(0, POINTS_LIMIT);
   }
 
   trackByLabel = (_: number, r: GanttRow) => r.label;

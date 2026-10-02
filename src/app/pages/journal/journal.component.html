@@ -41,7 +41,7 @@
         <div class="container">
           <article class="row align-items-center g-4 g-lg-5 cr-featured">
             <div class="col-lg-6">
-              <a class="cr-thumb cr-thumb-lg d-block" [href]="'/journal/' + post.slug" [style.background]="thumbBackground(post)" [attr.aria-label]="post.title">
+              <a class="cr-thumb cr-thumb-lg d-block" [routerLink]="['/journal', post.slug]" [style.background]="thumbBackground(post)" [attr.aria-label]="post.title">
                 <span class="cr-badge font-monospace text-uppercase">Featured</span>
               </a>
             </div>
@@ -55,9 +55,14 @@
               </div>
   
               <h2 class="cr-featured-title text-body-emphasis mb-3">
-                <a [href]="'/journal/' + post.slug">{{ post.title }}</a>
+                <a [routerLink]="['/journal', post.slug]">{{ post.title }}</a>
               </h2>
-              <p class="cr-excerpt mb-4">{{ post.excerpt }}</p>
+              <p class="cr-excerpt mb-4">
+                {{ preview(post.excerpt) }}
+                @if (isLong(post.excerpt)) {
+                  <a class="cr-read-more" [routerLink]="['/journal', post.slug]">Read more</a>
+                }
+              </p>
   
               <div class="d-flex align-items-center gap-3">
                 @if (post.author; as a) {
@@ -65,7 +70,7 @@
                   <span class="cr-meta">{{ a.name }}</span>
                   <span class="cr-rule" aria-hidden="true"></span>
                 }
-                <a class="cr-read-link" [href]="'/journal/' + post.slug">Read the post &rarr;</a>
+                <a class="cr-read-link" [routerLink]="['/journal', post.slug]">Read the post &rarr;</a>
               </div>
             </div>
           </article>
@@ -81,7 +86,7 @@
             @for (post of grid(); track post.slug) {
               <div class="col-md-6 col-lg-4">
                 <article class="cr-card-post h-100">
-                  <a class="cr-thumb d-block mb-3" [href]="'/journal/' + post.slug" [style.background]="thumbBackground(post)" [attr.aria-label]="post.title">
+                  <a class="cr-thumb d-block mb-3" [routerLink]="['/journal', post.slug]" [style.background]="thumbBackground(post)" [attr.aria-label]="post.title">
                     <span class="cr-badge font-monospace text-uppercase">{{ post.category }}</span>
                   </a>
 
@@ -91,9 +96,14 @@
                   </div>
   
                   <h3 class="cr-post-title text-body-emphasis mb-2">
-                    <a [href]="'/journal/' + post.slug">{{ post.title }}</a>
+                    <a [routerLink]="['/journal', post.slug]">{{ post.title }}</a>
                   </h3>
-                  <p class="cr-excerpt-sm mb-3">{{ post.excerpt }}</p>
+                  <p class="cr-excerpt-sm mb-3">
+                    {{ preview(post.excerpt) }}
+                    @if (isLong(post.excerpt)) {
+                      <a class="cr-read-more" [routerLink]="['/journal', post.slug]">Read more</a>
+                    }
+                  </p>
                   <time class="cr-meta font-monospace">{{ post.date }}</time>
                 </article>
               </div>
@@ -120,7 +130,7 @@
         <ul class="cr-list list-unstyled mb-0">
           @for (p of earlier(); track p.slug) {
             <li>
-              <a class="cr-list-row" [href]="'/journal/' + p.slug">
+              <a class="cr-list-row" [routerLink]="['/journal', p.slug]">
                 <time class="cr-meta font-monospace">{{ p.date }}</time>
                 <span class="cr-list-title text-body-emphasis">{{ p.title }}</span>
                 <span class="cr-list-cat font-monospace text-uppercase text-primary">{{ p.category }}</span>

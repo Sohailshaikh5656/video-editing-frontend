@@ -18,6 +18,11 @@ import { ProcessService } from '../../../services/admin/process.service';
 import { SharedModule } from '../../../shared/sharedModule';
 import { LoaderComponent } from '../../../components/common/loader/loader.component';
 import { DrawerComponent } from '../../../components/common/drawer/drawer.component';
+import { parsePoints, truncate } from '../../../shared/text.utils';
+
+/** Listing previews: longer descriptions / extra points sit behind "Read more". */
+const DESC_LIMIT = 100;
+const POINTS_LIMIT = 5;
 
 interface Process {
   id: number;
@@ -305,8 +310,38 @@ export class ProcessComponent implements OnInit, OnDestroy {
     });
   }
 
-  getPoints(points: any) {
-    console.log('Check', JSON.parse(points));
-    return JSON.parse(points);
+  // ── Listing previews ──────────────────────
+
+  readonly DESC_LIMIT = DESC_LIMIT;
+  readonly POINTS_LIMIT = POINTS_LIMIT;
+  readonly truncate = truncate;
+
+  /** Row keys ("d-<id>" / "p-<id>") whose description or points are fully shown. */
+  private expanded = signal<ReadonlySet<string>>(new Set());
+
+  isExpanded(key: string): boolean {
+    return this.expanded().has(key);
+  }
+
+  toggleExpanded(key: string): void {
+    this.expanded.update((set) => {
+      const next = new Set(set);
+      if (!next.delete(key)) next.add(key);
+      return next;
+    });
+  }
+
+  getPoints(points: unknown): string[] {
+    return parsePoints(points);
+  }
+
+  /** First POINTS_LIMIT points, or all of them once the row is expanded. */
+  visiblePoints(item: Process): string[] {
+    const points = this.getPoints(item.points);
+    return this.isExpanded('p-' + item.id) ? points : points.slice(0, POINTS_LIMIT);
+  }
+
+  hiddenPointCount(item: Process): number {
+    return Math.max(0, this.getPoints(item.points).length - POINTS_LIMIT);
   }
 }

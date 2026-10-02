@@ -485,3 +485,19 @@
       transition: none;
     }
   }
+/* ── Read more ── */
+
+.cr-read-more {
+  padding: 0;
+  border: 0;
+  font-size: inherit;
+  font-weight: 600;
+  color: var(--cr-flare);
+  background: none;
+  cursor: pointer;
+
+  &:hover { text-decoration: underline; }
+  &:focus-visible { outline: 2px solid var(--cr-flare); outline-offset: 2px; border-radius: 2px; }
+}
+
+.cr-read-more-row { padding-top: 0.25rem; font-size: 0.85rem; }

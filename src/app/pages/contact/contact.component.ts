@@ -1,3 +1,4 @@
+import { RouterLink } from '@angular/router';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -236,7 +237,7 @@ function notPastDateValidator(control: AbstractControl): ValidationErrors | null
 @Component({
   selector: 'app-contact',
   standalone: true,
-  imports: [SharedModule, UploadFileControllerComponent],
+  imports: [SharedModule, UploadFileControllerComponent, RouterLink],
   templateUrl: './contact.component.html',
   styleUrl: './contact.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

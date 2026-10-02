@@ -1,6 +1,7 @@
 import { ApplicationConfig } from '@angular/core';
 import {
   provideRouter,
+  withInMemoryScrolling,
   withEnabledBlockingInitialNavigation,
 } from '@angular/router';
 
@@ -13,7 +14,12 @@ import { UPLOAD_PROVIDER } from './services/upload/upload-provider';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(routes, withEnabledBlockingInitialNavigation()),
+    provideRouter(
+      routes,
+      withEnabledBlockingInitialNavigation(),
+      // makes <a routerLink fragment="workflow"> scroll to #workflow
+      withInMemoryScrolling({ anchorScrolling: 'enabled' }),
+    ),
     provideHttpClient(withInterceptors([authInterceptor, loadingInterceptor])),
 
     // Upload stack — UI code only depends on the UPLOAD_PROVIDER contract.

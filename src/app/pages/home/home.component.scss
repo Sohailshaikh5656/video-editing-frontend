@@ -1008,3 +1008,23 @@
     transition: none;
   }
 }
+
+/* ── Read more ── */
+
+.cr-read-more {
+  padding: 0;
+  border: 0;
+  font-size: 0.8em;
+  font-weight: 600;
+  color: var(--bs-primary);
+  background: none;
+  cursor: pointer;
+
+  &:hover { text-decoration: underline; }
+  &:focus-visible { outline: 2px solid var(--bs-primary); outline-offset: 2px; border-radius: 2px; }
+}
+
+.cr-post .cr-read-more {
+  display: inline-block;
+  font-size: 0.82rem;
+}
