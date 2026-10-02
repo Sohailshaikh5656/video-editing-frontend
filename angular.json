@@ -34,11 +34,9 @@
               "node_modules/bootstrap-icons/font/bootstrap-icons.css",
               "src/styles.scss",
               "node_modules/leaflet/dist/leaflet.css"
-
             ],
             "scripts": [
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
-
             ]
           },
           "configurations": {
@@ -47,12 +45,12 @@
                 {
                   "type": "initial",
                   "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumError": "2mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "100kb",
+                  "maximumError": "500kb"
                 }
               ],
               "outputHashing": "all"

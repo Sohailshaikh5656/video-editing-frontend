@@ -1,5 +1,13 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import {
+  NavigationEnd,
+  Router,
+  RouterLink,
+  RouterLinkActive,
+} from '@angular/router';
+import { filter } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AdminShellService } from '../../../services/admin-shell.service';
 
 interface NavItem {
   id: string;
@@ -24,9 +32,20 @@ const COLLAPSE_KEY = 'cr-sidebar-collapsed';
 })
 export class AdminSidebarComponent {
   private router = inject(Router);
+  readonly shell = inject(AdminShellService);
 
-  /** icon-only rail mode — remembered across sessions */
+  /** icon-only rail mode — remembered across sessions (desktop only) */
   collapsed = signal<boolean>(localStorage.getItem(COLLAPSE_KEY) === '1');
+
+  constructor() {
+    // tapping a nav link on the mobile off-canvas drawer should close it
+    this.router.events
+      .pipe(
+        filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+        takeUntilDestroyed(),
+      )
+      .subscribe(() => this.shell.closeMobileSidebar());
+  }
 
   /** best-effort read of the logged-in admin's username, saved at login */
   readonly username = computed(() => {

@@ -1,5 +1,5 @@
 export const environment = {
-  production: false,
+  production: true,
   defaultauth: 'fackbackend',
   directoryPath: '/root/iwf',
   CUT_SHORT_COMMON_IP_PORT: (window as any)['env']?.[
