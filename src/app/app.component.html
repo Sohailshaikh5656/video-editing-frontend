@@ -2,7 +2,9 @@
   <div class="cr-global-progress" role="status" aria-label="Loading"></div>
 }
 
-@if (isAdminRoute() && token && !loadNothing) {
+@if (isUnderMaintanace) {
+  <app-maintenance />
+} @else if (isAdminRoute() && token && !loadNothing) {
   <div class="cr-admin-shell">
     <app-admin-sidebar class="cr-admin-shell__sidebar" />
     <div class="cr-admin-shell__main">

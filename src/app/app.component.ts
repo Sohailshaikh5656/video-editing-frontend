@@ -6,6 +6,7 @@ import { FooterComponent } from './components/common/footer/footer.component';
 import { AdminSidebarComponent } from './components/common/admin-sidebar/admin-sidebar.component';
 import { AdminFooterComponent } from './components/common/admin-footer/admin-footer.component';
 import { AdminNavbarComponent } from './components/common/admin-navbar/admin-navbar.component';
+import { MaintenanceComponent } from './components/other/maintenance/maintenance.component';
 import { LoadingService } from './services/loading.service';
 
 @Component({
@@ -18,11 +19,14 @@ import { LoadingService } from './services/loading.service';
     AdminFooterComponent,
     AdminSidebarComponent,
     AdminNavbarComponent,
+    MaintenanceComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
+  // When true, every route (public and admin) is replaced by the maintenance page.
+  isUnderMaintanace: boolean = true;
   readonly loading = inject(LoadingService);
   token: string | null = localStorage.getItem('token');
   isAdminRoute = signal<boolean>(window.location.pathname.startsWith('/admin'));
