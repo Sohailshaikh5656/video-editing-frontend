@@ -26,7 +26,7 @@ import { LoadingService } from './services/loading.service';
 })
 export class AppComponent {
   // When true, every route (public and admin) is replaced by the maintenance page.
-  isUnderMaintanace: boolean = true;
+  isUnderMaintanace: boolean = false;
   readonly loading = inject(LoadingService);
   token: string | null = localStorage.getItem('token');
   isAdminRoute = signal<boolean>(window.location.pathname.startsWith('/admin'));
