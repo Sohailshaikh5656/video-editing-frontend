@@ -30,7 +30,13 @@ interface Tag {
 @Component({
   selector: 'app-video-tags',
   standalone: true,
-  imports: [CommonModule, FormsModule, SharedModule, LoaderComponent, DrawerComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    SharedModule,
+    LoaderComponent,
+    DrawerComponent,
+  ],
   templateUrl: './video-tag.component.html',
   styleUrl: './video-tag.component.scss',
 })
@@ -150,7 +156,7 @@ export class VideoTagsComponent implements OnInit, OnDestroy {
 
     const request$ =
       this.modalMode() === 'edit' && this.editingId !== null
-        ? this.tagsService.updateTags({ id: this.editingId, tag: name } as any)
+        ? this.tagsService.updateTags(this.editingId, { tag: name })
         : this.tagsService.createTags({ tag: name });
 
     request$.subscribe({

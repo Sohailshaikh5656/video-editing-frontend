@@ -23,8 +23,8 @@ export class VideoTagsService {
     return this.http.post(`${this.backendUrl}`, payload);
   }
 
-  updateTags(payload: { tag: string }) {
-    return this.http.put(`${this.backendUrl}`, payload);
+  updateTags(id: number, payload: { tag: string }) {
+    return this.http.put(`${this.backendUrl}/${id}`, payload);
   }
 
   deleteTag(id: number) {
